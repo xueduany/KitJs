@@ -1,0 +1,30 @@
+.tab_container {
+	height: 40px;
+	width: 400px;
+	display: block;
+	clear: both;
+	overflow: hidden;
+	display: block;
+	position: relative;
+}
+
+.tab_container .inner_tab_container {
+	height: 40px;
+	width: 999px;
+	display: block;
+	position: absolute;
+	left: 0;
+	top: 0;
+	display: block;
+	position: absolute;
+}
+
+.tab_container .tab {
+	float: left;
+	display: block;
+	height: 38px;
+	min-width: 200px;
+	max-width: 400px;
+	border: 1px solid #ccc;
+	min-width: 200px;
+}

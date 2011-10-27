@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Z-Type</title>
+		<style type="text/css">
+html, body {
+	background-color:#25272b;
+	background-image:url(phobos.png);
+	background-position:54px 105px;
+	background-attachment:fixed;
+	background-repeat:no-repeat;
+	color:#fff;
+	font-family:helvetica,arial,sans-serif;
+	margin:0;
+	padding:0;
+	font-size:12pt;
+}
+#canvas {
+	border:1px solid #555;
+	position:absolute;
+	left:0;
+	top:0;
+	width:360px;
+	height:640px;
+	background-color:#000;
+}
+#game {
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	margin:auto;
+	width:360px;
+	height:640px;
+}
+#nocanvas {
+	width:360px;
+	margin:150px auto;
+}
+a {
+	color:#0066cc;
+}
+img {
+	border:0;
+}
+.made-with-impact {
+	position:absolute;
+	text-align:center;
+	bottom:32px;
+	right:32px;
+}
+#ad {
+	width:160px;
+	height:600px;
+	position:absolute;
+	left:32px;
+	top:0;
+	bottom:0;
+	margin:auto;
+}
+#fbhint {
+	position:absolute;
+	bottom:0;
+	left:1px;
+	display:none;
+}
+#fboverlay {
+	position:absolute;
+	z-index:100;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0;
+	margin:auto;
+	width:420px;
+	height:180px;
+	padding:10px;
+	background-color:rgba(110,132,180,0.8);
+	border:6px solid rgba(60,90,152,0.8);
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	border-radius:6px;
+}
+.fbbutton {
+	display:block;
+	float:left;
+	text-decoration:none;
+	color:#fff;
+	background-color:#3b5998;
+	border:1px solid #2a457f;
+	border-top-color:#8a9cc2;
+	text-align:center;
+	font-weight:bold;
+	xfont-size:12px;
+	padding:3px 8px;
+	margin-right:16px;
+}
+.fbbutton.no {
+	background-color:#5F6D89;
+}
+.fbbutton:hover {
+	background-color:#283b62;
+}
+		</style>
+		<script type="text/javascript" src="ztype.js"></script>
+		<script type="text/javascript">
+			ig.module('ztype').requires('game.main').defines(function() {
+				ZType.StartGame();
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="game">
+			<canvas id="canvas">
+				<div id="nocanvas">
+					To play this game you need a good Browser, like <a href="http://www.opera.com/">Opera</a>, <a href="http://www.google.com/chrome">Chrome</a>, <a href="http://www.mozilla.com/firefox/">Firefox</a> or <a href="http://www.apple.com/safari/">Safari</a>.
+				</div>
+			</canvas>
+		</div>
+	</body>
+</html>

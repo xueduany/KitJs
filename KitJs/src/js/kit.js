@@ -12,32 +12,34 @@ $kit = function() {
 		NODETYPE_TEXTNODE : 3,
 		NODETYPE_COMMENT : 8,
 		NODETYPE_ROOT : 9,
+		NODETYPE_FRAGMENT : 11,
 		//
 		REGEXP_SPACE : /\s+/g,
 		//
 		KIT_EVENT_REGISTER : "_kit_event_register_",
+		KIT_EVENT_FUNCTION_REGISTER : "_kit_event_function_register_",
 		KIT_EVENT_STOPIMMEDIATEPROPAGATION : "_kit_event_stopimmediatepropagation_",
-		KIT_EVENT_REGISTER_FUNCATION_PREFIX : "_kit_event_register_funcation_prefix_",
+		// KIT_EVENT_REGISTER_FUNCATION_PREFIX : "_kit_event_register_funcation_prefix_",
 		KIT_EVENT_STOPALLEVENT : "_kit_event_stopallevent_",
 		KIT_DOM_ID_PREFIX : "J_Kit_"
 	};
 	// -----------------------------------string-----------------------------------
 	function trim(str) {
-		if (str == null) {
+		if(str == null) {
 			return null;
 		}
 		return str.replace(/^\s+|\s+$/g, "");
 	}
 
 	function ltrim(str) {
-		if (str == null) {
+		if(str == null) {
 			return null;
 		}
 		return str.replace(/^\s+/, "");
 	}
 
 	function rtrim(str) {
-		if (str == null) {
+		if(str == null) {
 			return null;
 		}
 		return str.replace(/\s+$/, "");
@@ -48,13 +50,13 @@ $kit = function() {
 	 * remove some from array
 	 */
 	function arydel(ary, del) {
-		if (isAry(del)) {
-			for ( var i = 0; i < del.length; i++) {
+		if(isAry(del)) {
+			for(var i = 0; i < del.length; i++) {
 				arydel(ary, del[i]);
 			}
 		} else {
-			for ( var j = 0; j < ary.length; j++) {
-				if (ary[j] == del) {
+			for(var j = 0; j < ary.length; j++) {
+				if(ary[j] == del) {
 					ary.splice(j, 1);
 				}
 			}
@@ -67,16 +69,16 @@ $kit = function() {
 	 */
 	function inAry(a, o) {
 		var flag = false;
-		for ( var i = 0; i < a.length; i++) {
-			if (isAry(o)) {
-				for ( var j = 0; j < o.length; j++) {
-					if (a[i] == o[j]) {
+		for(var i = 0; i < a.length; i++) {
+			if(isAry(o)) {
+				for(var j = 0; j < o.length; j++) {
+					if(a[i] == o[j]) {
 						flag = true;
 						break;
 					}
 				}
 			} else {
-				if (a[i] == o) {
+				if(a[i] == o) {
 					flag = true;
 					break;
 				}
@@ -100,17 +102,26 @@ $kit = function() {
 		var a = (root || document).getElementsByClassName(cls);
 		return (a == null && a.length == 0) ? null : a[0];
 	}
+
 	/**
 	 * by tagName
 	 */
 	function els8tag(tagName, root) {
 		return (root || document).getElementsByTagName(tagName);
 	}
+
 	/**
 	 * els by cls
 	 */
 	function els8cls(cls, root) {
 		return (root || document).getElementsByClassName(cls);
+	}
+
+	/**
+	 * els by name
+	 */
+	function els8name(name, root) {
+		return (root || document).getElementsByName(name);
 	}
 
 	// -----------------------------------is something-----------------------------------
@@ -151,10 +162,10 @@ $kit = function() {
 	 * get/set attr
 	 */
 	function attr(el, attr, value) {
-		if (el != null && "nodeType" in el && CONSTANTS.NODETYPE_ELEMENT == el.nodeType) {
-			if (value == null) {
-				if (isObj(attr)) {
-					for ( var l in attr) {
+		if(el != null && "nodeType" in el && CONSTANTS.NODETYPE_ELEMENT == el.nodeType) {
+			if(value == null) {
+				if(isObj(attr)) {
+					for(var l in attr) {
 						el.setAttribute(l, attr[l]);
 					}
 				} else {
@@ -178,30 +189,32 @@ $kit = function() {
 		}
 		config = join(defaultConfig, config);
 		var what = config.what, where = config.where;
-		if (what != null && "nodeType" in where) {
+		if(what != null && "nodeType" in where) {
 			switch (config.pos.toString().toLowerCase()) {
 				case "first" :
-					if (CONSTANTS.NODETYPE_ELEMENT != where.nodeType) {
+					if(CONSTANTS.NODETYPE_ELEMENT == where.nodeType) {
 						where = where.parentNode;
+						where.insertAdjacentHTML("afterBegin", what);
+					} else {
+						where.insertAdjacentElement("afterBegin", what);
 					}
-					where.insertAdjacentHTML("afterBegin", what);
 					break;
 				case "before" :
 				case "previous" :
-					if (CONSTANTS.NODETYPE_ELEMENT != where.nodeType) {
+					if(CONSTANTS.NODETYPE_ELEMENT != where.nodeType) {
 						var tmpDiv = document.createElement("div");
 						where.insertBefore(tmpDiv);
 						tmpDiv.insertAdjacentHTML("beforeBegin", what);
 						where.parentNode.removeChild(tmpDiv);
 					} else {
-						where.insertAdjacentHTML("beforeBegin", what);
+						where.insertAdjacentElement("beforeBegin", what);
 					}
 					break;
 				case "after" :
 				case "nextsibling" :
-					if (CONSTANTS.NODETYPE_ELEMENT != where.nodeType) {
+					if(CONSTANTS.NODETYPE_ELEMENT != where.nodeType && NODETYPE_FRAGMENT != where.nodeType) {
 						var tmpDiv = document.createElement("div");
-						if (where.nextSibling) {
+						if(where.nextSibling) {
 							where.insertBefore(tmpDiv);
 						} else {
 							where.parentNode.appendChild(tmpDiv);
@@ -209,14 +222,16 @@ $kit = function() {
 						tmpDiv.insertAdjacentHTML("beforeBegin", what);
 						where.parentNode.removeChild(tmpDiv);
 					} else {
-						where.insertAdjacentHTML("afterEnd", what);
+						where.insertAdjacentElement("afterEnd", what);
 					}
 					break;
 				case "last" :
-					if (CONSTANTS.NODETYPE_ELEMENT != where.nodeType) {
+					if(CONSTANTS.NODETYPE_ELEMENT != where.nodeType) {
 						where = where.parentNode;
+						where.insertAdjacentHTML("beforeEnd", what);
+					} else {
+						where.insertAdjacentElement("beforeEnd", what);
 					}
-					where.insertAdjacentHTML("beforeEnd", what);
 					break;
 			}
 		}
@@ -235,8 +250,8 @@ $kit = function() {
 	 * add className
 	 */
 	function addCls(el, clss) {
-		if (isAry(clss)) {
-			for ( var i = 0; i < clss.length; i++) {
+		if(isAry(clss)) {
+			for(var i = 0; i < clss.length; i++) {
 				addCls(el, clss[i]);
 			}
 		} else {
@@ -249,39 +264,101 @@ $kit = function() {
 	 */
 	function delCls(el, clss) {
 		var a = el.className.splite(CONSTANTS.REGEXP_SPACE), b = [];
-		if (a.length) {
+		if(a.length) {
 			b = arydel(a, clss);
 		}
-		if (b.length) {
+		if(b.length) {
 			el.className = b.join(" ");
 		}
 	}
+
+	/**
+	 * Dom traversal
+	 */
 	function traversal(config) {
 		var defaultConfig = {
 			root : document.body
 		}
 		merge(config, defaultConfig);
-		if (isEmpty(config.node)) {
+		if(isEmpty(config.node)) {
 			config.node = config.root;
 		}
-		for ( var i = 0; i < config.node.childNodes.length; i++) {
+		for(var i = 0; i < config.node.childNodes.length; i++) {
 			var o = config.node.childNodes[i];
-			if (o.childNodes.length) {
+			if(o.childNodes.length) {
 				traversal(merge(config, {
 					node : o
 				}));
 			} else {
-				if (!isEmpty(config.fn)) {
+				if(!isEmpty(config.fn)) {
 					config.fn.apply(o, [o, config.root])
 				}
 			}
 		}
 	}
+
+	/**
+	 * nextElementSibling/Dom traversal
+	 */
+	function nextEl(el) {
+		var nextEl = null;
+		if(el.nextElementSibling != null) {
+			nextEl = el.nextElementSibling;
+		} else {
+			var parent = el.parentNode;
+			while(parent != null && parent.parentNode != null && parent == parent.parentNode.lastElementChild) {
+				parent = parent.parentNode;
+			}
+			var firstEl = parent.nextElementSibling.firstElementChild;
+			while(firstEl != null && firstEl.children.length > 0 && firstEl.firstElementChild != null) {
+				firstEl = firstEl.firstElementChild;
+			}
+			nextEl = firstEl;
+		}
+
+		return nextEl;
+	}
+
+	/**
+	 * previousElementSibling/Dom traversal
+	 */
+	function prevEl(el) {
+		var prevEl = null;
+		if(el.previousElementSibling != null) {
+			prevEl = el.previousElementSibling;
+		} else {
+			var parent = el.parentNode;
+			while(parent != null && parent.parentNode != null && parent == parent.parentNode.firstElementChild) {
+				parent = parent.parentNode;
+			}
+			var lastEl = parent.previousElementSibling.lastElementChild;
+			while(lastEl != null && lastEl.children.length > 0 && lastEl.lastElementChild != null) {
+				lastEl = lastEl.lastElementChild;
+			}
+			prevEl = lastEl;
+		}
+		return prevEl;
+	}
+
+	/**
+	 * return a documentFragment with html
+	 */
+	function newHTML(html) {
+		var box = document.createElement("div");
+		box.innerHTML = html;
+		var o = document.createDocumentFragment();
+		while(box.childNods.length) {
+			o.appendChild(box.childNodes[0]);
+		}
+		box = null;
+		return o;
+	}
+
 	/**
 	 * offset
 	 */
 	function offset(el) {
-		if (el == null) {
+		if(el == null) {
 			return;
 		}
 		var offsetPar = el.offsetParent, //
@@ -289,7 +366,7 @@ $kit = function() {
 		left = el.offsetLeft, //
 		width = el.offsetWidth, //
 		height = el.offsetHeight;
-		while (el != offsetPar) {
+		while(el != offsetPar) {
 			el = offsetPar;
 			top += el.offsetTop;
 			left += el.offsetLeft;
@@ -301,21 +378,23 @@ $kit = function() {
 			height : height
 		}
 	}
+
 	/**
 	 * scroll position
 	 */
 	function scroll(config) {
-		if (config == null) {
+		if(config == null) {
 			return {
 				top : document.body.scrollTop == 0 ? window.scrollY : document.body.scrollTop,
 				left : document.body.scrollLeft == 0 ? window.scrollX : document.body.scrollLeft
 			}
 		}
 	}
+
 	// -----------------------------------event-----------------------------------
 	/**
 	 * register event
-	 * 
+	 *
 	 * @el : event triggle element
 	 * @ev : event
 	 * @fn : event call out function
@@ -328,113 +407,82 @@ $kit = function() {
 			fn : null
 		}
 		config = join(defaultConfig, config);
-		if (isAry(config.el)) {
-			for ( var i = 0; i < config.el.length; i++) {
+		if(isAry(config.el)) {
+			for(var i = 0; i < config.el.length; i++) {
 				ev(join(config, {
 					el : config.el[i]
 				}));
 			}
-		} else if (isCanSplit2Ary(config.el)) {
+		} else if(isCanSplit2Ary(config.el)) {
 			var a = config.el.split(CONSTANTS.REGEXP_SPACE)
-			for ( var i = 0; i < a.length; i++) {
+			for(var i = 0; i < a.length; i++) {
 				var _el = el8id(a[i]);
-				if (!isEmpty(_el)) {
+				if(!isEmpty(_el)) {
 					ev(join(config, {
 						el : _el
 					}));
 				}
 			}
-		} else if (isStr(config.el)) {
+		} else if(isStr(config.el)) {
 			var _el = el8id(config.el);
-			if (!isEmpty(_el)) {
+			if(!isEmpty(_el)) {
 				ev(join(config, {
 					el : _el
 				}));
 			}
-		} else if (isAry(config.ev)) {
-			for ( var i = 0; i < config.ev.length; i++) {
+		} else if(isAry(config.ev)) {
+			for(var i = 0; i < config.ev.length; i++) {
 				ev(join(config, {
 					ev : config.ev[i]
 				}));
 			}
-		} else if (isCanSplit2Ary(config.ev)) {
+		} else if(isCanSplit2Ary(config.ev)) {
 			var a = config.ev.split(CONSTANTS.REGEXP_SPACE);
-			for ( var i = 0; i < a.length; i++) {
+			for(var i = 0; i < a.length; i++) {
 				ev(join(config, {
 					ev : a[i]
 				}));
 			}
 		} else {
 			config.ev = trim(config.ev);
-			if (!isEmpty(config.ev)) {
+			if(!isEmpty(config.ev)) {
 				// -------webkit support stopImmediatePropagation, so comment this template
-				var p1, flag_regEvent = false;
-				if (CONSTANTS.KIT_EVENT_REGISTER in config.el) {
-					p1 = config.el[CONSTANTS.KIT_EVENT_REGISTER];
-					if (config.ev in p1) {
-						// just so so...
-					} else {
-						p1[config.ev] = [];
-						flag_regEvent = true;
+				config.el[CONSTANTS.KIT_EVENT_REGISTER] = config.el[CONSTANTS.KIT_EVENT_REGISTER] || {};
+				config.el[CONSTANTS.KIT_EVENT_FUNCTION_REGISTER] = config.el[CONSTANTS.KIT_EVENT_FUNCTION_REGISTER] || {};
+				config.el[CONSTANTS.KIT_EVENT_REGISTER][config.ev] = config.el[CONSTANTS.KIT_EVENT_REGISTER][config.ev] || [];
+				//
+				config.el[CONSTANTS.KIT_EVENT_FUNCTION_REGISTER][config.ev] = config.el[CONSTANTS.KIT_EVENT_FUNCTION_REGISTER][config.ev] || (function() {
+					// stop global event on-off
+					if(window[CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
+						return;
 					}
-				} else {
-					p1 = config.el[CONSTANTS.KIT_EVENT_REGISTER] = {};
-					p1[config.ev] = [];
-					flag_regEvent = true;
-				}
-				if (flag_regEvent) {
-					config.el[CONSTANTS.KIT_EVENT_REGISTER_FUNCATION_PREFIX + config.ev] = config.el[CONSTANTS.KIT_EVENT_REGISTER_FUNCATION_PREFIX + config.ev] || (function() {
-						if (window[CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
-							return;
+					var EV = arguments[0];
+					merge(EV, {
+						stopNow : function() {
+							EV.stopPropagation();
+							EV.preventDefault();
+							window[$kit.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
+						},
+						stopDefault : function() {
+							EV.preventDefault();
+						},
+						stopGoOn : function() {
+							EV.stopPropagation();
 						}
-						var EV = arguments[0];
-						merge(EV, {
-							stopNow : function() {
-								EV.stopPropagation();
-								EV.preventDefault();
-								window[$kit.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
-							},
-							stopDefault : function() {
-								EV.preventDefault();
-							},
-							stopGoOn : function() {
-								EV.stopPropagation();
-							}
-						});
-						// EV.stopNow = function() {
-						// this.stopPropagation.call(this);
-						// EV.preventDefault();
-						// window[CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]
-						// = true;
-						// }
-						var target = config.el;
-						var evQueue = target[CONSTANTS.KIT_EVENT_REGISTER][config.ev];
-						for ( var i = 0; i < evQueue.length; i++) {
-							if (window[CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]) {
-								break;
-							}
-							var _config = evQueue[i];
-							// merge(_EV, {
-							// stopNow : function() {
-							// this.originEv.stopPropagation();
-							// this.originEv.preventDefault();
-							// window[$kit.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]
-							// = true;
-							// },
-							// stopDefault : function() {
-							// this.originEv.preventDefault();
-							// },
-							// stopGoOn : function() {
-							// this.originEv.stopPropagation();
-							// }
-							// });
-							_config.fn.call(_config.scope || _config.el, EV);
-						}
-						window[CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
 					});
-					config.el.addEventListener(config.ev, config.el[CONSTANTS.KIT_EVENT_REGISTER_FUNCATION_PREFIX + config.ev], false);
-				}
-				p1[config.ev].push(config);
+					var target = config.el;
+					var evQueue = target[CONSTANTS.KIT_EVENT_REGISTER][config.ev];
+					for(var i = 0; i < evQueue.length; i++) {
+						if(window[CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]) {
+							break;
+						}
+						var _evConfig = evQueue[i];
+						_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV);
+					}
+					window[CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
+				});
+				config.el.addEventListener(config.ev, config.el[CONSTANTS.KIT_EVENT_FUNCTION_REGISTER][config.ev], false);
+				config.el[CONSTANTS.KIT_EVENT_REGISTER][config.ev].push(config);
 			}
 		}
 	}
@@ -450,53 +498,53 @@ $kit = function() {
 			scope : this
 		}
 		config = join(defaultConfig, config);
-		if (isAry(config.el)) {
-			for ( var i = 0; i < config.el.length; i++) {
+		if(isAry(config.el)) {
+			for(var i = 0; i < config.el.length; i++) {
 				delEv(join(config, {
 					el : config.el[i]
 				}));
 			}
-		} else if (isCanSplit2Ary(config.el)) {
+		} else if(isCanSplit2Ary(config.el)) {
 			var a = config.el.split(CONSTANTS.REGEXP_SPACE)
-			for ( var i = 0; i < a.length; i++) {
+			for(var i = 0; i < a.length; i++) {
 				var _el = el8id(a[i]);
-				if (!isEmpty(_el)) {
+				if(!isEmpty(_el)) {
 					delEv(join(config, {
 						el : _el
 					}));
 				}
 			}
-		} else if (isStr(config.el)) {
+		} else if(isStr(config.el)) {
 			var _el = el8id(config.el);
-			if (!isEmpty(_el)) {
+			if(!isEmpty(_el)) {
 				delEv(join(config, {
 					el : _el
 				}));
 			}
-		} else if (isAry(config.ev)) {
-			for ( var i = 0; i < config.ev.length; i++) {
+		} else if(isAry(config.ev)) {
+			for(var i = 0; i < config.ev.length; i++) {
 				delEv(join(config, {
 					ev : config.ev[i]
 				}));
 			}
-		} else if (isCanSplit2Ary(config.ev)) {
+		} else if(isCanSplit2Ary(config.ev)) {
 			var a = config.ev.split(CONSTANTS.REGEXP_SPACE)
-			for ( var i = 0; i < a.length; i++) {
+			for(var i = 0; i < a.length; i++) {
 				delEv(join(config, {
 					ev : a[i]
 				}));
 			}
 		} else {
 			config.ev = trim(config.ev);
-			if (!isEmpty(config.ev)) {
+			if(!isEmpty(config.ev)) {
 				var evQueue = config.el[CONSTANTS.KIT_EVENT_REGISTER][config.ev];
-				for ( var i = 0; i < evQueue.length; i++) {
+				for(var i = 0; i < evQueue.length; i++) {
 					var _config = evQueue[i];
-					if (_config.fn.toString() == config.fn.toString()) {
+					if(_config.fn.toString() == config.fn.toString()) {
 						evQueue.splice(i, 1);
 					}
 				}
-				if (evQueue.length == 0) {
+				if(evQueue.length == 0) {
 					config.el.removeEventListener(config.ev, config.el[CONSTANTS.KIT_EVENT_REGISTER_FUNCATION_PREFIX + config.ev], false);
 				}
 			}
@@ -509,11 +557,11 @@ $kit = function() {
 	 */
 	function join() {
 		var a = arguments, b = {};
-		if (a.length == 0) {
+		if(a.length == 0) {
 			return;
 		}
-		for ( var i = 0; i < a.length; i++) {
-			for ( var r in a[i]) {
+		for(var i = 0; i < a.length; i++) {
+			for(var r in a[i]) {
 				b[r] = a[i][r];
 			}
 		}
@@ -525,35 +573,36 @@ $kit = function() {
 	 */
 	function merge() {
 		var a = arguments;
-		if (a.length < 2) {
+		if(a.length < 2) {
 			return;
 		}
-		for ( var i = 1; i < a.length; i++) {
-			for ( var r in a[i]) {
+		for(var i = 1; i < a.length; i++) {
+			for(var r in a[i]) {
 				a[0][r] = a[i][r];
 			}
 		}
 		return a[0];
 	}
+
 	/**
 	 * is collection include object
 	 */
 	function has(collection, object, ignoreCase) {
 		var flag = false, ignoreCase = (ignoreCase == true ? ignoreCase : false);
-		if (isAry(collection)) {
-			for ( var i = 0; i < collection.length; i++) {
-				if (collection[i] == object || (ignoreCase && collection[i].toLowerCase() == object.toLowerCase())) {
+		if(isAry(collection)) {
+			for(var i = 0; i < collection.length; i++) {
+				if(collection[i] == object || (ignoreCase && collection[i].toLowerCase() == object.toLowerCase())) {
 					flag = true;
 					break;
 				}
 			}
 		} else {
-			if (collection != null) {
-				if (object in collection) {
+			if(collection != null) {
+				if( object in collection) {
 					flag = true;
-				} else if (ignoreCase) {
-					for ( var p in collection) {
-						if (p.toString().toLowerCase() == object.toString().toLowerCase()) {
+				} else if(ignoreCase) {
+					for(var p in collection) {
+						if(p.toString().toLowerCase() == object.toString().toLowerCase()) {
 							flag = true;
 							break;
 						}
@@ -563,15 +612,16 @@ $kit = function() {
 		}
 		return flag;
 	}
+
 	// -----------------------------------log-----------------------------------
 	function log(info, config) {
 		config = merge({
 			borderColor : "#000"
 		}, config);
-		if (isAry(info)) {
+		if(isAry(info)) {
 			info = info.join("");
 		}
-		if (document.body) {
+		if(document.body) {
 			var div = document.body.appendChild(document.createElement("div"));
 			div.className = "J_Debug_Info";
 			div.style.borderBottom = "1px solid " + config.borderColor || "#000";
@@ -588,7 +638,7 @@ $kit = function() {
 
 	function clsLog() {
 		var a = els8cls("J_Debug_Info");
-		for ( var i = 0; i < a.length; i++) {
+		for(var i = 0; i < a.length; i++) {
 			a[i].parentNode.removeChild(a[i]);
 		}
 	}
@@ -598,31 +648,33 @@ $kit = function() {
 		var rnd = Math.random(10000);
 		return rnd.toString().substr(2, 10);
 	}
+
 	/**
 	 * generate unique DOM id
 	 */
 	function onlyId() {
 		var id = CONSTANTS.KIT_DOM_ID_PREFIX + only();
 		var count;
-		if (arguments.length == 1) {
+		if(arguments.length == 1) {
 			count = arguments[0];
 		} else {
 			count = 0;
 		}
 		count++;
 		$kit.log(count);
-		if (count > 100) {
+		if(count > 100) {
 			throw "error!";
 		}
-		if (!isEmpty(el8id(id))) {
+		if(!isEmpty(el8id(id))) {
 			return onlyId(count);
 		}
 		return id
 	}
+
 	function iOSInfo() {
 		var regExp_appleDevice = /\(([a-z; ]+)CPU ([a-z ]*)OS ([\d_]+) like Mac OS X/i;
 		var ver, device, re;
-		if (regExp_appleDevice.test(navigator.userAgent)) {
+		if(regExp_appleDevice.test(navigator.userAgent)) {
 			var a = navigator.userAgent.match(regExp_appleDevice);
 			ver = trim(a[3]);
 			ver = ver.replace(/_/g, ".");
@@ -635,13 +687,14 @@ $kit = function() {
 		}
 		return re;
 	}
+
 	/**
 	 * config include array, exclude, fn, scope iterator each element in array not include exclude
 	 */
 	function each(config) {
 		var a = config.array;
-		for ( var __i = 0; __i < a.length; __i++) {
-			if (inAry(config.exclude, a[__i])) {
+		for(var __i = 0; __i < a.length; __i++) {
+			if(inAry(config.exclude, a[__i])) {
 				continue;
 			} else {
 				config.fn.call(config.scope || this, a[__i], __i, a);
@@ -664,7 +717,7 @@ $kit = function() {
 	window[CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
 	var SYSINFO = {}, inf;
 	inf = iOSInfo();
-	if (inf != null) {
+	if(inf != null) {
 		merge(SYSINFO, inf);
 	}
 	// -----------------------------------return-----------------------------------
@@ -678,6 +731,7 @@ $kit = function() {
 		el8cls : el8cls,
 		els8tag : els8tag,
 		els8cls : els8cls,
+		els8name : els8name,
 		isStr : isStr,
 		isObj : isObj,
 		isAry : isAry,
@@ -688,6 +742,8 @@ $kit = function() {
 		addCls : addCls,
 		delCls : delCls,
 		traversal : traversal,
+		nextEl : nextEl,
+		prevEl : prevEl,
 		offset : offset,
 		scroll : scroll,
 		ev : ev,
