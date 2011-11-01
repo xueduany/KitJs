@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=3.0;">
+		<script src="../../src/js/kit.js"></script>
+		<script src="form.js"></script>
+		<script src="textarea.js"></script>
+		<link rel="stylesheet" href="textarea.css" />
+	</head>
+	<body>
+		<div>
+			<textarea cols="10" rows="3" style="font-size:20px;"></textarea>
+			<input type="button" value="zxc" id="as">
+		</div>
+		<script>
+			//$kit.log($kit.css($kit.el8tag("textarea"), "fontSize"));
+			var t = new $kit.ui.Form.TextArea({
+			 el : $kit.el8tag("textarea")
+			 })
+			$kit.ev({
+				el : "as",
+				ev : "click",
+				fn : function() {
+					var el = $kit.el8tag("textarea");
+					var text = el.value;
+					var a = text.match(/\n/ig);
+				}
+			})
+		</script>
+	</body>
+</html>
