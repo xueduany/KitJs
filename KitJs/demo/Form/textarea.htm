@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=3.0;">
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/textarea.js"></script>
+		<link rel="stylesheet" href="textarea.css" />
+	</head>
+	<body>
+		<div>
+			<h1>Type anything in the textarea below</h1>
+			<ol>
+				<li>
+					<h2>autoFix textarea height</h2>
+					<textarea cols="10" rows="3"></textarea>
+				</li>
+			</ol>
+		</div>
+		<script>
+			$kit.$(function() {
+				var textarea = new $kit.ui.Form.TextArea({
+					el : $kit.el8tag("textarea"),
+					minRows : 3,
+					blurFn : function() {
+						$kit.log("Current lose foucs!");
+					},
+					focusFn : function() {
+						$kit.log("Current foucs!");
+					},
+					textIsEmptyFn : function() {
+						$kit.log("Current is empty!");
+					},
+					textNotEmptyFn : function() {
+						//current is not empty
+					}
+				});
+			});
+
+		</script>
+	</body>
+</html>

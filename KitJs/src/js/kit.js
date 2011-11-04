@@ -51,11 +51,19 @@ $Kit.prototype = {
 		if(str == null) {
 			return null;
 		}
+		str = str.toString();
+		if(str.trim) {
+			return str.trim();
+		}
 		return str.replace(/^\s+|\s+$/g, "");
 	},
 	ltrim : function(str) {
 		if(str == null) {
 			return null;
+		}
+		str = str.toString();
+		if(str.trimLeft) {
+			return str.trimLeft();
 		}
 		return str.replace(/^\s+/, "");
 	},
@@ -63,9 +71,17 @@ $Kit.prototype = {
 		if(str == null) {
 			return null;
 		}
+		str = str.toString();
+		if(str.trimRight) {
+			return str.trimRight();
+		}
 		return str.replace(/\s+$/, "");
 	},
 	trimAll : function(str) {
+		if(str == null) {
+			return null;
+		}
+		str = str.toString();
 		return str.replace(/\s+/ig, "");
 	},
 	// -----------------------------------array-----------------------------------
@@ -147,6 +163,20 @@ $Kit.prototype = {
 		return (root || document).getElementsByName(name);
 	},
 	/**
+	 * elect interface
+	 */
+	el : function(selector, root) {
+		var me = this;
+		var selector = me.trim(selector);
+		if(selector.indexOf("#") == 0) {
+			return me.el8id(selector.substring(1), root);
+		} else if(selector.indexOf(".") == 0) {
+			return me.els8cls(selector.substring(1), root);
+		} else {
+			return me.els8tag(selector, root);
+		}
+	},
+	/**
 	 * parentNode search
 	 */
 	parentEl : function(config) {
@@ -198,7 +228,7 @@ $Kit.prototype = {
 	 */
 	isAry : function(o) {
 		var me = this;
-		return typeof (o) == "array" || (me.isObj(o) && o != null && "length" in o && o.length > 0);
+		return (o.constructor.name == "Array" || o.constructor.name == "NodeList");
 	},
 	/**
 	 * is string can be split into a array which elements total > 2
@@ -244,7 +274,7 @@ $Kit.prototype = {
 						el.style[l] = attr[l];
 					}
 				} else {
-					return document.defaultView.getComputedStyle(el, null)[attr];
+					return getComputedStyle(el, null)[attr];
 				}
 			} else {
 				el.style[attr] = value;
@@ -358,11 +388,13 @@ $Kit.prototype = {
 	 */
 	hasCls : function(el, cls) {
 		var me = this, flag = false;
-		var a = el.className.split(me.CONSTANTS.REGEXP_SPACE);
-		for(var i = 0; i < a.length; i++) {
-			if(a[i] == cls) {
-				flag = true;
-				break;
+		if(el.className != "" && el.className != null) {
+			var a = el.className.split(me.CONSTANTS.REGEXP_SPACE);
+			for(var i = 0; i < a.length; i++) {
+				if(a[i] == cls) {
+					flag = true;
+					break;
+				}
 			}
 		}
 		return flag;
@@ -507,7 +539,7 @@ $Kit.prototype = {
 					el : _el
 				}));
 			}
-		} else if(me.isAry(config.ev)) {
+		} else if(me.isAry(config.ev)) { a
 			for(var i = 0; i < config.ev.length; i++) {
 				me.ev(me.join(config, {
 					ev : config.ev[i]
@@ -522,7 +554,7 @@ $Kit.prototype = {
 			}
 		} else {
 			config.ev = me.trim(config.ev);
-			if(!me.isEmpty(config.ev)) {
+			if(!me.isEmpty(config.ev) && !me.isEmpty(config.fn)) {
 				// -------webkit support stopImmediatePropagation, so comment this template
 				var evReg = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] || {};
 				var evRegEv = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_EVENT] = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_EVENT] || {};
@@ -544,9 +576,10 @@ $Kit.prototype = {
 							EV.preventDefault();
 						},
 						stopGoOn : function() {
+							EV.preventDefault();
 							EV.stopPropagation();
-						}
-					});
+						},
+					}, me.evPos(EV));
 					var target = config.el;
 					var evQueue = target[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
 					for(var i = 0; i < evQueue.length; i++) {
@@ -554,7 +587,10 @@ $Kit.prototype = {
 							break;
 						}
 						var _evConfig = evQueue[i];
-						_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV);
+						_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
+						if(EV.type.toLowerCase()=="touchend"){
+							
+						}
 					}
 					window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
 				});
@@ -640,6 +676,25 @@ $Kit.prototype = {
 			}
 		}
 	},
+	/**
+	 * get event coordinate info
+	 */
+	evPos : function(ev) {
+		if(ev.type.indexOf("touch") == 0) {
+			return {
+				firstFingerClientX : ev.targetTouches[0].clientX,
+				firstFingerClientY : ev.targetTouches[0].clientY,
+				firstFingerPageX : ev.targetTouches[0].pageX,
+				firstFingerPageY : ev.targetTouches[0].pageY
+			}
+		}
+		return {
+			firstFingerClientX : ev.clientX,
+			firstFingerClientY : ev.clientY,
+			firstFingerPageX : ev.pageX,
+			firstFingerPageY : ev.pageY
+		}
+	},
 	// -----------------------------------object manipulate-----------------------------------
 	/**
 	 * combine object
@@ -721,13 +776,19 @@ $Kit.prototype = {
 		try {
 			var me = this;
 			config = me.merge({
-				borderColor : "#000"
+				borderColor : "#000",
+				container : null
 			}, config);
 			if(me.isAry(info)) {
 				info = info.join("");
 			}
 			if(document.body) {
-				var div = document.body.appendChild(document.createElement("div"));
+				var div;
+				if(config.container == null) {
+					div = document.body.appendChild(document.createElement("div"));
+				} else {
+					div = config.container.appendChild(document.createElement("div"));
+				}
 				div.className = "J_Debug_Info";
 				div.style.borderBottom = "1px solid " + config.borderColor || "#000";
 				try {
@@ -759,6 +820,7 @@ $Kit.prototype = {
 	 * generate unique DOM id
 	 */
 	onlyId : function() {
+		var me = this;
 		var id = me.CONSTANTS.KIT_DOM_ID_PREFIX + me.only();
 		var count;
 		if(arguments.length == 1) {
@@ -770,7 +832,7 @@ $Kit.prototype = {
 		if(count > 100) {
 			throw "error!";
 		}
-		if(!me.isEmpty(el8id(id))) {
+		if(!me.isEmpty(me.el8id(id))) {
 			return me.onlyId(count);
 		}
 		return id
