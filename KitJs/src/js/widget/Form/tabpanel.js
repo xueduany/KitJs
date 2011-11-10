@@ -4,7 +4,17 @@ $kit.ui.TabPanel = function(config) {
 		tabContainerCls : "tab_container",
 		innerTabContainerCls : "inner_tab_container",
 		tabCls : "tab",
-		tabTitle : "data-title"
+		tabTitle : "data-title",
+		accelerationValve : [{
+			acceleration : 1,
+			times : 8
+		}, {
+			acceleration : 2,
+			times : 15
+		}, {
+			acceleration : 4,
+			times : 25
+		}]
 	}
 	var me = this;
 	me.config = $kit.join(config, defaultConfig);
@@ -60,11 +70,15 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		});
 	},
 	moveTabBegin : function(ev, evConfig) {
-		var me = this;
+		var me = this, tabPanel = evConfig.tabPanel;
 		me._tabMove = true;
 		tabPanel.lastTimeStamp = ev.timeStamp;
 		tabPanel.lastPageX = ev.firstFingerPageX;
-
+		tabPanel.acceleration = 0;
+		tabPanel.moveLeft = 0;
+		tabPanel.keepTime = 0;
+		clearTimeout(tabPanel.clearMovies);
+		tabPanel.innerTabContainer.style["-webkit-transition"] = null;
 	},
 	moveTab : function(ev, evConfig) {
 		var me = this, tabPanel = evConfig.tabPanel;
@@ -75,7 +89,6 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 				//unit px
 				var distance = ev.firstFingerPageX - tabPanel.lastPageX;
 				var acceleration = parseFloat(distance / keepTime);
-				//$kit.log(acceleration);
 				var moveLeft = 0;
 				try {
 					moveLeft = parseFloat(tabPanel.innerTabContainer.style["-webkit-transform"].match(/translateX\((-{0,1}\d+)px\)/)[1]);
@@ -83,10 +96,8 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 				}
 				tabPanel.moveLeft = moveLeft = moveLeft + distance;
 				tabPanel.innerTabContainer.style["-webkit-transform"] = "translateX(" + moveLeft + "px" + ")";
-				// clearTimeout(window.aa);
-				// window.aa = setTimeout(function() {
-				// alert(tabPanel.moveLeft );
-				// }, 300);
+				tabPanel.acceleration = acceleration;
+				tabPanel.keepTime = keepTime;
 			}
 			tabPanel.lastTimeStamp = ev.timeStamp;
 			tabPanel.lastPageX = ev.firstFingerPageX;
@@ -95,15 +106,11 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 	},
 	moveTabEnd : function(ev, evConfig) {
 		var me = this;
-		alert(3);
 		if(me._tabMove) {
 			me._tabMove = false;
 			tabPanel.lastTimeStamp = null;
 			tabPanel.lastPageX = null;
 			var flagClearTimeout = false;
-			$kit.log(tabPanel.moveLeft);
-			$kit.log(tabPanel.container.offsetWidth);
-			$kit.log(tabPanel.innerTabContainerBox.offsetWidth);
 			var holdTime = 500;
 			if(tabPanel.moveLeft > 0) {
 				tabPanel.innerTabContainer.style["-webkit-transform"] = "translateX(0)";
@@ -114,9 +121,29 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 				tabPanel.innerTabContainer.style["-webkit-transform"] = "translateX(" + moveLeft + "px)";
 				tabPanel.innerTabContainer.style["-webkit-transition"] = "all " + holdTime + "ms ease-out 0";
 				flagClearTimeout = true;
+			} else {
+				if(!$kit.isEmpty(tabPanel.config.accelerationValve) && Math.abs(tabPanel.acceleration) > tabPanel.config.accelerationValve[0].acceleration) {
+					var ary = tabPanel.config.accelerationValve, a = Math.abs(tabPanel.acceleration), times = 0;
+					for(var i = 0; i < ary.length; i++) {
+						if(a > ary[i].acceleration) {
+							times = ary[i].times;
+						}
+					}
+					var moveLeft = tabPanel.moveLeft + tabPanel.acceleration * times * tabPanel.keepTime;
+					if(moveLeft > 0) {
+						moveLeft = 0;
+					} else if(moveLeft < tabPanel.container.offsetWidth - tabPanel.innerTabContainerBox.offsetWidth) {
+						moveLeft = tabPanel.container.offsetWidth - tabPanel.innerTabContainerBox.offsetWidth;
+					}
+					moveLeft = Math.ceil(moveLeft);
+					tabPanel.innerTabContainer.style["-webkit-transform"] = "translateX(" + moveLeft + "px" + ")";
+					tabPanel.innerTabContainer.style["-webkit-transition"] = "all " + holdTime + "ms ease-out 0";
+					flagClearTimeout = true;
+					$kit.log(times);
+				}
 			}
 			if(flagClearTimeout) {
-				setTimeout(function() {
+				tabPanel.clearMovies = setTimeout(function() {
 					tabPanel.innerTabContainer.style["-webkit-transition"] = null;
 				}, holdTime);
 			}

@@ -10,23 +10,6 @@ $Kit = function(config) {
 
 	}
 	me.config = me.join(config, defaultConfig);
-	me.CONSTANTS = {
-		NODETYPE_ELEMENT : 1,
-		NODETYPE_ELEMENT_ATTR : 2,
-		NODETYPE_TEXTNODE : 3,
-		NODETYPE_COMMENT : 8,
-		NODETYPE_ROOT : 9,
-		NODETYPE_FRAGMENT : 11,
-		//
-		REGEXP_SPACE : /\s+/g,
-		//
-		KIT_EVENT_REGISTER : "_kit_event_register_",
-		KIT_EVENT_REGISTER_EVENT : "_kit_event_register_event",
-		KIT_EVENT_REGISTER_FUNCTION : "_kit_event_register_function",
-		KIT_EVENT_STOPIMMEDIATEPROPAGATION : "_kit_event_stopimmediatepropagation_",
-		KIT_EVENT_STOPALLEVENT : "_kit_event_stopallevent_",
-		KIT_DOM_ID_PREFIX : "J_Kit_"
-	}
 	// -----------------------------init------------------------------------
 	window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT] = false;
 	window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
@@ -46,6 +29,24 @@ $Kit = function(config) {
 	}
 }
 $Kit.prototype = {
+	//----------------------CONSTANTS----------------------
+	CONSTANTS : {
+		NODETYPE_ELEMENT : 1,
+		NODETYPE_ELEMENT_ATTR : 2,
+		NODETYPE_TEXTNODE : 3,
+		NODETYPE_COMMENT : 8,
+		NODETYPE_ROOT : 9,
+		NODETYPE_FRAGMENT : 11,
+		//
+		REGEXP_SPACE : /\s+/g,
+		//
+		KIT_EVENT_REGISTER : "_kit_event_register_",
+		KIT_EVENT_REGISTER_EVENT : "_kit_event_register_event",
+		KIT_EVENT_REGISTER_FUNCTION : "_kit_event_register_function",
+		KIT_EVENT_STOPIMMEDIATEPROPAGATION : "_kit_event_stopimmediatepropagation_",
+		KIT_EVENT_STOPALLEVENT : "_kit_event_stopallevent_",
+		KIT_DOM_ID_PREFIX : "J_Kit_"
+	},
 	// -----------------------------------string-----------------------------------
 	trim : function(str) {
 		if(str == null) {
@@ -208,6 +209,9 @@ $Kit.prototype = {
 	/**
 	 * boolean isString
 	 */
+	isDefined : function(o) {
+		return typeof (o) != "undefined";
+	},
 	isStr : function(o) {
 		return typeof (o) == "string";
 	},
@@ -221,14 +225,15 @@ $Kit.prototype = {
 	 * boolean is function
 	 */
 	isFn : function(o) {
-		return typeof (o).toLowerCase() == "function";
+		var me = this;
+		return me.isDefined(o) && typeof (o).toLowerCase() == "function";
 	},
 	/**
 	 * is it can iterator
 	 */
 	isAry : function(o) {
 		var me = this;
-		return (o.constructor.name == "Array" || o.constructor.name == "NodeList");
+		return me.isDefined(o) && (o.constructor.name == "Array" || o.constructor.name == "NodeList");
 	},
 	/**
 	 * is string can be split into a array which elements total > 2
@@ -561,38 +566,41 @@ $Kit.prototype = {
 				var evRegFn = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION] = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION] || {};
 				evRegEv[config.ev] = evRegEv[config.ev] || [];
 				evRegFn[config.ev] = evRegFn[config.ev] || (function() {
-					// stop global event on-off
-					if(window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
-						return;
-					}
-					var EV = arguments[0];
-					me.merge(EV, {
-						stopNow : function() {
-							EV.stopPropagation();
-							EV.preventDefault();
-							window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
-						},
-						stopDefault : function() {
-							EV.preventDefault();
-						},
-						stopGoOn : function() {
-							EV.preventDefault();
-							EV.stopPropagation();
-						},
-					}, me.evPos(EV));
-					var target = config.el;
-					var evQueue = target[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
-					for(var i = 0; i < evQueue.length; i++) {
-						if(window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]) {
-							break;
+					try {
+						// stop global event on-off
+						if(window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
+							return;
 						}
-						var _evConfig = evQueue[i];
-						_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
-						if(EV.type.toLowerCase()=="touchend"){
-							
+						var EV = arguments[0];
+
+						me.merge(EV, {
+							stopNow : function() {
+								EV.stopPropagation();
+								EV.preventDefault();
+								window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
+							},
+							stopDefault : function() {
+								EV.preventDefault();
+							},
+							stopGoOn : function() {
+								EV.preventDefault();
+								EV.stopPropagation();
+							},
+						}, me.evExtra(EV));
+						var target = config.el;
+						var evQueue = target[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
+						for(var i = 0; i < evQueue.length; i++) {
+							if(window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]) {
+								break;
+							}
+							var _evConfig = evQueue[i];
+							_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
 						}
-					}
-					window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
+						window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
+					} catch(e) {
+						alert(e);
+						throw e;
+					};
 				});
 				config.el.addEventListener(config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev], false);
 				evRegEv[config.ev].push(config);
@@ -677,10 +685,17 @@ $Kit.prototype = {
 		}
 	},
 	/**
+	 * set event extra info
+	 */
+	evExtra : function(ev) {
+		var me = this;
+		return me.merge({}, me.evPos(ev))
+	},
+	/**
 	 * get event coordinate info
 	 */
 	evPos : function(ev) {
-		if(ev.type.indexOf("touch") == 0) {
+		if(ev.type.indexOf("touch") == 0 && ev.targetTouches && ev.targetTouches.length) {
 			return {
 				firstFingerClientX : ev.targetTouches[0].clientX,
 				firstFingerClientY : ev.targetTouches[0].clientY,
@@ -719,9 +734,11 @@ $Kit.prototype = {
 		if(a.length < 2) {
 			return;
 		}
-		for(var i = 1; i < a.length; i++) {
-			for(var r in a[i]) {
-				a[0][r] = a[i][r];
+		if(a[0] != null) {
+			for(var i = 1; i < a.length; i++) {
+				for(var r in a[i]) {
+					a[0][r] = a[i][r];
+				}
 			}
 		}
 		return a[0];
@@ -747,6 +764,9 @@ $Kit.prototype = {
 	 * is collection include object
 	 */
 	has : function(collection, object, ignoreCase) {
+		if( typeof (collection) == "undefined" || typeof (object) == "undefined") {
+			return false;
+		}
 		var me = this, flag = false, ignoreCase = (ignoreCase == true ? ignoreCase : false);
 		if(me.isAry(collection)) {
 			for(var i = 0; i < collection.length; i++) {
@@ -807,8 +827,8 @@ $Kit.prototype = {
 	clsLog : function() {
 		var me = this;
 		var a = me.els8cls("J_Debug_Info");
-		for(var i = 0; i < a.length; i++) {
-			a[i].parentNode.removeChild(a[i]);
+		while(a.length) {
+			a[0].parentNode.removeChild(a[0]);
 		}
 	},
 	// -----------------------------------else-----------------------------------

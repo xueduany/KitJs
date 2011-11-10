@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=3.0;">
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/anim.js"></script>
+		<style>
+			.test1 {
+				border: #ccc;
+				background-color: #aaa;
+				width: 100px;
+				height: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<h1>动画，为了解决有时候andriod的transition不支持几个属性复合之后的变化，所以使用js动态设置代替</h1>
+			<div class="test1">
+				1234567890-=
+			</div>
+			<script>
+				$kit.anim({
+					el : $kit.el(".test1")[0],
+					fx : "easeIn",
+					from : {
+						"-webkit-transform" : "translateX(100px) scale(1)"
+					},
+					to : {
+						"margin-top" : "100px",
+						"-webkit-transform" : "translateX(400px) scale(3)"
+					},
+					then : function() {
+						$kit.log("end!");
+					}
+				});
+
+			</script>
+		</div>
+	</body>
+</html>
