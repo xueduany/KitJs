@@ -2,7 +2,6 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=3.0;">
 		<script src="../../src/js/kit.js"></script>
 		<script src="../../src/js/widget/Form/form.js"></script>
 		<script src="../../src/js/widget/Form/textarea.js"></script>
@@ -10,8 +9,35 @@
 	</head>
 	<body>
 		<div>
-			<h1>表单样式</h1>
-			<textarea class="kitjs-form-textarea" rows="4" cols="20"></textarea>
+			<center>
+				<h1>表单样式</h1>
+				<textarea class="kitjs-form-textarea" rows="4" cols="20"></textarea>
+				<br/>
+				<div>
+					<input class="kitjs-form-textbox" type="text" size="30">
+				</div>
+				<br/>
+				<div>
+					<span class="kitjs-form-select"><select><option	value="1">1qweqweqweqwe</option><option value="2">2</option></select></span>
+				</div>
+				<br/>
+				<div>
+					<label class="kitjs-form-checkbox" for="checkbox_01"><input id="checkbox_01" type="checkbox" value="0">测试哟</label>
+					<label class="kitjs-form-checkbox" for="checkbox_02"><input id="checkbox_02" type="checkbox" value="0">测试哟</label>
+				</div>
+				<br/>
+				<div>
+					<label class="kitjs-form-radio" for="radio_01"><input id="radio_01" name="radio" type="radio" value="0">测试哟</label>
+					<label class="kitjs-form-radio" for="radio_02"><input id="radio_02" name="radio" type="radio" value="0">测试哟</label>
+				</div>
+				<br/>
+				<div>
+					<fieldset class="kitjs-form-fieldset" style="width:200px">
+						<legend>测试哟</legend>
+						测试哟
+					</fieldset>
+				</div>
+			</center>
 		</div>
 	</body>
 </html>

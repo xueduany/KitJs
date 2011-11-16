@@ -1,4 +1,4 @@
-.kitjs-form-textarea {
+.kitjs-form-textbox {
 	width: auto;
 	height: auto;
 	cursor: pointer;
@@ -10,7 +10,7 @@
 	-webkit-transition: all 300ms ease-in 0;
 	background-image: -webkit-gradient(linear, left top, left 25, from(#fff), color-stop(4%, #eee), to(#fff));
 }
-.kitjs-form-textarea:focus {
+.kitjs-form-textbox:focus {
 	color: #000;
 	outline: none;
 	border: #aaa 1px solid;

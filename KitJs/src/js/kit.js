@@ -89,11 +89,14 @@ $Kit.prototype = {
 	/**
 	 * remove some from array
 	 */
-	arydel : function(ary, del) {
+	aryDel : function(ary, del) {
 		var me = this;
+		if(!me.isAry(ary)) {
+			return;
+		}
 		if(me.isAry(del)) {
 			for(var i = 0; i < del.length; i++) {
-				me.arydel(ary, del[i]);
+				me.aryDel(ary, del[i]);
 			}
 		} else {
 			for(var j = 0; j < ary.length; j++) {
@@ -380,7 +383,7 @@ $Kit.prototype = {
 		var me = this;
 		var a = el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
 		if(a.length) {
-			b = me.arydel(a, clss);
+			b = me.aryDel(a, clss);
 		}
 		if(b.length) {
 			el.className = b.join(" ");
@@ -900,6 +903,33 @@ $Kit.prototype = {
 		me.mergeIf(child.prototype, new father(_arguments));
 		child.prototype.constructor = child;
 		child.superClass = father;
+	},
+	/**
+	 * 模板的简单实现
+	 *
+	 * @public
+	 * @param {string}模板文本
+	 * @param {object}替换对象
+	 *
+	 * <pre>
+	 * render('this is ${obj}', {
+	 * 	obj : 'car'
+	 * });
+	 * 结果：this is car
+	 * </pre>
+	 */
+	tpl : function(templ, data) {
+		// 充分利用变量，为单个节点提速
+		// 正则尽快匹配失败
+		// 理论上可以作为JSON的key，支持很多字符
+		return templ.replace(/(\$)(\{([^}]*)\})/gm, function(value, clear, origin, key) {
+			key = key.split('.');
+			value = data[key.shift()];
+			for(var i = 0; i < key.length; i++) {
+				value = value[key[i]];
+			}
+			return (value === null || value === undefined) ? (!!clear ? '' : origin) : value;
+		});
 	}
 }
 $kit = new $Kit();

@@ -17,7 +17,7 @@ $kit.ui.TabPanel = function(config) {
 		}]
 	}
 	var me = this;
-	me.config = $kit.join(config, defaultConfig);
+	me.config = $kit.join(defaultConfig, config);
 	me.init();
 };
 $kit.merge($kit.ui.TabPanel.prototype, {
