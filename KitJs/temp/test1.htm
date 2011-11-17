@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="../src/css/form.css">
+		<script src="../src/js/kit.js"></script>
+		<script src="../src/js/math.js" charset="utf-8"></script>
+		<script src="../src/js/array.js" charset="utf-8"></script>
+		<!-- -->
+		<script src="../src/js/widget/Form/form.js" charset="utf-8"></script>
+		<script src="../src/js/widget/Form/textarea.js" charset="utf-8"></script>
+	</head>
+	<body>
+		<textarea id="a1" cols="200" class="kitjs-form-textarea">More praise for FLIPPED: 
+“We flipped over this fantastic book, its gutsy girl Juli and its wise, wonderful ending.” 
+—The Chicago Tribune 
+“Delightful! Delicious! And totally teen.” 
+—BookPage 
+* “With a charismatic leading lady kids will flip over, a compelling dynamic between the two 
+narrators and a resonant ending, this novel is a great 
+deal larger than the sum of its parts.” 
+—Publishers Weekly, Starred 
+“A wonderful, light-hearted novel.” 
+—Library Talk 
+“This is a wry character study, a romance with substance and subtlety.” 
+—Booklist 
+“A highly agreeable romantic comedy.” 
+—Kirkus Reviews 
+Dedicated with infinite love to Colton and Connor, who make me feel like so much more than 
+the sum of my parts. 
+Special thanks to… my husband, Mark Parsons, who helps me feel the magic, 
+and my excellent editor, Nancy Siscoe, for her care and insight (and for making me stick to a 
+reduced-filler diet). 
+Also, eternal gratitude to Tad Callahan and Patricia Gabel, who were on the ball when we 
+needed it most. 
+Finally, thanks to Jeanne Madrid and the staff at Casa De Vida—may you keep the spirit.</textarea>
+		<script>
+			var textarea = new $kit.ui.Form.TextArea({
+				el : $kit.el8id("a1"),
+				minRows : 3,
+				blurFn : function() {
+					$kit.log("Current lose foucs!");
+				},
+				focusFn : function() {
+					$kit.log("Current foucs!");
+				},
+				textIsEmptyFn : function() {
+					$kit.log("Current is empty!");
+				},
+				textNotEmptyFn : function() {
+					//current is not empty
+				}
+			});
+			$kit.ev({
+				el : $kit.el8id("a1"),
+				ev : "click",
+				fn : function(ev, evCfg) {
+					var el = ev.target;
+					var endPos = el.selectionEnd;
+					el.setSelectionRange(0, endPos);
+					var selection = window.getSelection();
+					var text = selection.toString();
+					selection.removeAllRanges();
+					$kit.log(text);
+					ev.stopDefault();
+					//alert(text);
+				}
+			})
+		</script>
+	</body>
+</html>

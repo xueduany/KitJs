@@ -1,0 +1,22 @@
+.kitjs-form-fieldset {
+	border: 1px solid #ddd;
+	border-radius: 0.5em;
+	background: none;
+	-webkit-transition: all 300ms ease-in 0;
+}
+.kitjs-form-fieldset:active,
+.kitjs-form-fieldset:hover,
+.kitjs-form-fieldset:focus {
+	border-color: #aaa;
+	box-shadow: 0 0 10px #aaa;
+}
+.kitjs-form-fieldset legend {
+	color: #ddd;
+	background-color: #fff;
+	-webkit-transition: all 300ms ease-in 0;
+}
+.kitjs-form-fieldset:active legend,
+.kitjs-form-fieldset:hover legend,
+.kitjs-form-fieldset:focus legend {
+	color: #000;
+}

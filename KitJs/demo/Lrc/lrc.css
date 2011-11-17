@@ -1,0 +1,38 @@
+#lrc-list li:hover {
+	background-color: #eee;
+	-webkit-animation: highlightLrcRow 300ms ease-in 0ms 1;
+}
+#lrc-list li {
+	border-bottom: 1px solid #eee;
+}
+#lrc-list li:hover {
+	border-bottom: 1px solid #aaa;
+}
+#lrc-list .currentTimePoint {
+	background-color: #000;
+}
+#lrc-list .begin-time {
+}
+#lrc-list .end-time {
+}
+@-webkit-keyframes highlightLrcRow {
+	0% {
+		background: none;
+	}
+	100% {
+		background-color: #eee;
+	}
+}
+.lrc-area {
+	width: 100%;
+}
+.lrc-area td {
+	vertical-align: top;
+	text-align: left;
+}
+.lrc-area .left {
+	width: 50%;
+}
+.lrc-area .right {
+	width: 50%;
+}

@@ -1,0 +1,83 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="../../src/css/form.css">
+		<link rel="stylesheet" href="lrc.css">
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/math.js" charset="utf-8"></script>
+		<script src="../../src/js/array.js" charset="utf-8"></script>
+		<!-- -->
+		<script src="../../src/js/widget/Form/form.js" charset="utf-8"></script>
+		<script src="../../src/js/widget/Form/textarea.js" charset="utf-8"></script>
+		<script src="lrc.js" charset="utf-8"></script>
+	</head>
+	<body>
+		<video id="J_video" src="1.m4v" width="300" height="150" controls></video>
+		<input type="text" id="jjj">
+		<table class="lrc-area">
+			<tr>
+				<td class="left">
+				<div class="lrc-text-input-area">
+					<textarea id="J_lrcTextInput" class="kitjs-form-textbox" rows="3" cols="60"></textarea>
+				</div></td>
+				<td class="right">
+				<div id="lrc-create-area">
+					<button id="J_insrow">
+						插入
+					</button>
+					<ol id="lrc-list">
+						<!--<li>
+						<span class="begin-time"><input class="kitjs-form-textbox" type="text" value="1:1.1"></span>
+						<span class="end-time"><input class="kitjs-form-textbox" type="text" value="1:33.1"></span>
+						<div class="content">
+						<textarea class="kitjs-form-textarea">这是一段文字哦</textarea>
+						</div>
+						</li>-->
+					</ol>
+				</div></td>
+			</tr>
+		</table>
+		<div id="lrc-source-text"></div>
+		<script>
+			var lrc = new Lrc({
+				resource : $kit.el("#J_video")
+			})
+			var lrcText = new $kit.ui.Form.TextArea({
+				el : $kit.el("#J_lrcTextInput"),
+				minRows : 3,
+				textIsEmptyFn : function() {
+					$kit.log("Current is empty!");
+				},
+				textNotEmptyFn : function() {
+					//current is not empty
+				}
+			})
+			$kit.ev({
+				el : $kit.el("#J_lrcTextInput"),
+				ev : "click",
+				fn : function(ev, evCfg) {
+					var el = ev.target;
+					var endPos = el.selectionEnd;
+					el.setSelectionRange(0, endPos);
+					var selection = window.getSelection();
+					var text = selection.toString();
+					if($kit.isEmpty(text)) {
+						return;
+					}
+					selection.removeAllRanges();
+					$kit.insEl({
+						pos : "before",
+						where : el,
+						what : "<div>" + text + "</div>"
+					})
+					lrc.evInsLrcRow(null, {
+						lrcText : text
+					})
+					el.value = el.value.substr(endPos);
+					ev.stopDefault();
+				}
+			});
+
+		</script>
+	</body>
+</html>

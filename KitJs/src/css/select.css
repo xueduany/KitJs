@@ -1,0 +1,57 @@
+.kitjs-form-select {
+	padding: 0;
+	margin: 0;
+	cursor: pointer;
+	position: relative;
+	vertical-align: middle;
+	border-radius: .3em;
+	-webkit-transition: all 300ms ease-in 0;
+	-webkit-transition: all 300ms ease-in 0;
+	background-image: -webkit-gradient(linear, left top, left 25, from(#fff), color-stop(4%, #eee), to(#fff));
+}
+.kitjs-form-select select {
+	padding: 0;
+	margin: 0;
+	cursor: pointer;
+	outline: none;
+	border: 1px solid #eee;
+	border-radius: .3em;
+	position: relative;
+	background: none;
+	padding-right: 1.5em;
+	line-height: 1em;
+	-webkit-appearance: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	outline: none;
+	z-index: 1;
+	vertical-align: baseline;
+	-webkit-transition: all 300ms ease-in 0;
+}
+.kitjs-form-select select:hover,
+.kitjs-form-select select:active,
+.kitjs-form-select select:focus {
+	color: #000;
+	outline: none;
+	border: #aaa 1px solid;
+	box-shadow: 0 0 10px #ccc;
+}
+.kitjs-form-select:after {
+	z-index: 0;
+	content: ' ';
+	display: block;
+	position: absolute;
+	width: 0px;
+	height: 0px;
+	right: 0.3em;
+	top: 0.3em;
+	border-width: 8px;
+	border-style: dashed;
+	border-color: transparent;
+	border-top-style: solid;
+	border-top-color: #ccc;
+	-webkit-transform: scaleX(0.8);
+}
+.kitjs-form-select:hover:after,
+.kitjs-form-select:active:after {
+	border-top-color: #000;
+}

@@ -31,6 +31,9 @@ $Kit = function(config) {
 $Kit.prototype = {
 	//----------------------CONSTANTS----------------------
 	CONSTANTS : {
+		//异常处理,最大循环次数
+		MAX_CYCLE_COUNT : 1000,
+		//
 		NODETYPE_ELEMENT : 1,
 		NODETYPE_ELEMENT_ATTR : 2,
 		NODETYPE_TEXTNODE : 3,
@@ -39,45 +42,61 @@ $Kit.prototype = {
 		NODETYPE_FRAGMENT : 11,
 		//
 		REGEXP_SPACE : /\s+/g,
-		//
+		//事件注册
 		KIT_EVENT_REGISTER : "_kit_event_register_",
+		//事件
 		KIT_EVENT_REGISTER_EVENT : "_kit_event_register_event",
+		//方法
 		KIT_EVENT_REGISTER_FUNCTION : "_kit_event_register_function",
+		//立即停止所有事件
 		KIT_EVENT_STOPIMMEDIATEPROPAGATION : "_kit_event_stopimmediatepropagation_",
+		//停止所有事件触发
 		KIT_EVENT_STOPALLEVENT : "_kit_event_stopallevent_",
+		//DOM ID 默认前缀
 		KIT_DOM_ID_PREFIX : "J_Kit_"
 	},
+	// -----------------------------------is something-----------------------------------
+	/**
+	 * boolean isString
+	 */
+	isDefined : function(o) {
+		return typeof (o) != "undefined";
+	},
+	isStr : function(o) {
+		return typeof (o) == "string";
+	},
+	/**
+	 * boolean isObject
+	 */
+	isObj : function(o) {
+		return typeof (o) == "object";
+	},
+	/**
+	 * boolean is function
+	 */
+	isFn : function(o) {
+		var me = this;
+		return me.isDefined(o) && typeof (o) == "function";
+	},
+	/**
+	 * is it can iterator
+	 */
+	isAry : function(o) {
+		var me = this;
+		return me.isDefined(o) && (o.constructor.name == "Array" || o.constructor.name == "NodeList");
+	},
+	/**
+	 * is string can be split into a array which elements total > 2
+	 */
+	isCanSplit2Ary : function(o, sign) {
+		var me = this;
+		return me.isStr(o) && o.split(sign || /\s+/g).length > 1;
+	},
+	isEmpty : function(o) {
+		var me = this;
+		return typeof (o) == "undefined" || o == null || (me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
+	},
 	// -----------------------------------string-----------------------------------
-	trim : function(str) {
-		if(str == null) {
-			return null;
-		}
-		str = str.toString();
-		if(str.trim) {
-			return str.trim();
-		}
-		return str.replace(/^\s+|\s+$/g, "");
-	},
-	ltrim : function(str) {
-		if(str == null) {
-			return null;
-		}
-		str = str.toString();
-		if(str.trimLeft) {
-			return str.trimLeft();
-		}
-		return str.replace(/^\s+/, "");
-	},
-	rtrim : function(str) {
-		if(str == null) {
-			return null;
-		}
-		str = str.toString();
-		if(str.trimRight) {
-			return str.trimRight();
-		}
-		return str.replace(/\s+$/, "");
-	},
 	trimAll : function(str) {
 		if(str == null) {
 			return null;
@@ -110,9 +129,12 @@ $Kit.prototype = {
 	/**
 	 * if someone in array
 	 */
-	inAry : function(a, o) {
+	inAry : function(ary, o) {
 		var me = this, flag = false;
-		for(var i = 0; i < a.length; i++) {
+		if(!me.isAry(arg)) {
+			return;
+		}
+		for(var i = 0; i < ary.length; i++) {
 			if(me.isAry(o)) {
 				for(var j = 0; j < o.length; j++) {
 					if(a[i] == o[j]) {
@@ -141,7 +163,7 @@ $Kit.prototype = {
 	 */
 	el8cls : function(cls, root) {
 		var a = (root || document).getElementsByClassName(cls);
-		return (a == null && a.length == 0) ? null : a[0];
+		return (a != null && a.length ) ? a[0] : a;
 	},
 	/**
 	 * by tagName
@@ -152,7 +174,7 @@ $Kit.prototype = {
 	el8tag : function(tagName, root) {
 		var me = this;
 		var re = me.els8tag(tagName, root);
-		return re != null && re.length > 0 ? re[0] : null;
+		return re != null && re.length ? re[0] : re;
 	},
 	/**
 	 * els by cls
@@ -171,7 +193,10 @@ $Kit.prototype = {
 	 */
 	el : function(selector, root) {
 		var me = this;
-		var selector = me.trim(selector);
+		if(me.isEmpty(selector)) {
+			return;
+		}
+		var selector = selector.toString().trim();
 		if(selector.indexOf("#") == 0) {
 			return me.el8id(selector.substring(1), root);
 		} else if(selector.indexOf(".") == 0) {
@@ -208,87 +233,46 @@ $Kit.prototype = {
 		}
 		return el;
 	},
-	// -----------------------------------is something-----------------------------------
-	/**
-	 * boolean isString
-	 */
-	isDefined : function(o) {
-		return typeof (o) != "undefined";
-	},
-	isStr : function(o) {
-		return typeof (o) == "string";
-	},
-	/**
-	 * boolean isObject
-	 */
-	isObj : function(o) {
-		return typeof (o) == "object";
-	},
-	/**
-	 * boolean is function
-	 */
-	isFn : function(o) {
-		var me = this;
-		return me.isDefined(o) && typeof (o).toLowerCase() == "function";
-	},
-	/**
-	 * is it can iterator
-	 */
-	isAry : function(o) {
-		var me = this;
-		return me.isDefined(o) && (o.constructor.name == "Array" || o.constructor.name == "NodeList");
-	},
-	/**
-	 * is string can be split into a array which elements total > 2
-	 */
-	isCanSplit2Ary : function(o, sign) {
-		var me = this;
-		return me.isStr(o) && o.split(sign || /\s+/g).length > 1;
-	},
-	isEmpty : function(o) {
-		var me = this;
-		return typeof (o) == "undefined" || o == null || (me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
-	},
 	// -----------------------------------dom manipulate-----------------------------------
 	/**
 	 * get/set attr
 	 */
 	attr : function(el, attr, value) {
 		var me = this;
-		if(el != null) {
-			if(value == null) {
-				if(me.isObj(attr)) {
-					for(var l in attr) {
-						el.setAttribute(l, attr[l]);
-					}
-				} else {
-					return el.getAttribute(attr);
+		if(me.isEmpty(el)) {
+			return;
+		}
+		if(value == null) {
+			if(me.isObj(attr)) {
+				for(var l in attr) {
+					el.setAttribute(l, attr[l]);
 				}
 			} else {
-				el.setAttribute(attr, value);
+				return el.getAttribute(attr);
 			}
+		} else {
+			el.setAttribute(attr, value);
 		}
-		return null;
 	},
 	/**
 	 * set/get style
 	 */
 	css : function(el, attr, value) {
 		var me = this;
-		if(el != null) {
-			if(value == null) {
-				if(me.isObj(attr)) {
-					for(var l in attr) {
-						el.style[l] = attr[l];
-					}
-				} else {
-					return getComputedStyle(el, null)[attr];
+		if(me.isEmpty(el)) {
+
+		}
+		if(value == null) {
+			if(me.isObj(attr)) {
+				for(var l in attr) {
+					el.style[l] = attr[l];
 				}
 			} else {
-				el.style[attr] = value;
+				return getComputedStyle(el, null)[attr];
 			}
+		} else {
+			el.style[attr] = value;
 		}
-		return null;
 	},
 	/**
 	 * insert element
@@ -342,6 +326,10 @@ $Kit.prototype = {
 	 * replace element
 	 */
 	rpEl : function(element, html) {
+		var me = this;
+		if(me.isEmpty(element) || me.isEmpty(html)) {
+			return;
+		}
 		var range = element.ownerDocument.createRange();
 		range.selectNodeContents(element);
 		element.parentNode.replaceChild(range.createContextualFragment(html), element);
@@ -351,6 +339,10 @@ $Kit.prototype = {
 	 * remove node
 	 */
 	rmEl : function(element) {
+		var me = this;
+		if(me.isEmpty(element)) {
+			return;
+		}
 		element.parentNode.removeChild(element, true);
 	},
 	/**
@@ -358,12 +350,15 @@ $Kit.prototype = {
 	 */
 	adCls : function(el, clss) {
 		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
 		if(me.isAry(clss)) {
 			for(var i = 0; i < clss.length; i++) {
 				me.adCls(el, clss[i]);
 			}
 		} else {
-			var a = el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
+			var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
 			for(var i = 0; i < a.length; i++) {
 				if(a[i] == clss) {
 					flag = false;
@@ -381,7 +376,10 @@ $Kit.prototype = {
 	 */
 	rmCls : function(el, clss) {
 		var me = this;
-		var a = el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
+		if(me.isEmpty(el)) {
+			return;
+		}
+		var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
 		if(a.length) {
 			b = me.aryDel(a, clss);
 		}
@@ -396,7 +394,10 @@ $Kit.prototype = {
 	 */
 	hasCls : function(el, cls) {
 		var me = this, flag = false;
-		if(el.className != "" && el.className != null) {
+		if(me.isEmpty(el)) {
+			return;
+		}
+		if(!me.isEmpty(el.className)) {
 			var a = el.className.split(me.CONSTANTS.REGEXP_SPACE);
 			for(var i = 0; i < a.length; i++) {
 				if(a[i] == cls) {
@@ -435,6 +436,10 @@ $Kit.prototype = {
 	 * nextElementSibling/Dom traversal
 	 */
 	nextEl : function(el) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
 		var nextEl = null;
 		if(el.nextElementSibling != null) {
 			nextEl = el.nextElementSibling;
@@ -455,6 +460,10 @@ $Kit.prototype = {
 	 * previousElementSibling/Dom traversal
 	 */
 	prevEl : function(el) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
 		var prevEl = null;
 		if(el.previousElementSibling != null) {
 			prevEl = el.previousElementSibling;
@@ -475,6 +484,10 @@ $Kit.prototype = {
 	 * return a documentFragment with html
 	 */
 	newHTML : function(html) {
+		var me = this;
+		if(me.isEmpty(html)) {
+			return;
+		}
 		var box = document.createElement("div");
 		box.innerHTML = html;
 		var o = document.createDocumentFragment();
@@ -488,7 +501,8 @@ $Kit.prototype = {
 	 * offset
 	 */
 	offset : function(el) {
-		if(el == null) {
+		var me = this;
+		if(me.isEmpty(el)) {
 			return;
 		}
 		var offsetPar = el.offsetParent, //
@@ -561,7 +575,7 @@ $Kit.prototype = {
 				}));
 			}
 		} else {
-			config.ev = me.trim(config.ev);
+			config.ev = config.ev.toString().trim();
 			if(!me.isEmpty(config.ev) && !me.isEmpty(config.fn)) {
 				// -------webkit support stopImmediatePropagation, so comment this template
 				var evReg = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] || {};
@@ -658,7 +672,7 @@ $Kit.prototype = {
 				}));
 			}
 		} else {
-			config.ev = me.trim(config.ev);
+			config.ev = config.ev.toString().trim();
 			if(!me.isEmpty(config.ev)) {
 				if(!me.isEmpty(config.fn)) {
 					var evQueue = config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
@@ -689,6 +703,7 @@ $Kit.prototype = {
 	},
 	/**
 	 * set event extra info
+	 * @private
 	 */
 	evExtra : function(ev) {
 		var me = this;
@@ -696,6 +711,7 @@ $Kit.prototype = {
 	},
 	/**
 	 * get event coordinate info
+	 * @private
 	 */
 	evPos : function(ev) {
 		if(ev.type.indexOf("touch") == 0 && ev.targetTouches && ev.targetTouches.length) {
@@ -766,34 +782,36 @@ $Kit.prototype = {
 	/**
 	 * is collection include object
 	 */
+	/*
 	has : function(collection, object, ignoreCase) {
-		if( typeof (collection) == "undefined" || typeof (object) == "undefined") {
-			return false;
-		}
-		var me = this, flag = false, ignoreCase = (ignoreCase == true ? ignoreCase : false);
-		if(me.isAry(collection)) {
-			for(var i = 0; i < collection.length; i++) {
-				if(collection[i] == object || (ignoreCase && collection[i].toLowerCase() == object.toLowerCase())) {
-					flag = true;
-					break;
-				}
-			}
-		} else {
-			if(collection != null) {
-				if( object in collection) {
-					flag = true;
-				} else if(ignoreCase) {
-					for(var p in collection) {
-						if(p.toString().toLowerCase() == object.toString().toLowerCase()) {
-							flag = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return flag;
-	},
+	if( typeof (collection) == "undefined" || typeof (object) == "undefined") {
+	return false;
+	}
+	var me = this, flag = false, ignoreCase = (ignoreCase == true ? ignoreCase : false);
+	if(me.isAry(collection)) {
+	for(var i = 0; i < collection.length; i++) {
+	if(collection[i] == object || (ignoreCase && collection[i].toLowerCase() == object.toLowerCase())) {
+	flag = true;
+	break;
+	}
+	}
+	} else {
+	if(collection != null) {
+	if( object in collection) {
+	flag = true;
+	} else if(ignoreCase) {
+	for(var p in collection) {
+	if(p.toString().toLowerCase() == object.toString().toLowerCase()) {
+	flag = true;
+	break;
+	}
+	}
+	}
+	}
+	}
+	return flag;
+	},*/
+
 	// -----------------------------------log-----------------------------------
 	log : function(info, config) {
 		try {
@@ -852,7 +870,7 @@ $Kit.prototype = {
 			count = 0;
 		}
 		count++;
-		if(count > 100) {
+		if(count > me.CONSTANTS.MAX_CYCLE_COUNT) {
 			throw "error!";
 		}
 		if(!me.isEmpty(me.el8id(id))) {
@@ -865,9 +883,9 @@ $Kit.prototype = {
 		var ver, device, re;
 		if(regExp_appleDevice.test(navigator.userAgent)) {
 			var a = navigator.userAgent.match(regExp_appleDevice);
-			ver = me.trim(a[3]);
+			ver = a[3].toString().trim();
 			ver = ver.replace(/_/g, ".");
-			device = me.trim(a[1]);
+			device = a[1].toString().trim();
 			device = device.substring(0, device.indexOf(";"));
 			re = {
 				device : device,
@@ -879,18 +897,28 @@ $Kit.prototype = {
 	/**
 	 * config include array, exclude, fn, scope iterator each element in array not include exclude
 	 */
-	each : function(config) {
-		var me = this, a = config.array;
-		for(var __i = 0; __i < a.length; __i++) {
-			if(me.inAry(config.exclude, a[__i])) {
-				continue;
-			} else {
-				config.fn.call(config.scope || this, a[__i], __i, a);
+	// each : function(config) {
+	// var me = this;
+	// var a = config.array;
+	// for(var i = 0; i < a.length; i++) {
+	// if(me.inAry(config.exclude, a[i])) {
+	// continue;
+	// } else {
+	// config.fn.call(config.scope || this, a[i], i, a);
+	// }
+	// }
+	// },
+	each : function(ary, fn, scope) {
+		var me = this;
+		if(!me.isEmpty(fn) && me.isAry(ary)) {
+			for(var i = 0; i < ary.length; i++) {
+				fn.call(scope || window, ary[i], i, a);
 			}
 		}
 	},
 	/**
 	 * subClass inherit superClass
+	 * 简单继承
 	 */
 	inherit : function(config) {
 		var me = this, child = config.child, father = config.father;

@@ -23,16 +23,6 @@ $kit.merge($kit.ui.Form.TextArea.prototype, {
 			me.autoFixHeight();
 			me.config.el.style["overflow-y"] = "hidden";
 		}
-	},
-	autoFixHeight : function() {
-		var me = this;
-		$kit.ev({
-			el : me.config.el,
-			ev : "input",
-			fn : function() {
-				me.fixHeight();
-			}
-		});
 		$kit.ev({
 			el : me.config.el,
 			ev : "blur",
@@ -42,6 +32,20 @@ $kit.merge($kit.ui.Form.TextArea.prototype, {
 			el : me.config.el,
 			ev : "focus",
 			fn : me.config.focusFn
+		});
+		//
+		me.fixHeight();
+		//
+	},
+	autoFixHeight : function() {
+		var me = this;
+		$kit.ev({
+			el : me.config.el,
+			ev : "input",
+			fn : function() {
+				me.fixHeight();
+			},
+			scope : me
 		});
 	},
 	fixHeight : function() {
@@ -71,9 +75,9 @@ $kit.merge($kit.ui.Form.TextArea.prototype, {
 		while(textarea.clientHeight < textarea.scrollHeight && textarea.value.length > 0) {
 			textarea.rows += 1;
 		}
-		if($kit.isEmpty($kit.trim(textarea.value)) && !$kit.isEmpty(me.config.textIsEmptyFn)) {
+		if($kit.isEmpty(textarea.value.trim()) && !$kit.isEmpty(me.config.textIsEmptyFn)) {
 			me.config.textIsEmptyFn.apply(me, [me]);
-		} else if(!$kit.isEmpty($kit.trim(textarea.value)) && !$kit.isEmpty(me.config.textNotEmptyFn)) {
+		} else if(!$kit.isEmpty(textarea.value.trim()) && !$kit.isEmpty(me.config.textNotEmptyFn)) {
 			me.config.textNotEmptyFn.apply(me, [me]);
 		}
 	},
