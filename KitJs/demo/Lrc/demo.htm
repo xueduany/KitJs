@@ -6,6 +6,7 @@
 		<script src="../../src/js/kit.js"></script>
 		<script src="../../src/js/math.js" charset="utf-8"></script>
 		<script src="../../src/js/array.js" charset="utf-8"></script>
+		<script src="../../src/js/LinkedHashMap.js" charset="utf-8"></script>
 		<!-- -->
 		<script src="../../src/js/widget/Form/form.js" charset="utf-8"></script>
 		<script src="../../src/js/widget/Form/textarea.js" charset="utf-8"></script>
@@ -19,6 +20,7 @@
 				<td class="left">
 				<div class="lrc-text-input-area">
 					<textarea id="J_lrcTextInput" class="kitjs-form-textbox" rows="3" cols="60"></textarea>
+					<button id="J_splitLrc_btn">切割</button>
 				</div></td>
 				<td class="right">
 				<div id="lrc-create-area">
@@ -52,31 +54,7 @@
 					//current is not empty
 				}
 			})
-			$kit.ev({
-				el : $kit.el("#J_lrcTextInput"),
-				ev : "click",
-				fn : function(ev, evCfg) {
-					var el = ev.target;
-					var endPos = el.selectionEnd;
-					el.setSelectionRange(0, endPos);
-					var selection = window.getSelection();
-					var text = selection.toString();
-					if($kit.isEmpty(text)) {
-						return;
-					}
-					selection.removeAllRanges();
-					$kit.insEl({
-						pos : "before",
-						where : el,
-						what : "<div>" + text + "</div>"
-					})
-					lrc.evInsLrcRow(null, {
-						lrcText : text
-					})
-					el.value = el.value.substr(endPos);
-					ev.stopDefault();
-				}
-			});
+			
 
 		</script>
 	</body>
