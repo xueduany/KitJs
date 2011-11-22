@@ -1,12 +1,92 @@
-#lrc-list li:hover {
-	background-color: #eee;
-	-webkit-animation: highlightLrcRow 300ms ease-in 0ms 1;
+body,
+table,
+tr,
+td,
+video,
+audio,
+ul,
+ol,
+li {
+	padding: 0;
+	margin: 0;
+}
+.lrc-create {
+	margin: 0 auto;
+}
+.lrc-create td {
+	vertical-align: top;
+}
+.lrc-create td.resource {
+	width: 600px;
+}
+.lrc-create td.creater {
+	width: 370px;
 }
 #lrc-list li {
 	border-bottom: 1px solid #eee;
+	list-style: none;
+	position: relative;
+	width: 100%;
+	display: block;
 }
 #lrc-list li:hover {
-	border-bottom: 1px solid #aaa;
+	/*-webkit-animation: highlightLrcRow 300ms ease-in 0ms 1;*/
+	-webkit-transition: all 300ms ease-in 0ms;
+	border-color: #aaa;
+}
+/*#lrc-list li .operate {
+	height: 0px;
+	-webkit-transform: scaleY(0);
+	-webkit-transform-origin: top left;
+	opacity: 0;
+}
+#lrc-list li:hover .operate {
+	-webkit-transform: scaleY(1);
+	-webkit-transition: all 300ms ease-in 0ms;
+	height: 30px;
+	opacity: 1;
+	display: block;
+}*/
+#lrc-list li.selected {
+	background-color: yellow;
+}
+#lrc-list li .operate {
+	display: none;
+	height: 30px;
+	line-height: 30px;
+	position: absolute;
+	left: 0;
+	bottom: -30px;
+	z-index: 9;
+}
+#lrc-list li .begin-time {
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	z-index: 1;
+	resize: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+	border: 0;
+	outline: none;
+}
+#lrc-list li .subtitle {
+	border-radius: 0.5em;
+	background-color: transparent;
+	border: 1px solid transparent;;
+	-webkit-appearance: none;
+	resize: none;
+	text-indent: 4em;
+	outline: none;
+}
+#lrc-list li .begin-time:focus {
+	top: 0px;
+	left: 0px;
+	border: 1px solid #ccc;
+	border-radius: 0.5em;
+}
+#lrc-list li .subtitle:focus {
+	border-color: #ccc;
 }
 #lrc-list .currentTimePoint {
 	background-color: #000;
@@ -14,14 +94,6 @@
 #lrc-list .begin-time {
 }
 #lrc-list .end-time {
-}
-@-webkit-keyframes highlightLrcRow {
-	0% {
-		background: none;
-	}
-	100% {
-		background-color: #eee;
-	}
 }
 .lrc-area {
 	width: 100%;
@@ -35,4 +107,21 @@
 }
 .lrc-area .right {
 	width: 50%;
+}
+.textarea_lrcTextResource {
+	border: 1px solid transparent;
+	outline: 0;
+	border-radius: 0.5em;
+	resize: none;
+}
+.textarea_lrcTextResourceEditAble {
+	border-color: #ccc;
+}
+.lrcTextEditArea {
+	position: relative;
+}
+.lrcTextEditArea .buttonArea {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
 }

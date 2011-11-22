@@ -31,9 +31,6 @@ $Kit = function(config) {
 $Kit.prototype = {
 	//----------------------CONSTANTS----------------------
 	CONSTANTS : {
-		//异常处理,最大循环次数
-		MAX_CYCLE_COUNT : 1000,
-		//
 		NODETYPE_ELEMENT : 1,
 		NODETYPE_ELEMENT_ATTR : 2,
 		NODETYPE_TEXTNODE : 3,
@@ -41,70 +38,46 @@ $Kit.prototype = {
 		NODETYPE_ROOT : 9,
 		NODETYPE_FRAGMENT : 11,
 		//
-		DOCUMENT_POSITION_SAME : 0, //同一个
-		DOCUMENT_POSITION_DISCONNECTED : 1, //不在一个文档
-		DOCUMENT_POSITION_PRECEDING : 2, //b在a前面
-		DOCUMENT_POSITION_FOLLOWING : 4, //b在a后面
-		DOCUMENT_POSITION_CONTAINS : 10, //b是a祖先
-		DOCUMENT_POSITION_CONTAINED_BY : 20, //b是a儿子
-		DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC : 32, //不常用
-		//
 		REGEXP_SPACE : /\s+/g,
-		//事件注册
+		//
 		KIT_EVENT_REGISTER : "_kit_event_register_",
-		//事件
 		KIT_EVENT_REGISTER_EVENT : "_kit_event_register_event",
-		//方法
 		KIT_EVENT_REGISTER_FUNCTION : "_kit_event_register_function",
-		//立即停止所有事件
 		KIT_EVENT_STOPIMMEDIATEPROPAGATION : "_kit_event_stopimmediatepropagation_",
-		//停止所有事件触发
 		KIT_EVENT_STOPALLEVENT : "_kit_event_stopallevent_",
-		//DOM ID 默认前缀
 		KIT_DOM_ID_PREFIX : "J_Kit_"
 	},
-	// -----------------------------------is something-----------------------------------
-	/**
-	 * boolean isString
-	 */
-	isDefined : function(o) {
-		return typeof (o) != "undefined";
-	},
-	isStr : function(o) {
-		return typeof (o) == "string";
-	},
-	/**
-	 * boolean isObject
-	 */
-	isObj : function(o) {
-		return typeof (o) == "object";
-	},
-	/**
-	 * boolean is function
-	 */
-	isFn : function(o) {
-		var me = this;
-		return !me.isEmpty(o) && typeof (o) == "function";
-	},
-	/**
-	 * is it can iterator
-	 */
-	isAry : function(o) {
-		var me = this;
-		return me.isDefined(o) && o != null && (o.constructor.name == "Array" || o.constructor.name == "NodeList");
-	},
-	/**
-	 * is string can be split into a array which elements total > 2
-	 */
-	isCanSplit2Ary : function(o, sign) {
-		var me = this;
-		return me.isStr(o) && o.split(sign || /\s+/g).length > 1;
-	},
-	isEmpty : function(o) {
-		var me = this;
-		return typeof (o) == "undefined" || o == null || (me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
-	},
 	// -----------------------------------string-----------------------------------
+	trim : function(str) {
+		if(str == null) {
+			return null;
+		}
+		str = str.toString();
+		if(str.trim) {
+			return str.trim();
+		}
+		return str.replace(/^\s+|\s+$/g, "");
+	},
+	ltrim : function(str) {
+		if(str == null) {
+			return null;
+		}
+		str = str.toString();
+		if(str.trimLeft) {
+			return str.trimLeft();
+		}
+		return str.replace(/^\s+/, "");
+	},
+	rtrim : function(str) {
+		if(str == null) {
+			return null;
+		}
+		str = str.toString();
+		if(str.trimRight) {
+			return str.trimRight();
+		}
+		return str.replace(/\s+$/, "");
+	},
 	trimAll : function(str) {
 		if(str == null) {
 			return null;
@@ -116,14 +89,11 @@ $Kit.prototype = {
 	/**
 	 * remove some from array
 	 */
-	aryDel : function(ary, del) {
+	arydel : function(ary, del) {
 		var me = this;
-		if(!me.isAry(ary)) {
-			return;
-		}
 		if(me.isAry(del)) {
 			for(var i = 0; i < del.length; i++) {
-				me.aryDel(ary, del[i]);
+				me.arydel(ary, del[i]);
 			}
 		} else {
 			for(var j = 0; j < ary.length; j++) {
@@ -137,12 +107,9 @@ $Kit.prototype = {
 	/**
 	 * if someone in array
 	 */
-	inAry : function(ary, o) {
+	inAry : function(a, o) {
 		var me = this, flag = false;
-		if(!me.isAry(arg)) {
-			return;
-		}
-		for(var i = 0; i < ary.length; i++) {
+		for(var i = 0; i < a.length; i++) {
 			if(me.isAry(o)) {
 				for(var j = 0; j < o.length; j++) {
 					if(a[i] == o[j]) {
@@ -171,7 +138,7 @@ $Kit.prototype = {
 	 */
 	el8cls : function(cls, root) {
 		var a = (root || document).getElementsByClassName(cls);
-		return (a != null && a.length ) ? a[0] : a;
+		return (a == null && a.length == 0) ? null : a[0];
 	},
 	/**
 	 * by tagName
@@ -182,7 +149,7 @@ $Kit.prototype = {
 	el8tag : function(tagName, root) {
 		var me = this;
 		var re = me.els8tag(tagName, root);
-		return re != null && re.length ? re[0] : re;
+		return re != null && re.length > 0 ? re[0] : null;
 	},
 	/**
 	 * els by cls
@@ -201,10 +168,7 @@ $Kit.prototype = {
 	 */
 	el : function(selector, root) {
 		var me = this;
-		if(me.isEmpty(selector)) {
-			return;
-		}
-		var selector = selector.toString().trim();
+		var selector = me.trim(selector);
 		if(selector.indexOf("#") == 0) {
 			return me.el8id(selector.substring(1), root);
 		} else if(selector.indexOf(".") == 0) {
@@ -213,46 +177,115 @@ $Kit.prototype = {
 			return me.els8tag(selector, root);
 		}
 	},
+	/**
+	 * parentNode search
+	 */
+	parentEl : function(config) {
+		var me = this;
+		var defaultConfig = {
+			root : document.body,
+			condition : null,
+			el : null,
+			scope : window
+		};
+		me.mergeIf(config, defaultConfig);
+		var el = config.el, n = 0, scope = config.scope, root = config.root;
+		if(el != null && config.condition == null && me.isFn(condition)) {
+			do {
+				if(condition.apply(scope, [el, n, root]) == true) {
+					break;
+				} else {
+					if(el.parentNode != null && el != root) {
+						el = el.parentNode;
+					} else {
+						el = null;
+					}
+				}
+			} while(el!=null);
+		}
+		return el;
+	},
+	// -----------------------------------is something-----------------------------------
+	/**
+	 * boolean isString
+	 */
+	isDefined : function(o) {
+		return typeof (o) != "undefined";
+	},
+	isStr : function(o) {
+		return typeof (o) == "string";
+	},
+	/**
+	 * boolean isObject
+	 */
+	isObj : function(o) {
+		return typeof (o) == "object";
+	},
+	/**
+	 * boolean is function
+	 */
+	isFn : function(o) {
+		var me = this;
+		return me.isDefined(o) && typeof (o).toLowerCase() == "function";
+	},
+	/**
+	 * is it can iterator
+	 */
+	isAry : function(o) {
+		var me = this;
+		return me.isDefined(o) && (o.constructor.name == "Array" || o.constructor.name == "NodeList");
+	},
+	/**
+	 * is string can be split into a array which elements total > 2
+	 */
+	isCanSplit2Ary : function(o, sign) {
+		var me = this;
+		return me.isStr(o) && o.split(sign || /\s+/g).length > 1;
+	},
+	isEmpty : function(o) {
+		var me = this;
+		return typeof (o) == "undefined" || o == null || (me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
+	},
 	// -----------------------------------dom manipulate-----------------------------------
 	/**
 	 * get/set attr
 	 */
 	attr : function(el, attr, value) {
 		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		if(value == null) {
-			if(me.isObj(attr)) {
-				for(var l in attr) {
-					el.setAttribute(l, attr[l]);
+		if(el != null) {
+			if(value == null) {
+				if(me.isObj(attr)) {
+					for(var l in attr) {
+						el.setAttribute(l, attr[l]);
+					}
+				} else {
+					return el.getAttribute(attr);
 				}
 			} else {
-				return el.getAttribute(attr);
+				el.setAttribute(attr, value);
 			}
-		} else {
-			el.setAttribute(attr, value);
 		}
+		return null;
 	},
 	/**
 	 * set/get style
 	 */
 	css : function(el, attr, value) {
 		var me = this;
-		if(me.isEmpty(el)) {
-
-		}
-		if(value == null) {
-			if(me.isObj(attr)) {
-				for(var l in attr) {
-					el.style[l] = attr[l];
+		if(el != null) {
+			if(value == null) {
+				if(me.isObj(attr)) {
+					for(var l in attr) {
+						el.style[l] = attr[l];
+					}
+				} else {
+					return getComputedStyle(el, null)[attr];
 				}
 			} else {
-				return getComputedStyle(el, null)[attr];
+				el.style[attr] = value;
 			}
-		} else {
-			el.style[attr] = value;
 		}
+		return null;
 	},
 	/**
 	 * insert element
@@ -306,10 +339,6 @@ $Kit.prototype = {
 	 * replace element
 	 */
 	rpEl : function(element, html) {
-		var me = this;
-		if(me.isEmpty(element) || me.isEmpty(html)) {
-			return;
-		}
 		var range = element.ownerDocument.createRange();
 		range.selectNodeContents(element);
 		element.parentNode.replaceChild(range.createContextualFragment(html), element);
@@ -319,10 +348,6 @@ $Kit.prototype = {
 	 * remove node
 	 */
 	rmEl : function(element) {
-		var me = this;
-		if(me.isEmpty(element)) {
-			return;
-		}
 		element.parentNode.removeChild(element, true);
 	},
 	/**
@@ -330,15 +355,12 @@ $Kit.prototype = {
 	 */
 	adCls : function(el, clss) {
 		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
 		if(me.isAry(clss)) {
 			for(var i = 0; i < clss.length; i++) {
 				me.adCls(el, clss[i]);
 			}
 		} else {
-			var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
+			var a = el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
 			for(var i = 0; i < a.length; i++) {
 				if(a[i] == clss) {
 					flag = false;
@@ -356,12 +378,9 @@ $Kit.prototype = {
 	 */
 	rmCls : function(el, clss) {
 		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
+		var a = el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
 		if(a.length) {
-			b = me.aryDel(a, clss);
+			b = me.arydel(a, clss);
 		}
 		if(b.length) {
 			el.className = b.join(" ");
@@ -374,10 +393,7 @@ $Kit.prototype = {
 	 */
 	hasCls : function(el, cls) {
 		var me = this, flag = false;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		if(!me.isEmpty(el.className)) {
+		if(el.className != "" && el.className != null) {
 			var a = el.className.split(me.CONSTANTS.REGEXP_SPACE);
 			for(var i = 0; i < a.length; i++) {
 				if(a[i] == cls) {
@@ -415,14 +431,10 @@ $Kit.prototype = {
 	/**
 	 * nextElementSibling/Dom traversal
 	 */
-	nextEl : function(el, condition, scope) {
-		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		var next = null;
+	nextEl : function(el) {
+		var nextEl = null;
 		if(el.nextElementSibling != null) {
-			next = el.nextElementSibling;
+			nextEl = el.nextElementSibling;
 		} else {
 			var parent = el.parentNode;
 			while(parent != null && parent.parentNode != null && parent == parent.parentNode.lastElementChild) {
@@ -432,38 +444,17 @@ $Kit.prototype = {
 			while(firstEl != null && firstEl.children.length > 0 && firstEl.firstElementChild != null) {
 				firstEl = firstEl.firstElementChild;
 			}
-			next = firstEl;
+			nextEl = firstEl;
 		}
-		if(next != null) {
-			var condition = condition || null, scope = scope || null;
-			if(me.isFn(condition)) {
-				if(condition.call(scope, next, el) == true) {
-					return next;
-				} else if(condition.call(scope, next, el) == false) {
-					return null;
-				} else {
-					var allNodes = document.getElementsByTagName("*");
-					if(next != allNodes[allNodes.length - 1]) {
-						return me.nextEl(next, condition, scope);
-					} else {
-						return null;
-					}
-				}
-			}
-		}
-		return next;
+		return nextEl;
 	},
 	/**
 	 * previousElementSibling/Dom traversal
 	 */
-	prevEl : function(el, condition, scope) {
-		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		var prev = null;
+	prevEl : function(el) {
+		var prevEl = null;
 		if(el.previousElementSibling != null) {
-			prev = el.previousElementSibling;
+			prevEl = el.previousElementSibling;
 		} else {
 			var parent = el.parentNode;
 			while(parent != null && parent.parentNode != null && parent == parent.parentNode.firstElementChild) {
@@ -473,61 +464,14 @@ $Kit.prototype = {
 			while(lastEl != null && lastEl.children.length > 0 && lastEl.lastElementChild != null) {
 				lastEl = lastEl.lastElementChild;
 			}
-			prev = lastEl;
+			prevEl = lastEl;
 		}
-		if(prev != null) {
-			var condition = condition || null, scope = scope || null;
-			if(me.isFn(condition)) {
-				if(condition.call(scope, prev, el) == true) {
-					return prev;
-				} else if(condition.call(scope, prev, el) == false) {
-					return null;
-				} else {
-					var allNodes = document.getElementsByTagName("*");
-					if(prev != allNodes[0]) {
-						return me.prevEl(prev, condition, scope);
-					} else {
-						return null;
-					}
-				}
-			}
-		}
-		return prev;
-	},
-	/**
-	 * parentNode search
-	 */
-	parentEl : function(el, condition, scope) {
-		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		var parent = null;
-		if(el.parentNode != null && el.parentNode != el) {
-			parent = el.parentNode;
-		}
-		if(parent != null) {
-			var condition = condition || null, scope = scope || null;
-			if(me.isFn(condition)) {
-				if(condition.call(scope, parent, el) == true) {
-					return parent;
-				} else if(condition.call(scope, parent, el) == false) {
-					return null;
-				} else {
-					return me.parentEl(parent, condition, scope);
-				}
-			}
-		}
-		return parent;
+		return prevEl;
 	},
 	/**
 	 * return a documentFragment with html
 	 */
 	newHTML : function(html) {
-		var me = this;
-		if(me.isEmpty(html)) {
-			return;
-		}
 		var box = document.createElement("div");
 		box.innerHTML = html;
 		var o = document.createDocumentFragment();
@@ -541,8 +485,7 @@ $Kit.prototype = {
 	 * offset
 	 */
 	offset : function(el) {
-		var me = this;
-		if(me.isEmpty(el)) {
+		if(el == null) {
 			return;
 		}
 		var offsetPar = el.offsetParent, //
@@ -615,51 +558,49 @@ $Kit.prototype = {
 				}));
 			}
 		} else {
-			config.ev = config.ev.toString().trim();
-			if(!me.isEmpty(config.el) && !me.isEmpty(config.ev) && !me.isEmpty(config.fn)) {
+			config.ev = me.trim(config.ev);
+			if(!me.isEmpty(config.ev) && !me.isEmpty(config.fn)) {
 				// -------webkit support stopImmediatePropagation, so comment this template
 				var evReg = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] || {};
 				var evRegEv = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_EVENT] = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_EVENT] || {};
 				var evRegFn = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION] = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION] || {};
 				evRegEv[config.ev] = evRegEv[config.ev] || [];
 				evRegFn[config.ev] = evRegFn[config.ev] || (function() {
-					/*try {*/
-					// stop global event on-off
-					if(window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
-						return;
-					}
-					var EV = arguments[0];
-
-					me.merge(EV, {
-						stopNow : function() {
-							EV.stopPropagation();
-							EV.preventDefault();
-							window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
-						},
-						stopDefault : function() {
-							EV.preventDefault();
-						},
-						stopGoOn : function() {
-							EV.preventDefault();
-							EV.stopPropagation();
-						},
-					}, me.evExtra(EV));
-					var target = config.el;
-					var evQueue = target[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
-					for(var i = 0; i < evQueue.length; i++) {
-						if(window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]) {
-							break;
+					try {
+						// stop global event on-off
+						if(window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
+							return;
 						}
-						var _evConfig = evQueue[i];
-						_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
-					}
-					window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
-					/*
-					 } catch(e) {
-					 alert(e);
-					 throw e;
-					 };*/
+						var EV = arguments[0];
 
+						me.merge(EV, {
+							stopNow : function() {
+								EV.stopPropagation();
+								EV.preventDefault();
+								window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
+							},
+							stopDefault : function() {
+								EV.preventDefault();
+							},
+							stopGoOn : function() {
+								EV.preventDefault();
+								EV.stopPropagation();
+							},
+						}, me.evExtra(EV));
+						var target = config.el;
+						var evQueue = target[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
+						for(var i = 0; i < evQueue.length; i++) {
+							if(window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]) {
+								break;
+							}
+							var _evConfig = evQueue[i];
+							_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
+						}
+						window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
+					} catch(e) {
+						alert(e);
+						throw e;
+					};
 				});
 				config.el.addEventListener(config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev], false);
 				evRegEv[config.ev].push(config);
@@ -714,7 +655,7 @@ $Kit.prototype = {
 				}));
 			}
 		} else {
-			config.ev = config.ev.toString().trim();
+			config.ev = me.trim(config.ev);
 			if(!me.isEmpty(config.ev)) {
 				if(!me.isEmpty(config.fn)) {
 					var evQueue = config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
@@ -745,7 +686,6 @@ $Kit.prototype = {
 	},
 	/**
 	 * set event extra info
-	 * @private
 	 */
 	evExtra : function(ev) {
 		var me = this;
@@ -753,7 +693,6 @@ $Kit.prototype = {
 	},
 	/**
 	 * get event coordinate info
-	 * @private
 	 */
 	evPos : function(ev) {
 		if(ev.type.indexOf("touch") == 0 && ev.targetTouches && ev.targetTouches.length) {
@@ -824,36 +763,34 @@ $Kit.prototype = {
 	/**
 	 * is collection include object
 	 */
-	/*
 	has : function(collection, object, ignoreCase) {
-	if( typeof (collection) == "undefined" || typeof (object) == "undefined") {
-	return false;
-	}
-	var me = this, flag = false, ignoreCase = (ignoreCase == true ? ignoreCase : false);
-	if(me.isAry(collection)) {
-	for(var i = 0; i < collection.length; i++) {
-	if(collection[i] == object || (ignoreCase && collection[i].toLowerCase() == object.toLowerCase())) {
-	flag = true;
-	break;
-	}
-	}
-	} else {
-	if(collection != null) {
-	if( object in collection) {
-	flag = true;
-	} else if(ignoreCase) {
-	for(var p in collection) {
-	if(p.toString().toLowerCase() == object.toString().toLowerCase()) {
-	flag = true;
-	break;
-	}
-	}
-	}
-	}
-	}
-	return flag;
-	},*/
-
+		if( typeof (collection) == "undefined" || typeof (object) == "undefined") {
+			return false;
+		}
+		var me = this, flag = false, ignoreCase = (ignoreCase == true ? ignoreCase : false);
+		if(me.isAry(collection)) {
+			for(var i = 0; i < collection.length; i++) {
+				if(collection[i] == object || (ignoreCase && collection[i].toLowerCase() == object.toLowerCase())) {
+					flag = true;
+					break;
+				}
+			}
+		} else {
+			if(collection != null) {
+				if( object in collection) {
+					flag = true;
+				} else if(ignoreCase) {
+					for(var p in collection) {
+						if(p.toString().toLowerCase() == object.toString().toLowerCase()) {
+							flag = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return flag;
+	},
 	// -----------------------------------log-----------------------------------
 	log : function(info, config) {
 		try {
@@ -912,7 +849,7 @@ $Kit.prototype = {
 			count = 0;
 		}
 		count++;
-		if(count > me.CONSTANTS.MAX_CYCLE_COUNT) {
+		if(count > 100) {
 			throw "error!";
 		}
 		if(!me.isEmpty(me.el8id(id))) {
@@ -925,9 +862,9 @@ $Kit.prototype = {
 		var ver, device, re;
 		if(regExp_appleDevice.test(navigator.userAgent)) {
 			var a = navigator.userAgent.match(regExp_appleDevice);
-			ver = a[3].toString().trim();
+			ver = me.trim(a[3]);
 			ver = ver.replace(/_/g, ".");
-			device = a[1].toString().trim();
+			device = me.trim(a[1]);
 			device = device.substring(0, device.indexOf(";"));
 			re = {
 				device : device,
@@ -939,28 +876,18 @@ $Kit.prototype = {
 	/**
 	 * config include array, exclude, fn, scope iterator each element in array not include exclude
 	 */
-	// each : function(config) {
-	// var me = this;
-	// var a = config.array;
-	// for(var i = 0; i < a.length; i++) {
-	// if(me.inAry(config.exclude, a[i])) {
-	// continue;
-	// } else {
-	// config.fn.call(config.scope || this, a[i], i, a);
-	// }
-	// }
-	// },
-	each : function(ary, fn, scope) {
-		var me = this;
-		if(!me.isEmpty(fn) && me.isAry(ary)) {
-			for(var i = 0; i < ary.length; i++) {
-				fn.call(scope || window, ary[i], i, a);
+	each : function(config) {
+		var me = this, a = config.array;
+		for(var __i = 0; __i < a.length; __i++) {
+			if(me.inAry(config.exclude, a[__i])) {
+				continue;
+			} else {
+				config.fn.call(config.scope || this, a[__i], __i, a);
 			}
 		}
 	},
 	/**
 	 * subClass inherit superClass
-	 * 简单继承
 	 */
 	inherit : function(config) {
 		var me = this, child = config.child, father = config.father;
@@ -973,33 +900,6 @@ $Kit.prototype = {
 		me.mergeIf(child.prototype, new father(_arguments));
 		child.prototype.constructor = child;
 		child.superClass = father;
-	},
-	/**
-	 * 模板的简单实现
-	 *
-	 * @public
-	 * @param {string}模板文本
-	 * @param {object}替换对象
-	 *
-	 * <pre>
-	 * render('this is ${obj}', {
-	 * 	obj : 'car'
-	 * });
-	 * 结果：this is car
-	 * </pre>
-	 */
-	tpl : function(templ, data) {
-		// 充分利用变量，为单个节点提速
-		// 正则尽快匹配失败
-		// 理论上可以作为JSON的key，支持很多字符
-		return templ.replace(/(\$)(\{([^}]*)\})/gm, function(value, clear, origin, key) {
-			key = key.split('.');
-			value = data[key.shift()];
-			for(var i = 0; i < key.length; i++) {
-				value = value[key[i]];
-			}
-			return (value === null || value === undefined) ? (!!clear ? '' : origin) : value;
-		});
 	}
 }
 $kit = new $Kit();
@@ -1007,3 +907,276 @@ $kit = new $Kit();
  * register widget
  */
 $kit.ui = {};
+/**
+ * javascript animation 动画扩展
+ */
+$kit.merge($Kit.prototype.CONSTANTS, {
+	KIT_EVENT_EXTRA : "KIT_EVENT_EXTRA",
+	CLOCKWISE_ROTATION : 1,
+	COUNTERCLOCKWISE_ROTATION : -1
+});
+$kit.merge($Kit.prototype, {
+	/**
+	 * 动画
+	 */
+	anim : function(config) {
+		var me = this;
+		var defaultConfig = {
+			timeSeg : 17,
+			duration : 1000,
+			el : undefined,
+			from : undefined,
+			to : undefined,
+			fx : undefined,
+			then : undefined,
+			scope : window
+		};
+		me.mergeIf(config, defaultConfig);
+		if (!me.isEmpty(config.el)) {
+			config.hold = 0;
+			config.timeout = setInterval(function() {
+				config.hold += config.timeSeg;
+				if (config.hold >= config.duration) {
+					for ( var p in config.to) {
+						config.el.style[p] = config.to[p];
+					}
+					clearInterval(config.timeout);
+					config.then.call(config.scope, config);
+				} else {
+					for ( var p in config.to) {
+						var sty = me.identifyCssValue(config.from[p]), sty1 = me.identifyCssValue(config.to[p]), reSty = "";
+						for ( var i = 0; i < sty1.length; i++) {
+							if (i > 0) {
+								reSty += " ";
+							}
+							var o = sty1[i];
+							o.value = me.fx(config.fx)(config.hold, (sty == null ? 0 : sty[i].value), (sty == null ? sty1[i].value : (sty1[i].value - sty[i].value)), config.duration)
+							reSty += o.prefix + o.value + o.unit + o.postfix;
+						}
+						config.el.style[p] = reSty;
+					}
+				}
+			}, config.timeSeg);
+			return config;
+		}
+	},
+	/**
+	 * 分解css的值，知道哪个是value(数字)，那个是单位
+	 */
+	identifyCssValue : function(cssStr) {
+		var me = this;
+		if (typeof (cssStr) != "undefined") {
+			cssStr = cssStr.toString();
+			var a1 = cssStr.match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z]*)([a-z\)]*)/ig);
+			if (a1 != null) {
+				var reSty = [];
+				for ( var i = 0; i < a1.length; i++) {
+					var a = a1[i].match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z]*)([a-z\)]*)/i);
+					var sty = {
+						style : a[0],
+						prefix : a[1],
+						value : parseFloat(a[2]),
+						unit : a[3],
+						postfix : a[4]
+					}
+					reSty.push(sty);
+				}
+				return reSty;
+			}
+		}
+		return null;
+	},
+	/**
+	 * 曲线函数
+	 */
+	Fx : {
+		swing : function(t, b, c, d) {
+			return -c * (t /= d) * (t - 2) + b;
+		},
+		easeInQuad : function(t, b, c, d) {
+			return c * (t /= d) * t + b;
+		},
+		easeOutQuad : function(t, b, c, d) {
+			return -c * (t /= d) * (t - 2) + b;
+		},
+		easeInOutQuad : function(t, b, c, d) {
+			if ((t /= d / 2) < 1)
+				return c / 2 * t * t + b;
+			return -c / 2 * ((--t) * (t - 2) - 1) + b;
+		},
+		easeInCubic : function(t, b, c, d) {
+			return c * (t /= d) * t * t + b;
+		},
+		easeOutCubic : function(t, b, c, d) {
+			return c * ((t = t / d - 1) * t * t + 1) + b;
+		},
+		easeInOutCubic : function(t, b, c, d) {
+			if ((t /= d / 2) < 1)
+				return c / 2 * t * t * t + b;
+			return c / 2 * ((t -= 2) * t * t + 2) + b;
+		},
+		easeInQuart : function(t, b, c, d) {
+			return c * (t /= d) * t * t * t + b;
+		},
+		easeOutQuart : function(t, b, c, d) {
+			return -c * ((t = t / d - 1) * t * t * t - 1) + b;
+		},
+		easeInOutQuart : function(t, b, c, d) {
+			if ((t /= d / 2) < 1)
+				return c / 2 * t * t * t * t + b;
+			return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+		},
+		easeInQuint : function(t, b, c, d) {
+			return c * (t /= d) * t * t * t * t + b;
+		},
+		easeOutQuint : function(t, b, c, d) {
+			return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
+		},
+		easeInOutQuint : function(t, b, c, d) {
+			if ((t /= d / 2) < 1)
+				return c / 2 * t * t * t * t * t + b;
+			return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+		},
+		easeInSine : function(t, b, c, d) {
+			return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
+		},
+		easeOutSine : function(t, b, c, d) {
+			return c * Math.sin(t / d * (Math.PI / 2)) + b;
+		},
+		easeInOutSine : function(t, b, c, d) {
+			return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+		},
+		easeInExpo : function(t, b, c, d) {
+			return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+		},
+		easeOutExpo : function(t, b, c, d) {
+			return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+		},
+		easeInOutExpo : function(t, b, c, d) {
+			if (t == 0)
+				return b;
+			if (t == d)
+				return b + c;
+			if ((t /= d / 2) < 1)
+				return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+			return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+		},
+		easeInCirc : function(t, b, c, d) {
+			return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+		},
+		easeOutCirc : function(t, b, c, d) {
+			return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+		},
+		easeInOutCirc : function(t, b, c, d) {
+			if ((t /= d / 2) < 1)
+				return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+			return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+		},
+		easeInElastic : function(t, b, c, d) {
+			var s = 1.70158;
+			var p = 0;
+			var a = c;
+			if (t == 0)
+				return b;
+			if ((t /= d) == 1)
+				return b + c;
+			if (!p)
+				p = d * .3;
+			if (a < Math.abs(c)) {
+				a = c;
+				var s = p / 4;
+			} else
+				var s = p / (2 * Math.PI) * Math.asin(c / a);
+			return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+		},
+		easeOutElastic : function(t, b, c, d) {
+			var s = 1.70158;
+			var p = 0;
+			var a = c;
+			if (t == 0)
+				return b;
+			if ((t /= d) == 1)
+				return b + c;
+			if (!p)
+				p = d * .3;
+			if (a < Math.abs(c)) {
+				a = c;
+				var s = p / 4;
+			} else
+				var s = p / (2 * Math.PI) * Math.asin(c / a);
+			return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+		},
+		easeInOutElastic : function(t, b, c, d) {
+			var s = 1.70158;
+			var p = 0;
+			var a = c;
+			if (t == 0)
+				return b;
+			if ((t /= d / 2) == 2)
+				return b + c;
+			if (!p)
+				p = d * (.3 * 1.5);
+			if (a < Math.abs(c)) {
+				a = c;
+				var s = p / 4;
+			} else
+				var s = p / (2 * Math.PI) * Math.asin(c / a);
+			if (t < 1)
+				return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+			return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+		},
+		easeInBack : function(t, b, c, d, s) {
+			if (s == undefined)
+				s = 1.70158;
+			return c * (t /= d) * t * ((s + 1) * t - s) + b;
+		},
+		easeOutBack : function(t, b, c, d, s) {
+			if (s == undefined)
+				s = 1.70158;
+			return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+		},
+		easeInOutBack : function(t, b, c, d, s) {
+			if (s == undefined)
+				s = 1.70158;
+			if ((t /= d / 2) < 1)
+				return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
+			return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
+		},
+		easeInBounce : function(t, b, c, d) {
+			return c - $.easing.easeOutBounce(d - t, 0, c, d) + b;
+		},
+		easeOutBounce : function(t, b, c, d) {
+			if ((t /= d) < (1 / 2.75)) {
+				return c * (7.5625 * t * t) + b;
+			} else if (t < (2 / 2.75)) {
+				return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b;
+			} else if (t < (2.5 / 2.75)) {
+				return c * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375) + b;
+			} else {
+				return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
+			}
+		},
+		easeInOutBounce : function(t, b, c, d) {
+			if (t < d / 2)
+				return $.easing.easeInBounce(t * 2, 0, c, d) * .5 + b;
+			return $.easing.easeOutBounce(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+		}
+	},
+	/**
+	 * 根据类型返回对应的曲线函数，或者自定义函数
+	 */
+	fx : function(type) {
+		var me = this;
+		if (me.isStr(type) && me.has(me.Fx, type)) {
+			return me.Fx[type];
+		} else if (me.isFn(type)) {
+			return type;
+		}
+		return me.Fx.swing;
+	}
+});
+$_kit = $kit;
+$kit = new $Kit();
+$kit.mergeIf($kit, $_kit);
+$_kit = null;
+

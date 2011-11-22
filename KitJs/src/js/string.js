@@ -6,7 +6,7 @@ $Kit.String = function() {
 }
 $Kit.String.prototype = {
 	breakSentence : function(str) {
-		
+		return str.replace(/([,\.\?!;:][\s"'’”)])/g, "$1\n");
 	}
 };
-$kit.string = new $Kit.String();
+$kit.str = $kit.string = new $Kit.String();

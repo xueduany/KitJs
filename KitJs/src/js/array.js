@@ -117,4 +117,4 @@ $Kit.Array.prototype = {
 		}
 	}
 };
-$kit.array = new $Kit.Array();
+$kit.ary = $kit.array = new $Kit.Array();

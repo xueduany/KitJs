@@ -6,6 +6,7 @@
 		<script src="../../src/js/kit.js"></script>
 		<script src="../../src/js/math.js" charset="utf-8"></script>
 		<script src="../../src/js/array.js" charset="utf-8"></script>
+		<script src="../../src/js/string.js" charset="utf-8"></script>
 		<script src="../../src/js/LinkedHashMap.js" charset="utf-8"></script>
 		<!-- -->
 		<script src="../../src/js/widget/Form/form.js" charset="utf-8"></script>
@@ -13,39 +14,68 @@
 		<script src="lrc.js" charset="utf-8"></script>
 	</head>
 	<body>
-		<video id="J_video" src="1.m4v" width="300" height="150" controls></video>
-		<input type="text" id="jjj">
-		<table class="lrc-area">
+		<table class="lrc-create">
 			<tr>
-				<td class="left">
-				<div class="lrc-text-input-area">
-					<textarea id="J_lrcTextInput" class="kitjs-form-textbox" rows="3" cols="60"></textarea>
-					<button id="J_splitLrc_btn">切割</button>
-				</div></td>
-				<td class="right">
-				<div id="lrc-create-area">
-					<button id="J_insrow">
-						插入
-					</button>
+				<td class="resource"><video id="J_video" src="1.m4v" width="600" height="400" controls></video></td>
+				<td class="creater">
+				<div class="lrc-area">
+					<!--<button id="J_insrow">
+					插入
+					</button>-->
 					<ol id="lrc-list">
-						<!--<li>
-						<span class="begin-time"><input class="kitjs-form-textbox" type="text" value="1:1.1"></span>
-						<span class="end-time"><input class="kitjs-form-textbox" type="text" value="1:33.1"></span>
-						<div class="content">
-						<textarea class="kitjs-form-textarea">这是一段文字哦</textarea>
-						</div>
-						</li>-->
+						<li>
+							<input class="begin-time" size="4" type="text" value="00:00.00">
+							<textarea cols="59" id="asdasd" class="subtitle">这是一段文字哦</textarea>
+							<div class="operate">
+								<button>删除</button>
+							</div>
+						</li>
+						<li>
+							<input class="begin-time" size="4" type="text" value="00:00.00">
+							<textarea cols="59" id="asdasd" class="subtitle">这是一段文字哦</textarea>
+							<div class="operate">
+								<button>删除</button>
+							</div>
+						</li>
+						<li>
+							<input class="begin-time" size="4" type="text" value="00:00.00">
+							<textarea cols="59" id="asdasd" class="subtitle">这是一段文字哦</textarea>
+							<div class="operate">
+								<button>删除</button>
+							</div>
+						</li>
+						<li>
+							<input class="begin-time" size="4" type="text" value="00:00.00">
+							<textarea cols="59" id="asdasd" class="subtitle">这是一段文字哦</textarea>
+							<div class="operate">
+								<button>删除</button>
+							</div>
+						</li>
 					</ol>
-				</div></td>
+					<div class="lrcTextEditArea">
+						<textarea id="J_lrcTextResourceInput" class="textarea_lrcTextResource" rows="3" cols="60"></textarea>
+						<div class="buttonArea">
+							<!--<button id="J_splitLrc_btn">
+							切割
+							</button>-->
+							<button id="J_editLrc_btn">
+								编辑
+							</button>
+							<button id="J_formatLrc_btn">
+								格式
+							</button>
+						</div>
+				</td>
 			</tr>
 		</table>
+		<input type="text" id="jjj">
 		<div id="lrc-source-text"></div>
 		<script>
 			var lrc = new Lrc({
 				resource : $kit.el("#J_video")
-			})
+			});
 			var lrcText = new $kit.ui.Form.TextArea({
-				el : $kit.el("#J_lrcTextInput"),
+				el : $kit.el("#J_lrcTextResourceInput"),
 				minRows : 3,
 				textIsEmptyFn : function() {
 					$kit.log("Current is empty!");
@@ -54,8 +84,11 @@
 					//current is not empty
 				}
 			})
-			
 
+			// var lrcText1 = new $kit.ui.Form.TextArea({
+			// el : $kit.el("#asdasd"),
+			// minRows : 3
+			// });
 		</script>
 	</body>
 </html>
