@@ -77,7 +77,7 @@ $Kit.prototype = {
 	 * boolean isObject
 	 */
 	isObj : function(o) {
-		return typeof (o) == "object";
+		return typeof (o) == "object" && o != null;
 	},
 	/**
 	 * boolean is function
@@ -222,7 +222,7 @@ $Kit.prototype = {
 		if(me.isEmpty(el)) {
 			return;
 		}
-		if(value == null) {
+		if(!me.isDefined(value)) {
 			if(me.isObj(attr)) {
 				for(var l in attr) {
 					el.setAttribute(l, attr[l]);
@@ -231,7 +231,11 @@ $Kit.prototype = {
 				return el.getAttribute(attr);
 			}
 		} else {
-			el.setAttribute(attr, value);
+			if(value == null) {
+				el.removeAttribute(attr);
+			} else {
+				el.setAttribute(attr, value);
+			}
 		}
 	},
 	/**

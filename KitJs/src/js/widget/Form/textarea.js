@@ -5,12 +5,14 @@ $kit.ui.Form.TextArea = function(config) {
 	});
 	var me = this;
 	var defaultConfig = {
+		el : undefined,
 		minRows : 1,
 		autoFixHeight : true,
 		textIsEmptyFn : undefined,
 		textNotEmptyFn : undefined,
 		blurFn : undefined,
-		focusFn : undefined
+		focusFn : undefined,
+		kitWidgetName : "kitTextArea"
 	}
 	me.config = $kit.join(defaultConfig, config);
 	var me = this;
@@ -19,6 +21,7 @@ $kit.ui.Form.TextArea = function(config) {
 $kit.merge($kit.ui.Form.TextArea.prototype, {
 	init : function() {
 		var me = this;
+		me.config.el[me.config.kitWidgetName] = me;
 		if(me.config.autoFixHeight) {
 			me.autoFixHeight();
 			me.config.el.style["overflow-y"] = "hidden";
@@ -82,6 +85,7 @@ $kit.merge($kit.ui.Form.TextArea.prototype, {
 		}
 	},
 	setValue : function(str) {
+		var me = this;
 		me.config.el.value = str;
 		if(me.config.autoFixHeight) {
 			me.fixHeight();
