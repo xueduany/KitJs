@@ -139,19 +139,19 @@ $Kit.prototype = {
 	 */
 	inAry : function(ary, o) {
 		var me = this, flag = false;
-		if(!me.isAry(arg)) {
+		if(!me.isAry(ary)) {
 			return;
 		}
 		for(var i = 0; i < ary.length; i++) {
 			if(me.isAry(o)) {
 				for(var j = 0; j < o.length; j++) {
-					if(a[i] == o[j]) {
+					if(ary[i] == o[j]) {
 						flag = true;
 						break;
 					}
 				}
 			} else {
-				if(a[i] == o) {
+				if(ary[i] == o) {
 					flag = true;
 					break;
 				}
@@ -193,8 +193,20 @@ $Kit.prototype = {
 	/**
 	 * els by name
 	 */
+	el8name : function(name, root) {
+		var a = (root || document).getElementsByName(name);
+		return (a != null && a.length ) ? a[0] : a;
+	},
+	el8nm : function(name, root) {
+		var me = this;
+		return me.el8name(name, root);
+	},
 	els8name : function(name, root) {
 		return (root || document).getElementsByName(name);
+	},
+	els8nm : function(name, root) {
+		var me = this;
+		return me.els8name(name, root);
 	},
 	/**
 	 * elect interface
@@ -209,6 +221,8 @@ $Kit.prototype = {
 			return me.el8id(selector.substring(1), root);
 		} else if(selector.indexOf(".") == 0) {
 			return me.els8cls(selector.substring(1), root);
+		} else if(selector.indexOf("@") == 0) {
+			return me.els8name(selector.substring(1), root);
 		} else {
 			return me.els8tag(selector, root);
 		}
@@ -599,7 +613,10 @@ $Kit.prototype = {
 				}
 			}
 		} else if(me.isStr(config.el)) {
-			var _el = me.el8id(config.el);
+			var _el = me.el(config.el);
+			if(me.isEmpty(_el)) {
+				_el = me.el("#" + config.el);
+			}
 			if(!me.isEmpty(_el)) {
 				me.ev(me.join(config, {
 					el : _el
@@ -699,6 +716,9 @@ $Kit.prototype = {
 			}
 		} else if(me.isStr(config.el)) {
 			var _el = me.el8id(config.el);
+			if(me.isEmpty(_el)) {
+				_el = me.el("#" + config.el);
+			}
 			if(!me.isEmpty(_el)) {
 				me.delEv(me.join(config, {
 					el : _el

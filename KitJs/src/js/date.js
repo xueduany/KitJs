@@ -11,8 +11,22 @@ $Kit.Date.prototype = {
 	parseTime : function(timeStr) {
 		var me = this;
 		var a = timeStr.split(":");
-		var hours = parseFloat(a[0]), minutes = parseFloat(a[1]), seconds = parseFloat(a[2]);
+		var hours, minutes, seconds;
+		if (a.length == 3) {
+			hours = parseFloat(a[0]);
+			minutes = parseFloat(a[1]);
+			seconds = parseFloat(a[2]);
+		} else if (a.length == 2) {
+			hours = 0;
+			minutes = parseFloat(a[0]);
+			seconds = parseFloat(a[1]);
+		} else {
+			hours = 0;
+			minutes = 0;
+			seconds = parseFloat(a[0]);
+		}
 		var time = hours * 60 * 60 + minutes * 60 + seconds;
+		time = Math.round(time);
 		return time;
 	},
 	/**

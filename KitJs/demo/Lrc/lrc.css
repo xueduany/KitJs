@@ -10,6 +10,31 @@ li {
 	padding: 0;
 	margin: 0;
 }
+
+#header,
+#bodycontent,
+#footer {
+	width: 980px;
+	margin: 0 auto;
+}
+#bodycontent table.subtitle-panel td.left {
+	width: 150px;
+	text-align: center;
+	vertical-align: top;
+}
+#bodycontent table.subtitle-panel td.right {
+	text-align: left;
+}
+#bodycontent table.subtitle-panel td.right textarea {
+	display: block;
+}
+.label-Ihavesub {
+	display: block;
+}
+.subtitle-uploadbox {
+	display: none;
+}
+
 .lrc-create {
 	margin: 0 auto;
 }
@@ -21,6 +46,11 @@ li {
 }
 .lrc-create td.creater {
 	width: 370px;
+}
+#lrc-list {
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 300px;
 }
 #lrc-list li {
 	border: 1px solid transparent;
@@ -131,8 +161,7 @@ li {
 .lrc-area {
 	height: 400px;
 	width: 370px;
-	overflow-y: auto;
-	overflow-x: hidden;
+	position: relative;
 }
 .textarea_lrcTextResource {
 	border: 1px solid transparent;
@@ -152,4 +181,8 @@ li {
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
+}
+
+.control-params {
+	display: none;
 }

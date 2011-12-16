@@ -56,7 +56,8 @@ Lrc = function(config) {
 		nowPlaying : false,
 		nowPaused : false,
 		nowEnded : false,
-		clsSubTitleContainer : "J_lrcArea"
+		clsSubTitleContainer : "J_lrcArea",
+		lrcSourceFile : null
 	}
 	var me = this;
 	me.config = $kit.join(defaultConfig, config);
@@ -69,6 +70,32 @@ Lrc.prototype = {
 	init : function() {
 		var me = this;
 		var resource = me.config.resource;
+		/**
+		 * 解析Lrc
+		 */
+		if(me.config.lrcSourceFile != null) {
+			var lrcText = me.config.lrcSourceFile.value;
+			var subTitles = lrcText.split("\n");
+			for(var i = 0; i < subTitles.length; i++) {
+				var subtitle = subTitles[i];
+				subtitle = subtitle.trim();
+				rightBracketPos = subtitle.indexOf("]");
+				leftBracketPos = subtitle.indexOf("[");
+				var timeStr = "";
+				if(leftBracketPos == 0 && rightBracketPos > leftBracketPos) {
+					timeStr = subtitle.substring(leftBracketPos + 1, rightBracketPos - leftBracketPos);
+				}
+				if(/^(\d+:){0,2}\d{1,2}(\.\d{0,2}){0,1}$/.test(timeStr)) {
+					me.insertLrcRow({
+						lrcText : subtitle.substring(rightBracketPos + 1),
+						lrcTimeStr : $kit.date.formatTime($kit.date.parseTime(timeStr))
+					});
+					me.timeNow();
+				} else {
+					me.config.lrcTextResource.value += "\n" + subtitle;
+				}
+			}
+		}
 		/**
 		 * 参数设置
 		 */
@@ -88,7 +115,7 @@ Lrc.prototype = {
 			el : me.config.lrcTextResource,
 			ev : "dblclick",
 			fn : function(ev, evCfg) {
-				var el = ev.target;
+				var el = ev.target, me = this;
 				if($kit.hasCls(el, "textarea_lrcTextResourceEditAble")) {
 					return;
 				}
@@ -110,14 +137,21 @@ Lrc.prototype = {
 				 where : el,
 				 what : '<div class="cutted_lrc">' + text + '</div>'
 				 })*/
-
-				lrc.insertLrcRow({
-					lrcText : text
-				})
+				var currentTime = me.config.currentTime == 0 ? 0 : me.config.currentTime + me.config.timeError;
+				var currentTimeStr = $kit.date.formatTime(currentTime);
+				if(me.config.formattedCurrentTimeStr == 0 || me.config.formattedCurrentTimeStr == "0") {
+					me.config.formattedCurrentTimeStr = $kit.date.formatTime(me.config.formattedCurrentTimeStr);
+				}
+				me.insertLrcRow({
+					lrcText : text,
+					lrcTimeStr : currentTimeStr
+				});
+				me.timeNow();
 				el.kitTextArea.setValue(el.value.substr(endPos));
 				el.blur();
 				ev.stopDefault();
-			}
+			},
+			scope : me
 		});
 		/**
 		 * 只有当字幕来源处于可编辑状态时候，才能被编辑
@@ -236,7 +270,16 @@ Lrc.prototype = {
 			ev : "dblclick",
 			fn : function(ev, evCfg) {
 				var me = this;
-				var createdLi = me.insertLrcRow();
+				var currentTime = me.config.currentTime == 0 ? 0 : me.config.currentTime + me.config.timeError;
+				var currentTimeStr = $kit.date.formatTime(currentTime);
+				if(me.config.formattedCurrentTimeStr == 0 || me.config.formattedCurrentTimeStr == "0") {
+					me.config.formattedCurrentTimeStr = $kit.date.formatTime(me.config.formattedCurrentTimeStr);
+				}
+				var createdLi = me.insertLrcRow({
+					lrcText : "",
+					lrcTimeStr : currentTimeStr
+				});
+				me.timeNow();
 				me.elLrcTextFromLi(createdLi).focus();
 			},
 			scope : me
@@ -264,13 +307,22 @@ Lrc.prototype = {
 			$kit.adCls(operate, me.config.clsOperateModifyTime);
 		}
 		//
-		if(me.config.nowPlaying) {
+		if(me.config.nowPlaying || 1 == 1) {
 			var currentPlayingLi = $kit.el8cls(me.config.clsCurrentTimePoint, me.config.lrcList);
-			var container = $kit.el8cls(me.config.clsSubTitleContainer);
+			var container = me.config.lrcList;
+			// console.log(currentPlayingLi.offsetTop);
+			// console.log(container.offsetHeight + "            " + container.scrollTop);
+			var doFlag = false;
 			if(container.offsetHeight + container.scrollTop < currentPlayingLi.offsetTop) {
-				currentPlayingLi.scrollIntoView();
+				doFlag = true;
 			} else if(container.offsetHeight + container.scrollTop > currentPlayingLi.offsetTop + currentPlayingLi.offsetHeight) {
-				currentPlayingLi.scrollIntoView();
+				doFlag = true;
+			}
+			if(doFlag) {
+				if(window.timeoutScrollSubtitleCurrentLi != currentPlayingLi) {
+					window.timeoutScrollSubtitleCurrentLi = currentPlayingLi;
+					me.scrollSubtitle(currentPlayingLi);
+				}
 			}
 		}
 	},
@@ -333,14 +385,18 @@ Lrc.prototype = {
 	 */
 	insertLrcRow : function(subTitle) {
 		var subTitle = subTitle || {
-			lrcText : ""
+			lrcText : "",
+			lrcTimeStr : $kit.date.formatTime(me.config.currentTime == 0 ? 0 : me.config.currentTime + me.config.timeError)
 		};
 		var me = this;
-		var currentTime = me.config.currentTime == 0 ? 0 : me.config.currentTime + me.config.timeError;
-		var currentTimeStr = $kit.date.formatTime(currentTime);
-		if(me.config.formattedCurrentTimeStr == 0 || me.config.formattedCurrentTimeStr == "0") {
-			me.config.formattedCurrentTimeStr = $kit.date.formatTime(me.config.formattedCurrentTimeStr);
-		}
+		/*
+		 var currentTime = me.config.currentTime == 0 ? 0 : me.config.currentTime + me.config.timeError;
+		 var currentTimeStr = $kit.date.formatTime(currentTime);
+		 if(me.config.formattedCurrentTimeStr == 0 || me.config.formattedCurrentTimeStr == "0") {
+		 me.config.formattedCurrentTimeStr = $kit.date.formatTime(me.config.formattedCurrentTimeStr);
+		 }*/
+		var currentTime = $kit.date.parseTime(subTitle.lrcTimeStr);
+		var currentTimeStr = subTitle.lrcTimeStr;
 		var idLi = "";
 		if(!me.config.timeLine.hs(currentTimeStr)) {
 			idLi = $kit.onlyId();
@@ -378,7 +434,6 @@ Lrc.prototype = {
 			var lrcTextarea = $kit.el8tag("textarea", $kit.el8id(me.config.timeLine.get(me.config.currentKeyInTimeLine).rowDomId));
 			lrcTextarea.kitTextArea.setValue(lrcTextarea.value + subTitle.lrcText);
 		}
-		me.timeNow();
 		if(!$kit.isEmpty(idLi)) {
 			return $kit.el8id(idLi);
 		}
@@ -727,5 +782,81 @@ Lrc.prototype = {
 		me.config.timeLine.rm(time);
 		$kit.rmEl(lastLi);
 		me.config.resource.currentTime = $kit.date.parseTime(time);
+	},
+	scrollSubtitle : function(li) {
+		var me = this;
+		var container = me.config.lrcList;
+		/*if(li.offsetTop >= container.scrollTop && li.offsetTop <= container.scrollTop + container.scrollHeight) {
+
+		 } else {*/
+		$kit.anim.motion({
+			timeSeg : 17,
+			duration : 500,
+			el : container,
+			from : {
+				scrollTop : container.scrollTop
+			},
+			to : {
+				scrollTop : li.offsetTop
+			},
+			fx : $kit.anim.Fx.swing,
+			then : function() {
+			},
+			timeout : window.timeoutScrollSubtitle
+		});
+		//}
 	}
+}
+
+$kit.$(function() {
+	if($kit.el("#J_Ihavesub")) {
+		$kit.ev({
+			el : "#J_Ihavesub",
+			ev : "click",
+			fn : function(ev, evCfg) {
+				if(this.checked) {
+					$kit.el("@content")[0].style.display = "none";
+					$kit.el("@subtitle")[0].style.display = "block";
+				} else {
+					$kit.el("@content")[0].style.display = "block";
+					$kit.el("@subtitle")[0].style.display = "none";
+				}
+			}
+		})
+		if($kit.el("#J_Ihavesub").checked) {
+			$kit.el("@content")[0].style.display = "none";
+			$kit.el("@subtitle")[0].style.display = "block";
+		} else {
+			$kit.el("@content")[0].style.display = "block";
+			$kit.el("@subtitle")[0].style.display = "none";
+		}
+	}
+	if($kit.el("#J_lrcTextResourceInput")) {
+		var lrc = new Lrc({
+			resource : $kit.el("#J_video"),
+			lrcSourceFile : $kit.el8id("J_LrcSourceFile")
+		});
+		window.lrc = lrc;
+		var lrcText = new $kit.ui.Form.TextArea({
+			el : $kit.el("#J_lrcTextResourceInput"),
+			minRows : 3,
+			textIsEmptyFn : function() {
+				$kit.log("Current is empty!");
+			},
+			textNotEmptyFn : function() {
+				//current is not empty
+			}
+		});
+	}
+});
+//
+function submitLrc() {
+	$kit.el8name("contentSourceText").value = $kit.el8cls("textarea_lrcTextResource").value;
+	var subtitleBeginTimeAry = $kit.els8cls("begin-time");
+	var subtitleTextAry = $kit.els8cls("subtitle");
+	for(var i = 0; i < subtitleBeginTimeAry.length; i++) {
+		$kit.el8name("subtitleText").value += "[" + subtitleBeginTimeAry[i].value + "] " + subtitleTextAry[i].value.replace(/\n+/g, "") + "\n";
+	}
+	document.forms[0].submit();
+
 }

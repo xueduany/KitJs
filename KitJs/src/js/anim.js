@@ -1,16 +1,14 @@
 /**
  * javascript animation 动画扩展
  */
-$kit.merge($Kit.prototype.CONSTANTS, {
-	KIT_EVENT_EXTRA : "KIT_EVENT_EXTRA",
-	CLOCKWISE_ROTATION : 1,
-	COUNTERCLOCKWISE_ROTATION : -1
-});
-$kit.merge($Kit.prototype, {
+$Kit.Animation = $Kit.Anim = function() {
+	//
+}
+$Kit.Anim.prototype = {
 	/**
 	 * 动画
 	 */
-	anim : function(config) {
+	motion : function(config) {
 		var me = this;
 		var defaultConfig = {
 			timeSeg : 17,
@@ -20,19 +18,28 @@ $kit.merge($Kit.prototype, {
 			to : undefined,
 			fx : undefined,
 			then : undefined,
-			scope : window
+			scope : window,
+			exceptStyleArray : ["scrollTop", "scrollLeft"],
+			timeout : undefined
 		};
-		me.mergeIf(config, defaultConfig);
-		if (!me.isEmpty(config.el)) {
+		$kit.mergeIf(config, defaultConfig);
+		if (!$kit.isEmpty(config.el)) {
 			config.hold = 0;
+			clearInterval(config.timeout);
 			config.timeout = setInterval(function() {
 				config.hold += config.timeSeg;
 				if (config.hold >= config.duration) {
 					for ( var p in config.to) {
-						config.el.style[p] = config.to[p];
+						if ($kit.inAry(config.exceptStyleArray, p)) {
+							config.el[p] = config.to[p];
+						} else {
+							config.el.style[p] = config.to[p];
+						}
 					}
 					clearInterval(config.timeout);
-					config.then.call(config.scope, config);
+					if ($kit.isFn(config.then)) {
+						config.then.call(config.scope, config);
+					}
 				} else {
 					for ( var p in config.to) {
 						var sty = me.identifyCssValue(config.from[p]), sty1 = me.identifyCssValue(config.to[p]), reSty = "";
@@ -44,7 +51,11 @@ $kit.merge($Kit.prototype, {
 							o.value = me.fx(config.fx)(config.hold, (sty == null ? 0 : sty[i].value), (sty == null ? sty1[i].value : (sty1[i].value - sty[i].value)), config.duration)
 							reSty += o.prefix + o.value + o.unit + o.postfix;
 						}
-						config.el.style[p] = reSty;
+						if ($kit.inAry(config.exceptStyleArray, p)) {
+							config.el[p] = reSty;
+						} else {
+							config.el.style[p] = reSty;
+						}
 					}
 				}
 			}, config.timeSeg);
@@ -258,15 +269,12 @@ $kit.merge($Kit.prototype, {
 	 */
 	fx : function(type) {
 		var me = this;
-		if (me.isStr(type) && me.has(me.Fx, type)) {
+		if ($kit.isStr(type) && $kit.has(me.Fx, type)) {
 			return me.Fx[type];
-		} else if (me.isFn(type)) {
+		} else if ($kit.isFn(type)) {
 			return type;
 		}
 		return me.Fx.swing;
 	}
-});
-$_kit = $kit;
-$kit = new $Kit();
-$kit.mergeIf($kit, $_kit);
-$_kit = null;
+}
+$kit.anim = new $Kit.Anim();
