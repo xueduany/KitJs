@@ -14,6 +14,7 @@ $Kit.Anim.prototype = {
 			timeSeg : 17,
 			duration : 1000,
 			el : undefined,
+			elSplitRegExp : /\s+/,
 			from : undefined,
 			to : undefined,
 			fx : undefined,
@@ -25,24 +26,72 @@ $Kit.Anim.prototype = {
 		$kit.mergeIf(config, defaultConfig);
 		if (!$kit.isEmpty(config.el)) {
 			config.hold = 0;
-			clearInterval(config.timeout);
+			var f1 = false, timeoutStr;
+			if ($kit.isStr(config.timeout)) {
+				timeoutStr = config.timeout;
+				clearInterval(window[config.timeout]);
+				f1 = true;
+			} else {
+				clearInterval(config.timeout);
+			}
+			// 重置初始样式
+			for ( var p in config.from) {
+				var elArray = [];
+				if ($kit.isStr(config.el)) {
+					elArray = config.el.split(config.elSplitRegExp);
+				} else if ($kit.isAry(config.el)) {
+					elArray = config.el;
+				} else {
+					elArray = [config.el];
+				}
+				for ( var k = 0; k < elArray.length; k++) {
+					var el = $kit.el(elArray[k]);
+					if ($kit.isNode(el)) {
+						if ($kit.inAry(config.exceptStyleArray, p)) {
+							el[p] = config.from[p];
+						} else {
+							el.style[p] = config.from[p];
+						}
+					}
+				}
+			}
 			config.timeout = setInterval(function() {
 				config.hold += config.timeSeg;
 				if (config.hold >= config.duration) {
 					for ( var p in config.to) {
-						if ($kit.inAry(config.exceptStyleArray, p)) {
-							config.el[p] = config.to[p];
+						var elArray = [];
+						if ($kit.isStr(config.el)) {
+							elArray = config.el.split(config.elSplitRegExp);
+						} else if ($kit.isAry(config.el)) {
+							elArray = config.el;
 						} else {
-							config.el.style[p] = config.to[p];
+							elArray = [config.el];
+						}
+						for ( var k = 0; k < elArray.length; k++) {
+							var el = $kit.el(elArray[k]);
+							if ($kit.isNode(el)) {
+								if ($kit.inAry(config.exceptStyleArray, p)) {
+									el[p] = config.to[p];
+								} else {
+									el.style[p] = config.to[p];
+								}
+							}
 						}
 					}
 					clearInterval(config.timeout);
+					config.timeout = null;
 					if ($kit.isFn(config.then)) {
 						config.then.call(config.scope, config);
 					}
 				} else {
 					for ( var p in config.to) {
+						if (!(p in config.from)) {
+							return;
+						}
 						var sty = me.identifyCssValue(config.from[p]), sty1 = me.identifyCssValue(config.to[p]), reSty = "";
+						if (sty == null || sty1 == null) {
+							continue;
+						}
 						for ( var i = 0; i < sty1.length; i++) {
 							if (i > 0) {
 								reSty += " ";
@@ -51,14 +100,35 @@ $Kit.Anim.prototype = {
 							o.value = me.fx(config.fx)(config.hold, (sty == null ? 0 : sty[i].value), (sty == null ? sty1[i].value : (sty1[i].value - sty[i].value)), config.duration)
 							reSty += o.prefix + o.value + o.unit + o.postfix;
 						}
-						if ($kit.inAry(config.exceptStyleArray, p)) {
-							config.el[p] = reSty;
+						var elArray = [];
+						if ($kit.isStr(config.el)) {
+							elArray = config.el.split(config.elSplitRegExp);
+						} else if ($kit.isAry(config.el)) {
+							elArray = config.el;
 						} else {
-							config.el.style[p] = reSty;
+							elArray = [config.el];
 						}
+						for ( var k = 0; k < elArray.length; k++) {
+							var el = $kit.el(elArray[k]);
+							if ($kit.isNode(el)) {
+								if ($kit.inAry(config.exceptStyleArray, p)) {
+									el[p] = reSty;
+								} else {
+									el.style[p] = reSty;
+								}
+							}
+						}
+						// if ($kit.inAry(config.exceptStyleArray, p)) {
+						// config.el[p] = reSty;
+						// } else {
+						// config.el.style[p] = reSty;
+						// }
 					}
 				}
 			}, config.timeSeg);
+			if (f1) {
+				window[timeoutStr] = config.timeout
+			}
 			return config;
 		}
 	},
@@ -69,11 +139,11 @@ $Kit.Anim.prototype = {
 		var me = this;
 		if (typeof (cssStr) != "undefined") {
 			cssStr = cssStr.toString();
-			var a1 = cssStr.match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z]*)([a-z\)]*)/ig);
+			var a1 = cssStr.match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/ig);
 			if (a1 != null) {
 				var reSty = [];
 				for ( var i = 0; i < a1.length; i++) {
-					var a = a1[i].match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z]*)([a-z\)]*)/i);
+					var a = a1[i].match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/i);
 					var sty = {
 						style : a[0],
 						prefix : a[1],
@@ -245,7 +315,7 @@ $Kit.Anim.prototype = {
 			return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
 		},
 		easeInBounce : function(t, b, c, d) {
-			return c - $.easing.easeOutBounce(d - t, 0, c, d) + b;
+			return c - $kit.anim.Fx.easeOutBounce(d - t, 0, c, d) + b;
 		},
 		easeOutBounce : function(t, b, c, d) {
 			if ((t /= d) < (1 / 2.75)) {
@@ -260,8 +330,8 @@ $Kit.Anim.prototype = {
 		},
 		easeInOutBounce : function(t, b, c, d) {
 			if (t < d / 2)
-				return $.easing.easeInBounce(t * 2, 0, c, d) * .5 + b;
-			return $.easing.easeOutBounce(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+				return $kit.anim.Fx.easeInBounce(t * 2, 0, c, d) * .5 + b;
+			return $kit.anim.Fx.easeOutBounce(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
 		}
 	},
 	/**

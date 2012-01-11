@@ -22,10 +22,21 @@ $Kit = function(config) {
 	 * dom ready
 	 */
 	me.$ = function(fn) {
-		me.ev({
-			ev : "load",
-			fn : fn
-		});
+		if(me.isIE() && IEContentLoaded) {
+			IEContentLoaded(window, function() {
+				me.ev({
+					ev : 'DOMContentLoaded',
+					fn : fn,
+					scope : document
+				});
+			});
+		} else {
+			me.ev({
+				ev : 'DOMContentLoaded',
+				fn : fn,
+				scope : document
+			});
+		}
 	}
 }
 $Kit.prototype = {
@@ -65,6 +76,21 @@ $Kit.prototype = {
 	},
 	// -----------------------------------is something-----------------------------------
 	/**
+	 * 是否ie...
+	 */
+	isIE : function(o) {
+		if(document.all) {
+			return true;
+		}
+		return false;
+	},
+	isChrome : function(o) {
+		return /Chrome/.test(navigator.userAgent);
+	},
+	isFirefox : function(o) {
+
+	},
+	/**
 	 * boolean isString
 	 */
 	isDefined : function(o) {
@@ -91,7 +117,16 @@ $Kit.prototype = {
 	 */
 	isAry : function(o) {
 		var me = this;
-		return me.isDefined(o) && o != null && (o.constructor.name == "Array" || o.constructor.name == "NodeList");
+		return me.isDefined(o) && o != null && ((o.constructor.name && o.constructor.name == "Array") || me.isNodeList(o));
+	},
+	/**
+	 * 是否html元素
+	 */
+	isNodeList : function(o) {
+		return (o.toString() == '[object NodeList]') || (o.toString() == '[object HTMLCollection]' && typeof (o) == 'object' && 'length' in o && o.__proto__.item);
+	},
+	isNode : function(o) {
+		return o.nodeType && ((o.constructor.name && o.constructor.name.indexOf('Element') > -1) || (o.toString().indexOf('Element') > 1));
 	},
 	/**
 	 * is string can be split into a array which elements total > 2
@@ -215,6 +250,8 @@ $Kit.prototype = {
 		var me = this;
 		if(me.isEmpty(selector)) {
 			return;
+		} else if(me.isNode(selector) || me.isNodeList(selector)) {
+			return selector;
 		}
 		var selector = selector.toString().trim();
 		if(selector.indexOf("#") == 0) {
@@ -224,7 +261,17 @@ $Kit.prototype = {
 		} else if(selector.indexOf("@") == 0) {
 			return me.els8name(selector.substring(1), root);
 		} else {
-			return me.els8tag(selector, root);
+			if(selector.indexOf(".") > 0 && selector.indexOf(".") < selector.length) {
+				var a = me.els8cls(selector.substring(selector.indexOf(".") + 1));
+				for(var i = 0; !me.isEmpty(a) && i < a.length; i++) {
+					if(a[i].tagName && a[i].tagName.toLowerCase() == selector.split(".")[0].toLowerCase()) {
+						return a[i];
+					}
+				}
+				return null;
+			} else {
+				return me.els8tag(selector, root);
+			}
 		}
 	},
 	// -----------------------------------dom manipulate-----------------------------------
@@ -341,7 +388,13 @@ $Kit.prototype = {
 		if(me.isEmpty(element)) {
 			return;
 		}
-		element.parentNode.removeChild(element, true);
+		if(me.isNodeList(element)) {
+			for(var i = 0; i < element.length; i++) {
+				me.rmEl(element[i]);
+			}
+		} else {
+			element.parentNode.removeChild(element, true);
+		}
 	},
 	/**
 	 * add className
@@ -385,12 +438,13 @@ $Kit.prototype = {
 			el.className = b.join(" ");
 		} else {
 			el.className = "";
+			me.attr(el, 'class', null);
 		}
 	},
 	/**
 	 * has class true?
 	 */
-	hasCls : function(el, cls) {
+	hsCls : function(el, cls) {
 		var me = this, flag = false;
 		if(me.isEmpty(el)) {
 			return;
@@ -405,6 +459,17 @@ $Kit.prototype = {
 			}
 		}
 		return flag;
+	},
+	/**
+	 * 切换css，有则删，无则加
+	 */
+	toggleCls : function(el, cls) {
+		var me = this;
+		if(me.hsCls(el, cls)) {
+			me.rmCls(el, cls);
+		} else {
+			me.adCls(el, cls);
+		}
 	},
 	/**
 	 * Dom traversal
@@ -549,7 +614,7 @@ $Kit.prototype = {
 		var box = document.createElement("div");
 		box.innerHTML = html;
 		var o = document.createDocumentFragment();
-		while(box.childNods.length) {
+		while(box.childNodes && box.childNodes.length) {
 			o.appendChild(box.childNodes[0]);
 		}
 		box = null;
@@ -667,12 +732,13 @@ $Kit.prototype = {
 					}, me.evExtra(EV));
 					var target = config.el;
 					var evQueue = target[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
+					var returnValue;
 					for(var i = 0; i < evQueue.length; i++) {
 						if(window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION]) {
 							break;
 						}
 						var _evConfig = evQueue[i];
-						_evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
+						returnValue = _evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
 					}
 					window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
 					/*
@@ -680,10 +746,19 @@ $Kit.prototype = {
 					 alert(e);
 					 throw e;
 					 };*/
-
+					return returnValue;
 				});
 				config.el.addEventListener(config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev], false);
 				evRegEv[config.ev].push(config);
+			} else {
+				if(!me.isEmpty(config.el) && !me.isEmpty(config.ev) && me.isEmpty(config.fn)) {
+					if(window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
+						return;
+					}
+					var evt = document.createEvent('Event');
+					evt.initEvent(config.ev, true, true);
+					config.el.dispatchEvent(evt);
+				}
 			}
 		}
 	},
@@ -976,9 +1051,9 @@ $Kit.prototype = {
 	// },
 	each : function(ary, fn, scope) {
 		var me = this;
-		if(!me.isEmpty(fn) && me.isAry(ary)) {
+		if(me.isFn(fn) && me.isAry(ary)) {
 			for(var i = 0; i < ary.length; i++) {
-				fn.call(scope || window, ary[i], i, a);
+				fn.call(scope || window, ary[i], i, ary);
 			}
 		}
 	},

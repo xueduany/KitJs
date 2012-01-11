@@ -46,6 +46,7 @@ $kit.merge($kit.ui.Form.TimeInput.prototype, {
 				_t += 1;
 			}
 			timeInput.value = $kit.date.formatTime(_t);
+			ev.stopDefault();
 		} else if(ev.keyCode == $kit.event.KEYCODE_DOWN || ev.keyCode == $kit.event.KEYCODE_SUB) {
 			var _t = $kit.date.parseTime(timeInput.value);
 			if(ev.ctrlKey) {
@@ -59,6 +60,7 @@ $kit.merge($kit.ui.Form.TimeInput.prototype, {
 				_t = 0;
 			}
 			timeInput.value = $kit.date.formatTime(_t);
+			ev.stopDefault();
 		}
 	},
 	evInputComplete : function(ev, evCfg) {
