@@ -1,5 +1,5 @@
 .kitjs-form-fieldset {
-	border: 1px solid #ddd;
+	border: 1px solid #ccc;
 	border-radius: 0.5em;
 	background: none;
 	-webkit-transition: all 300ms ease-in 0;
@@ -11,7 +11,7 @@
 	box-shadow: 0 0 10px #aaa;
 }
 .kitjs-form-fieldset legend {
-	color: #ddd;
+	color: #ccc;
 	background-color: #fff;
 	-webkit-transition: all 300ms ease-in 0;
 }

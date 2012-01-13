@@ -1,0 +1,27 @@
+body {
+	width: 980px;
+	margin: 0 auto;
+	font-family: "微软雅黑";
+	color: #7d7d7d;
+}
+h1, h2 {
+	text-align: center;
+}
+h1 {
+	color: #0092d3;
+}
+h2 {
+	color: #53bde8;
+}
+ul, li {
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	vertical-align: top;
+}
+a {
+	color: #7d7d7d;
+}
+a:hover {
+	color: #000;
+}

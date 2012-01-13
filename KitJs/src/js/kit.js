@@ -289,7 +289,10 @@ $Kit.prototype = {
 					el.setAttribute(l, attr[l]);
 				}
 			} else {
-				return el.getAttribute(attr);
+				if(el.hasAttribute(attr)) {
+					return el.getAttribute(attr);
+				}
+				return undefined;
 			}
 		} else {
 			if(value == null) {
