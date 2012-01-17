@@ -56,13 +56,12 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		var innerTabContainerBox = document.createElement('div');
 		me.tabPanelTab.appendChild(innerTabContainerBox);
 		innerTabContainerBox.className = "tabpanel-tabList";
-		var tabTotalWidth = 0, maxMoveLeft = 0;
+		var tabTotalWidth = 0;
 		var first = true;
 		for(var i = 0; i < tabPages.length; ) {
 			if($kit.contains(me.tabPanelBody, tabPages[i])) {
 				i++;
 			} else {
-				me.tabPanelBody.appendChild(tabPages[i]);
 				if(!first) {
 					tabPages[i].style.display = 'none';
 				} else {
@@ -95,13 +94,13 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 				if($kit.isEmpty(o.id)) {
 					o.id = $kit.onlyId();
 				}
-				$kit.attr(_tab, "data-tabpageid", o.id)
-				//o.style.display = "none";
-				tabTotalWidth = tabTotalWidth < _tab.offsetWidth + _tab.offsetLeft ? _tab.offsetWidth + _tab.offsetLeft : tabTotalWidth;
+				$kit.attr(_tab, "data-tabpageid", o.id);
+				tabTotalWidth = tabTotalWidth > _tab.offsetLeft + _tab.offsetWidth ? tabTotalWidth : _tab.offsetLeft + _tab.offsetWidth;
+				//
+				me.tabPanelBody.appendChild(tabPages[i]);
 			}
 		}
 		me.innerTabContainerBox = innerTabContainerBox;
-		maxMoveLeft = me.tabPanelTab.offsetWidth - tabTotalWidth;
 		//
 		me.flag_move = false;
 		me.flag_mouseover = false;
@@ -131,6 +130,9 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 				if(ev.type == 'mouseover' && $kit.contains(me.tabPanelTab, ev.relatedTarget) && $kit.contains(me.tabPanelTab, ev.target)) {
 					return;
 				}
+				if(ev.type == 'touchstart' || ev.type == 'touchend') {
+					ev.stopDefault();
+				}
 				me['flag_' + ev.type] = true;
 				switch (ev.type) {
 					case 'mouseover':
@@ -147,6 +149,9 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 					case 'mouseup':
 						me.flag_mousedown = false;
 						break;
+					case 'touchend':
+						me.flag_touchstart = false;
+						break;
 				}
 				if((me.flag_mousedown && me.flag_mouseover) || me.flag_touchstart) {
 					me.flag_tabMove = true;
@@ -159,7 +164,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 					clearTimeout(me.clearMovies);
 					me.innerTabContainerBox.style["-webkit-transition"] = null;
 				} else if(me.flag_mouseup || me.flag_mouseout || me.flag_touchend) {
-					if(me.flag_tabMove) {
+					if(me.flag_tabMove && me.flag_tabHasMove == true) {
 						me.flag_tabMove = false;
 						me.lastTimeStamp = null;
 						me.lastPageX = null;
@@ -177,14 +182,16 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 								fx : $kit.anim.Fx.easeOutQuart,
 								then : function() {
 									//
-
 								},
 								timeout : '_timeout_motion_tabpanel_' + me.kitId
 							});
 						} else if(me.tabPanelTab.offsetWidth - me.moveLeft > tabTotalWidth) {
-							//var moveLeft = me.tabPanelTab.offsetWidth - tabTotalWidth;
-							//me.innerTabContainerBox.style["-webkit-transform"] = "translateX(" + moveLeft + "px)";
-							//me.innerTabContainerBox.style["-webkit-transition"] = "all " + holdTime + "ms ease-out 0";
+							var moveLeft = 0;
+							if(tabTotalWidth > me.tabPanelTab.offsetWidth) {
+								moveLeft = me.tabPanelTab.offsetWidth - tabTotalWidth;
+							} else {
+								moveLeft = 0;
+							}
 							$kit.anim.motion({
 								duration : holdTime,
 								el : me.innerTabContainerBox,
@@ -192,7 +199,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 									'-webkit-transform' : me.innerTabContainerBox.style["-webkit-transform"]
 								},
 								to : {
-									'-webkit-transform' : 'translateX(' + maxMoveLeft + 'px)'
+									'-webkit-transform' : 'translateX(' + moveLeft + 'px)'
 								},
 								fx : $kit.anim.Fx.easeOutQuart,
 								then : function() {
@@ -201,7 +208,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 								},
 								timeout : '_timeout_motion_tabpanel_' + me.kitId
 							});
-						} else if(me.flag_tabHasMove == true) {
+						} else {
 							if(!$kit.isEmpty(me.config.accelerationValve) && Math.abs(me.acceleration) > me.config.accelerationValve[0].acceleration) {
 								var ary = me.config.accelerationValve, a = Math.abs(me.acceleration), times = 0;
 								for(var i = 0; i < ary.length; i++) {
@@ -212,12 +219,9 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 								var moveLeft = me.moveLeft + me.acceleration * times * me.keepTime;
 								if(moveLeft > 0) {
 									moveLeft = 0;
-								} else if(moveLeft < maxMoveLeft) {
-									moveLeft = maxMoveLeft;
+								} else if(moveLeft < me.tabPanelTab.offsetWidth - tabTotalWidth) {
+									moveLeft = me.tabPanelTab.offsetWidth - tabTotalWidth;
 								}
-								//moveLeft = Math.ceil(moveLeft);
-								//me.innerTabContainerBox.style["-webkit-transform"] = "translateX(" + moveLeft + "px" + ")";
-								//me.innerTabContainerBox.style["-webkit-transition"] = "all " + holdTime + "ms ease-out 0";
 								$kit.anim.motion({
 									duration : holdTime,
 									el : me.innerTabContainerBox,
@@ -237,7 +241,25 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 							}
 						}
 					}
+					if(me.flag_tabHasMove == false && (ev.type == "mouseup" || ev.type == "touchend")) {
+						var el = ev.target;
+						var me = this;
+						if(!$kit.hsCls(el, 'tab') && el.parentNode && $kit.hsCls(el.parentNode, 'tab')) {
+							el = el.parentNode;
+						}
+						if($kit.hsCls(el, 'tab') && me.flag_tabHasMove == false) {
+							var a = $kit.el("." + tabPanel.config.tabPageCls);
+							for(var i = 0; i < a.length; i++) {
+								a[i].style.display = "none";
+							}
+							$kit.el("#" + $kit.attr(el, "data-tabpageid")).style.display = "block";
+							var selectedTab = $kit.el8cls(me.config.selectedTabCls, me.tabPanel);
+							$kit.rmCls(selectedTab, me.config.selectedTabCls);
+							$kit.adCls(el, me.config.selectedTabCls);
+						}
+					}
 					me.flag_tabMove = false;
+					me.flag_tabHasMove = false
 				}
 			},
 			scope : me
@@ -248,12 +270,14 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 			fn : me.moveTab,
 			scope : me
 		});
-		$kit.ev({
-			el : me.tabPanelTab,
-			ev : "click",
-			fn : me.tabClick,
-			scope : me
-		});
+
+		// $kit.ev({
+		// el : me.tabPanelTab,
+		// ev : "click",
+		// fn : me.tabClick,
+		// scope : me
+		// });
+
 		$kit.ev({
 			el : me.tabPanelTab,
 			ev : "select selectstart",
@@ -280,7 +304,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 	},
 	moveTab : function(ev, evConfig) {
 		var me = this;
-		if(me.flag_tabMove = true && ev.which == 1) {
+		if(me.flag_tabMove = true && (me.flag_mousedown || me.flag_touchstart) && ((ev.which == 1 && ev.type == "mousemove") || ev.type == "touchmove")) {
 			if(!$kit.isEmpty(me.lastTimeStamp)) {
 				//unit ms
 				var keepTime = ev.timeStamp - me.lastTimeStamp;
@@ -304,4 +328,8 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 			ev.stopDefault();
 		}
 	},
+	setTabPanelStyle : function(css) {
+		var me = this;
+		$kit.css(me.tabPanel, css);
+	}
 });

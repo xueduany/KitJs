@@ -315,7 +315,7 @@ $Kit.prototype = {
 	css : function(el, attr, value) {
 		var me = this;
 		if(me.isEmpty(el)) {
-
+			return;
 		}
 		if(value == null) {
 			if(me.isObj(attr)) {
@@ -653,6 +653,35 @@ $Kit.prototype = {
 			left : left,
 			width : width,
 			height : height
+		}
+	},
+	/**
+	 * 获取可视区域信息
+	 */
+	viewport : function() {
+		var cWidth, cHeight, sWidth, sHeight, sLeft, sTop;
+		if(document.compatMode == "BackCompat") {
+			cWidth = document.body.clientWidth;
+			cHeight = document.body.clientHeight;
+			sWidth = document.body.scrollWidth;
+			sHeight = document.body.scrollHeight;
+			sLeft = document.body.scrollLeft;
+			sTop = document.body.scrollTop;
+		} else {//document.compatMode == "CSS1Compat"
+			cWidth = document.documentElement.clientWidth;
+			cHeight = document.documentElement.clientHeight;
+			sWidth = document.documentElement.scrollWidth;
+			sHeight = document.documentElement.scrollHeight;
+			sLeft = document.documentElement.scrollLeft == 0 ? document.body.scrollLeft : document.documentElement.scrollLeft;
+			sTop = document.documentElement.scrollTop == 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+		}
+		return {
+			clientWidth : cWidth,
+			clientHeight : cHeight,
+			scrollWidth : sWidth,
+			scrollHeight : sHeight,
+			scrollLeft : sLeft,
+			scrollTop : sTop
 		}
 	},
 	// -----------------------------------event-----------------------------------
