@@ -1,6 +1,7 @@
 body {
 	margin: 0;
 	padding: 0;
+	font-family: "微软雅黑";
 }
 
 .kitjs-tabpanel {
@@ -16,12 +17,23 @@ body {
 .tabpanel_tab_container {
 	margin: 0;
 	padding: 0;
-	height: 30px;
+	height: 85px;
 	width: 100%;
 	position: relative;
-	border-bottom: 3px solid #145072;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#383a45), to(#212229));
 }
 
+.tabpanel_tab_container:before {
+	height: 17px;
+	width: 100%;
+	content: ' ';
+	display: block;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#a1a3a7),to(#fefefe),color-stop(30%,#e7e7e7));
+	position: absolute;
+	top: 80px;
+	left: 0;
+	z-index: -1;
+}
 .tabpanel-tabList {
 	width: 9999px;
 	display: block;
@@ -31,22 +43,52 @@ body {
 	overflow: hidden;
 	position: absolute;
 	display: block;
+	height: 100%
+}
+.tabpanel-tabList:before {
+	content: ' ';
+	display: block;
+	position: absolute;
+	height: 1px;
+	font-size: 0;
+	line-height: 0;
+	top: 74px;
+	left: 0;
+	width: 100%;
+	border-top:2px solid #0c1018;
 }
 
 .tabpanel-tabList .tab {
 	float: left;
 	display: block;
-	height: 100%;
-	border-bottom: 0px;
-	background-color: #ccc;
-	border-radius: 10px 10px 0 0;
-	margin-left: 10px;
-	padding: 5px 20px;
+	height: 65px;
+	line-height: 60px;
+	margin-top: 10px;
+	padding: 0px 46px;
+	padding-bottom: 0;
 	cursor: pointer;
-	border-radius: 10px 10px 0 0;
-	cursor: pointer;
-	height: 100%;
-	color: #000;
+	border-radius: 5px 5px 0 0;
+	border: 2px solid transparent;
+	border-bottom: 0;
+	color: #d2d2d5;
+	position: relative;
+	font-size: 22px;
+	text-shadow: -1px -1px 2px #000;
+}
+
+.tabpanel-tabList .tab:last-child:before {
+	display: none;
+}
+.tabpanel-tabList .tab:before {
+	content: ' ';
+	width: 0.5px;
+	height: 28px;
+	background-color: #3e3f46;
+	border-left: 2px solid #080808;
+	border-right: 1px solid #47474f;
+	position: absolute;
+	right: -6px;
+	top: 16px;
 }
 
 .tabpanl_body_container {
@@ -55,7 +97,27 @@ body {
 }
 
 .tabpanel-tabList .selected-tab {
-	background-color: #145072 !important;
+	background-color: #5073b8 !important;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#5c7cbe), to(#496db3));
 	border-color: #000;
 	color: #fff !important;
+	background-color: #ccc;
+	color: #000;
+	position: relative;
+	z-index: 1;
+}
+.tabpanel-tabList .selected-tab:before {
+	display: none;
+}
+.tabpanel-tabList .selected-tab:after {
+	position: absolute;
+	bottom: -5px;
+	z-index: 0;
+	left: -999px;
+	width: 9999px;
+	content: ' ';
+	height: 5px;
+	display: block;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#496db3), to(#4365a6));
+	border-bottom: 0.5px solid #243457; 
 }
