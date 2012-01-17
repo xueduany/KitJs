@@ -1,0 +1,62 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.kitjs-tabpanel {
+	margin: 10px;
+	height: 600px;
+	width: 600px;
+	display: block;
+	clear: both;
+	overflow: hidden;
+	display: block;
+	position: relative;
+}
+
+.tabpanel_tab_container {
+	margin: 0;
+	padding: 0;
+	height: 30px;
+	width: 100%;
+	position: relative;
+	border-bottom: 3px solid #145072;
+}
+
+.tabpanel-tabList {
+	width: 9999px;
+	display: block;
+	left: 0;
+	top: 0;
+	height: 100%;
+	overflow: hidden;
+	position: absolute;
+	display: block;
+}
+
+.tabpanel-tabList .tab {
+	float: left;
+	display: block;
+	height: 100%;
+	border-bottom: 0px;
+	background-color: #ccc;
+	border-radius: 10px 10px 0 0;
+	margin-left: 10px;
+	padding: 7px 60px;
+	cursor: pointer;
+	border-radius: 10px 10px 0 0;
+	cursor: pointer;
+	height: 100%;
+	color: #000;
+}
+
+.tabpanl_body_container {
+	border: 1px solid #000;
+	border-top: 0;
+}
+
+.tabpanel-tabList .selected-tab {
+	background-color: #145072 !important;
+	border-color: #000;
+	color: #fff !important;
+}

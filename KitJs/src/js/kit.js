@@ -276,6 +276,13 @@ $Kit.prototype = {
 	},
 	// -----------------------------------dom manipulate-----------------------------------
 	/**
+	 * 比较element位置
+	 * 如果a包含b返回true，否则返回false
+	 */
+	contains : function(a, b) {
+		return a.contains ? a != b && a.contains(b) : !!(a.compareDocumentPosition(arg) & 16);
+	},
+	/**
 	 * get/set attr
 	 */
 	attr : function(el, attr, value) {
