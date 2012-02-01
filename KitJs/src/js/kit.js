@@ -99,6 +99,9 @@ $Kit.prototype = {
 	isStr : function(o) {
 		return typeof (o) == "string";
 	},
+	isNum : function(o) {
+		return isFinite(o)
+	},
 	/**
 	 * boolean isObject
 	 */
@@ -123,7 +126,7 @@ $Kit.prototype = {
 	 * 是否html元素
 	 */
 	isNodeList : function(o) {
-		return (o.toString() == '[object NodeList]') || (o.toString() == '[object HTMLCollection]' && typeof (o) == 'object' && 'length' in o && o.__proto__.item);
+		return o.toString() == '[object NodeList]' || o.toString() == '[object HTMLCollection]';
 	},
 	isNode : function(o) {
 		return o.nodeType && ((o.constructor.name && o.constructor.name.indexOf('Element') > -1) || (o.toString().indexOf('Element') > 1));
@@ -879,6 +882,21 @@ $Kit.prototype = {
 				delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT];
 				delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION];
 			}
+		}
+	},
+	newEv : function(config) {
+		var me = this, defaultConfig = {
+			el : window,
+			type : 'Events',
+			ev : null,
+			bubbles : false,
+			cancelable : false
+		}
+		config = me.join(defaultConfig, config);
+		if(!$kit.isEmpty(config.ev)) {
+			var e = document.createEvent(config.type);
+			e.initEvent(config.ev, config.bubbles, config.cancelable);
+			config.el.dispatchEvent(e);
 		}
 	},
 	/**

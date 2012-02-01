@@ -115,6 +115,25 @@ $Kit.Array.prototype = {
 					return ary.sort(me.SORT_DESC);
 			}
 		}
+	},
+	/**
+	 * 通过比较方法取得值
+	 */
+	get : function(ary, validateFn, scope) {
+		var scope = scope || window;
+		for ( var i = 0; i < ary.length; i++) {
+			if (validateFn.call(scope, ary[i], i, ary) == true) {
+				return ary[i];
+			}
+		}
+	},
+	getTextBeginWith : function(ary, beginWithText) {
+		var me = this;
+		return me.get(ary, function(o) {
+			if (o.indexOf(beginWithText) == 0) {
+				return true;
+			}
+		});
 	}
 };
 $kit.ary = $kit.array = new $Kit.Array();

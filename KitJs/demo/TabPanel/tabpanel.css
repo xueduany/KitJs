@@ -2,11 +2,14 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: "微软雅黑";
+	width: 100%;
+}
+
+a.backhome {
+	margin-left: 20px;
 }
 
 .kitjs-tabpanel {
-	height: 600px;
-	width: 600px;
 	display: block;
 	clear: both;
 	overflow: hidden;
@@ -17,33 +20,35 @@ body {
 .tabpanel_tab_container {
 	margin: 0;
 	padding: 0;
-	height: 85px;
+	height: 42px;
 	width: 100%;
 	position: relative;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#383a45), to(#212229));
 }
-
+/* 下边框外阴影 */
 .tabpanel_tab_container:before {
-	height: 17px;
+	height: 8px;
 	width: 100%;
 	content: ' ';
 	display: block;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#a1a3a7),to(#fefefe),color-stop(30%,#e7e7e7));
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#000000),to(#fefefe),color-stop(20%, #a1a3a7), color-stop(35%,#e7e7e7));
+	background-color: red;
 	position: absolute;
-	top: 80px;
+	bottom: -8px;
 	left: 0;
 	z-index: -1;
 }
+/* tab列表 */
 .tabpanel-tabList {
 	width: 9999px;
 	display: block;
 	left: 0;
 	top: 0;
 	height: 100%;
-	overflow: hidden;
 	position: absolute;
 	display: block;
-	height: 100%
+	height: 100%;
+	margin: 0 20px;
 }
 .tabpanel-tabList:before {
 	content: ' ';
@@ -52,54 +57,64 @@ body {
 	height: 1px;
 	font-size: 0;
 	line-height: 0;
-	top: 74px;
+	top: 38px;
 	left: 0;
 	width: 100%;
 	border-top:2px solid #0c1018;
 }
+/* .tabpanel-tabList .left-arrow,
+.tabpanel-tabList .right-arrow {
+	display: block;
+	width: 20px;
+	height: 100%;
+	float: left;
+} */
 
 .tabpanel-tabList .tab {
 	float: left;
 	display: block;
-	height: 65px;
-	line-height: 60px;
-	margin-top: 10px;
-	padding: 0px 46px;
+	height: 34px;
+	line-height: 34px;
+	margin-top: 5px;
+	padding: 0px 23px;
 	padding-bottom: 0;
 	cursor: pointer;
 	border-radius: 5px 5px 0 0;
-	border: 2px solid transparent;
+	border: 0px solid transparent;
 	border-bottom: 0;
 	color: #d2d2d5;
 	position: relative;
-	font-size: 22px;
-	text-shadow: -1px -1px 2px #000;
+	font-size: 14px;
+	text-shadow: 0px -1px 1px #000;
 }
 
+/* 分隔符 */
 .tabpanel-tabList .tab:last-child:before {
 	display: none;
 }
 .tabpanel-tabList .tab:before {
 	content: ' ';
-	width: 0.5px;
-	height: 28px;
+	width: 0px;
+	height: 14px;
 	background-color: #3e3f46;
 	border-left: 2px solid #080808;
 	border-right: 1px solid #47474f;
 	position: absolute;
 	right: -6px;
-	top: 16px;
+	top: 10px;
 }
 
 .tabpanl_body_container {
-	border: 1px solid #000;
-	border-top: 0;
+}
+.tab-move-animation {
+	
 }
 
 .tabpanel-tabList .selected-tab {
 	background-color: #5073b8 !important;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#5c7cbe), to(#496db3));
 	border-color: #000;
+	border-bottom: 0;
 	color: #fff !important;
 	background-color: #ccc;
 	color: #000;
@@ -109,15 +124,19 @@ body {
 .tabpanel-tabList .selected-tab:before {
 	display: none;
 }
+/* 选中边框下蓝条 */
 .tabpanel-tabList .selected-tab:after {
 	position: absolute;
-	bottom: -5px;
+	bottom: -4px;
 	z-index: 0;
 	left: -999px;
 	width: 9999px;
 	content: ' ';
-	height: 5px;
+	height: 4px;
 	display: block;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#496db3), to(#4365a6));
-	border-bottom: 0.5px solid #243457; 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#496db3), to(#243457), color-stop(70%,#4365a6));
+}
+
+.tabpanl_body_container .expHead {
+	display: none;
 }

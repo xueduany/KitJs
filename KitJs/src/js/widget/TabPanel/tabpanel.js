@@ -14,6 +14,8 @@ $kit.ui.TabPanel = function(config) {
 		tabPageCls : "J_tabpage",
 		tabContainerCls : "tabpanel_tab_container",
 		bodyContainerCls : "tabpanl_body_container",
+		innerTabContainerBoxCls : "tabpanel-tabList",
+		attr_tabpageid : 'data-tabpageid',
 		tabCls : "tab",
 		tabTitle : "标签",
 		selectedTabCls : 'selected-tab',
@@ -26,8 +28,7 @@ $kit.ui.TabPanel = function(config) {
 		}, {
 			acceleration : 4,
 			times : 25
-		}],
-
+		}]
 	}
 	var me = this;
 	me.config = $kit.join(defaultConfig, config);
@@ -40,7 +41,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		if(!$kit.isEmpty($kit.el8cls(me.config.tabPanelCls))//
 		&& !$kit.isEmpty($kit.el8cls(me.config.tabContainerCls, $kit.el8cls(me.config.tabPanelCls)))//
 		&& !$kit.isEmpty($kit.el8cls(me.config.bodyContainerCls, $kit.el8cls(me.config.tabPanelCls)))) {
-			//已经有类似的结构
+			// 已经有类似的结构
 		} else {
 			var html = $kit.tpl(me.config.what, me.config);
 			$kit.insEl({
@@ -52,55 +53,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		me.tabPanel = $kit.el8cls(me.config.tabPanelCls);
 		me.tabPanelTab = $kit.el8cls(me.config.tabContainerCls, me.tabPanel);
 		me.tabPanelBody = $kit.el8cls(me.config.bodyContainerCls, me.tabPanel);
-		var tabPages = $kit.els8cls(me.config.tabPageCls);
-		var innerTabContainerBox = document.createElement('div');
-		me.tabPanelTab.appendChild(innerTabContainerBox);
-		innerTabContainerBox.className = "tabpanel-tabList";
-		var tabTotalWidth = 0;
-		var first = true;
-		for(var i = 0; i < tabPages.length; ) {
-			if($kit.contains(me.tabPanelBody, tabPages[i])) {
-				i++;
-			} else {
-				if(!first) {
-					tabPages[i].style.display = 'none';
-				} else {
-					//tabPages[i].style.display = 'none';
-					first = false;
-				}
-				//
-				var _tab = document.createElement("div"), o = tabPages[i];
-				innerTabContainerBox.appendChild(_tab);
-				if(first) {
-					$kit.adCls(_tab, me.config.selectedTabCls);
-				} else {
-					first = false;
-				}
-				_tab.className = me.config.tabCls;
-				_tab.innerHTML = me.config.tabTitle;
-				//
-				var tabConfig = $kit.attr(o, "config");
-				if(tabConfig != undefined) {
-					eval("tabConfig=" + tabConfig);
-					$kit.css(_tab, tabConfig.css);
-					if(tabConfig.selected == true) {
-						$kit.adCls(_tab, me.config.selectedTabCls);
-					}
-					if(tabConfig.title) {
-						_tab.innerHTML = tabConfig.title;
-					}
-				}
-				//
-				if($kit.isEmpty(o.id)) {
-					o.id = $kit.onlyId();
-				}
-				$kit.attr(_tab, "data-tabpageid", o.id);
-				tabTotalWidth = tabTotalWidth > _tab.offsetLeft + _tab.offsetWidth ? tabTotalWidth : _tab.offsetLeft + _tab.offsetWidth;
-				//
-				me.tabPanelBody.appendChild(tabPages[i]);
-			}
-		}
-		me.innerTabContainerBox = innerTabContainerBox;
+		me.createTab();
 		//
 		me.flag_move = false;
 		me.flag_mouseover = false;
@@ -109,6 +62,11 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		me.flag_mouseup = false;
 		me.flag_tabHasMove == false
 		//
+		me.triggleEvent();
+	},
+	triggleEvent : function() {
+		var me = this;
+		me.timeSeg = 25;
 		$kit.ev({
 			el : document.body,
 			ev : "mouseup",
@@ -117,17 +75,24 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 				me.flag_mousedown = false;
 			},
 			scope : me
-		})
+		});
+		// $kit.ev({
+		// el : me.innerTabContainerBox,
+		// ev : 'webkitTransitionEnd',
+		// fn : function() {
+		// this.style.removeProperty('-webkit-transition');
+		// }
+		// });
 		$kit.ev({
 			el : me.tabPanelTab,
 			ev : "mousedown mouseover touchstart mouseup mouseout touchend",
 			fn : function(ev, evCfg) {
 				var me = this;
-				//去掉不必要的mouseover和mouoseout事件
-				if(ev.type == 'mouseout' && $kit.contains(me.tabPanelTab, ev.relatedTarget)) {
+				// 去掉不必要的mouseover和mouoseout事件
+				if((ev.type == 'mouseout' || ev.type == 'touchstart') && $kit.contains(me.tabPanelTab, ev.relatedTarget)) {
 					return;
 				}
-				if(ev.type == 'mouseover' && $kit.contains(me.tabPanelTab, ev.relatedTarget) && $kit.contains(me.tabPanelTab, ev.target)) {
+				if((ev.type == 'mouseover' || ev.type == 'touchstart') && $kit.contains(me.tabPanelTab, ev.relatedTarget) && $kit.contains(me.tabPanelTab, ev.target)) {
 					return;
 				}
 				if(ev.type == 'touchstart' || ev.type == 'touchend') {
@@ -135,21 +100,21 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 				}
 				me['flag_' + ev.type] = true;
 				switch (ev.type) {
-					case 'mouseover':
+					case 'mouseover' :
 						me.flag_mouseout = false;
 						me.flag_mousedown = false;
 						break;
-					case 'mouseout':
+					case 'mouseout' :
 						me.flag_mouseover = false;
 						me.flag_mousedown = false;
 						break;
-					case 'mousedown':
+					case 'mousedown' :
 						me.flag_mouseup = false;
 						break;
-					case 'mouseup':
+					case 'mouseup' :
 						me.flag_mousedown = false;
 						break;
-					case 'touchend':
+					case 'touchend' :
 						me.flag_touchstart = false;
 						break;
 				}
@@ -161,8 +126,6 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 					me.acceleration = 0;
 					me.moveLeft = 0;
 					me.keepTime = 0;
-					clearTimeout(me.clearMovies);
-					me.innerTabContainerBox.style["-webkit-transition"] = null;
 				} else if(me.flag_mouseup || me.flag_mouseout || me.flag_touchend) {
 					if(me.flag_tabMove && me.flag_tabHasMove == true) {
 						me.flag_tabMove = false;
@@ -171,6 +134,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 						var holdTime = 500;
 						if(me.moveLeft > 0) {
 							$kit.anim.motion({
+								timeSeg : me.timeSeg,
 								duration : holdTime,
 								el : me.innerTabContainerBox,
 								from : {
@@ -185,15 +149,18 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 								},
 								timeout : '_timeout_motion_tabpanel_' + me.kitId
 							});
-						} else if(me.tabPanelTab.offsetWidth - me.moveLeft > tabTotalWidth) {
+							// me.innerTabContainerBox.style['-webkit-transition'] = '-webkit-transform 500ms ease-in 0ms';
+							// me.innerTabContainerBox.style['-webkit-transform'] = 'translateX(0px)';
+						} else if(me.tabPanelTab.offsetWidth - me.moveLeft > me.tabTotalWidth) {
 							var moveLeft = 0;
-							if(tabTotalWidth > me.tabPanelTab.offsetWidth) {
-								moveLeft = me.tabPanelTab.offsetWidth - tabTotalWidth;
+							if(me.tabTotalWidth > me.tabPanelTab.offsetWidth) {
+								moveLeft = me.tabPanelTab.offsetWidth - me.tabTotalWidth;
 							} else {
 								moveLeft = 0;
 							}
 							$kit.anim.motion({
 								duration : holdTime,
+								timeSeg : me.timeSeg,
 								el : me.innerTabContainerBox,
 								from : {
 									'-webkit-transform' : me.innerTabContainerBox.style["-webkit-transform"]
@@ -208,6 +175,8 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 								},
 								timeout : '_timeout_motion_tabpanel_' + me.kitId
 							});
+							// me.innerTabContainerBox.style['-webkit-transition'] = '-webkit-transform 500ms ease-in 0ms';
+							// me.innerTabContainerBox.style['-webkit-transform'] = 'translateX(' + moveLeft + 'px)';
 						} else {
 							if(!$kit.isEmpty(me.config.accelerationValve) && Math.abs(me.acceleration) > me.config.accelerationValve[0].acceleration) {
 								var ary = me.config.accelerationValve, a = Math.abs(me.acceleration), times = 0;
@@ -219,11 +188,12 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 								var moveLeft = me.moveLeft + me.acceleration * times * me.keepTime;
 								if(moveLeft > 0) {
 									moveLeft = 0;
-								} else if(moveLeft < me.tabPanelTab.offsetWidth - tabTotalWidth) {
-									moveLeft = me.tabPanelTab.offsetWidth - tabTotalWidth;
+								} else if(moveLeft < me.tabPanelTab.offsetWidth - me.tabTotalWidth) {
+									moveLeft = me.tabPanelTab.offsetWidth - me.tabTotalWidth;
 								}
 								$kit.anim.motion({
 									duration : holdTime,
+									timeSeg : me.timeSeg,
 									el : me.innerTabContainerBox,
 									from : {
 										'-webkit-transform' : me.innerTabContainerBox.style["-webkit-transform"]
@@ -238,24 +208,21 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 									},
 									timeout : '_timeout_motion_tabpanel_' + me.kitId
 								});
+
+								// me.innerTabContainerBox.style['-webkit-transition'] = '-webkit-transform 500ms ease-in 0ms';
+								// me.innerTabContainerBox.style['-webkit-transform'] = 'translateX(' + moveLeft + 'px)';
+
 							}
 						}
 					}
 					if(me.flag_tabHasMove == false && (ev.type == "mouseup" || ev.type == "touchend")) {
 						var el = ev.target;
 						var me = this;
-						if(!$kit.hsCls(el, 'tab') && el.parentNode && $kit.hsCls(el.parentNode, 'tab')) {
+						if(!$kit.hsCls(el, me.config.tabCls) && el.parentNode && $kit.hsCls(el.parentNode, me.config.tabCls)) {
 							el = el.parentNode;
 						}
-						if($kit.hsCls(el, 'tab') && me.flag_tabHasMove == false) {
-							var a = $kit.el("." + tabPanel.config.tabPageCls);
-							for(var i = 0; i < a.length; i++) {
-								a[i].style.display = "none";
-							}
-							$kit.el("#" + $kit.attr(el, "data-tabpageid")).style.display = "block";
-							var selectedTab = $kit.el8cls(me.config.selectedTabCls, me.tabPanel);
-							$kit.rmCls(selectedTab, me.config.selectedTabCls);
-							$kit.adCls(el, me.config.selectedTabCls);
+						if($kit.hsCls(el, me.config.tabCls) && me.flag_tabHasMove == false) {
+							me.switchTab(el);
 						}
 					}
 					me.flag_tabMove = false;
@@ -270,7 +237,6 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 			fn : me.moveTab,
 			scope : me
 		});
-
 		// $kit.ev({
 		// el : me.tabPanelTab,
 		// ev : "click",
@@ -288,33 +254,124 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 			scope : me
 		});
 	},
-	tabClick : function(ev, evConfig) {
-		var el = ev.target;
+	/**
+	 * 创建标签
+	 */
+	createTab : function() {
 		var me = this;
-		if($kit.hsCls(el, 'tab') && me.flag_tabHasMove == false) {
-			var a = $kit.el("." + tabPanel.config.tabPageCls);
-			for(var i = 0; i < a.length; i++) {
-				a[i].style.display = "none";
+		var tabTotalWidth = 0;
+		var tabPages = $kit.els8cls(me.config.tabPageCls);
+		if(tabPages.length == 0 && !$kit.isEmpty($kit.el8cls(me.config.innerTabContainerBoxCls, me.tabPanelTab))) {
+			$kit.each($kit.el8cls(me.config.innerTabContainerBoxCls, me.tabPanelTab).children, function(o) {
+				var id = $kit.attr(o, me.config.attr_tabpageid);
+				$kit.adCls($kit.el8id(id), me.config.tabPageCls);
+			});
+			me.innerTabContainerBox = $kit.el8cls(me.config.innerTabContainerBoxCls, me.tabPanelTab);
+			var lastChild = me.innerTabContainerBox.children[me.innerTabContainerBox.children.length - 1];
+			tabTotalWidth = lastChild.offsetLeft + lastChild.offsetWidth;
+		} else {
+			if($kit.isEmpty($kit.el8cls(me.config.innerTabContainerBoxCls, me.tabPanelTab))) {
+				var innerTabContainerBox = document.createElement('div');
+				me.tabPanelTab.appendChild(innerTabContainerBox);
+				innerTabContainerBox.className = me.config.innerTabContainerBoxCls;
+				var first = true;
+				// var flag_leftArrow = false, flag_rightArrow = false, lastOne;
+				for(var i = 0; i < tabPages.length; ) {
+					if($kit.contains(me.tabPanelBody, tabPages[i])) {
+						i++;
+					} else {
+						if(!first) {
+							tabPages[i].style.display = 'none';
+						} else {
+							// tabPages[i].style.display = 'none';
+							first = false;
+						}
+						//
+						var _tab = document.createElement("div"), o = tabPages[i];
+						innerTabContainerBox.appendChild(_tab);
+						if(first) {
+							$kit.adCls(_tab, me.config.selectedTabCls);
+						} else {
+							first = false;
+						}
+						_tab.className = me.config.tabCls;
+						_tab.innerHTML = me.config.tabTitle;
+						// lastOne = _tab;
+						//
+						var tabConfig = $kit.attr(o, "config");
+						if(tabConfig != undefined) {
+							eval("tabConfig=" + tabConfig);
+							$kit.css(_tab, tabConfig.css);
+							if(tabConfig.selected == true) {
+								$kit.adCls(_tab, me.config.selectedTabCls);
+							}
+							if(tabConfig.title) {
+								_tab.innerHTML = tabConfig.title;
+							}
+						}
+						//
+						if($kit.isEmpty(o.id)) {
+							o.id = $kit.onlyId();
+						}
+						$kit.attr(_tab, me.config.attr_tabpageid, o.id);
+						tabTotalWidth = tabTotalWidth > _tab.offsetLeft + _tab.offsetWidth ? tabTotalWidth : _tab.offsetLeft + _tab.offsetWidth;
+						//
+						me.tabPanelBody.appendChild(tabPages[i]);
+					}
+					/*
+					 if(!flag_leftArrow) {//&& tabTotalWidth > me.tabPanelTab.offsetWidth) {
+					 $kit.insEl({
+					 pos : 'first',
+					 where : innerTabContainerBox,
+					 what : '<div class="left-arrow"></div>'
+					 })
+					 flag_leftArrow = true;
+					 }
+					 if(!flag_rightArrow && i == tabPages.length - 1 && !$kit.isEmpty(lastOne)) {//&& tabTotalWidth > me.tabPanelTab.offsetWidth  ) {
+					 $kit.insEl({
+					 pos : 'last',
+					 where : innerTabContainerBox,
+					 what : '<div class="right-arrow"></div>'
+					 })
+					 flag_rightArrow = true;
+					 var lastChild = innerTabContainerBox.children[innerTabContainerBox.children.length - 1];
+					 tabTotalWidth += lastChild.offsetWidth;
+					 }*/
+
+				}
+				me.innerTabContainerBox = innerTabContainerBox;
 			}
-			$kit.el("#" + $kit.attr(el, "data-tabpageid")).style.display = "block";
-			var selectedTab = $kit.el8cls(me.config.selectedTabCls, me.tabPanel);
-			$kit.rmCls(selectedTab, me.config.selectedTabCls);
-			$kit.adCls(el, me.config.selectedTabCls);
 		}
+		me.tabTotalWidth = tabTotalWidth;
+		me.tabTotalWidth += parseFloat($kit.css(me.innerTabContainerBox, 'marginLeft')) + parseFloat($kit.css(me.innerTabContainerBox, 'marginRight'));
 	},
+	/*tabClick : function(ev, evConfig) {
+	 var el = ev.target;
+	 var me = this;
+	 if($kit.hsCls(el, me.config.tabCls) && me.flag_tabHasMove == false) {
+	 var a = $kit.el("." + tabPanel.config.tabPageCls);
+	 for(var i = 0; i < a.length; i++) {
+	 a[i].style.display = "none";
+	 }
+	 $kit.el("#" + $kit.attr(el, me.config.attr_tabpageid)).style.display = "block";
+	 var selectedTab = $kit.el8cls(me.config.selectedTabCls, me.tabPanel);
+	 $kit.rmCls(selectedTab, me.config.selectedTabCls);
+	 $kit.adCls(el, me.config.selectedTabCls);
+	 }
+	 },*/
 	moveTab : function(ev, evConfig) {
 		var me = this;
 		if(me.flag_tabMove = true && (me.flag_mousedown || me.flag_touchstart) && ((ev.which == 1 && ev.type == "mousemove") || ev.type == "touchmove")) {
 			if(!$kit.isEmpty(me.lastTimeStamp)) {
-				//unit ms
+				// unit ms
 				var keepTime = ev.timeStamp - me.lastTimeStamp;
-				//unit px
+				// unit px
 				var distance = ev.firstFingerPageX - me.lastPageX;
 				var acceleration = parseFloat(distance / keepTime);
 				var moveLeft = 0;
 				try {
 					moveLeft = parseFloat(me.innerTabContainerBox.style["-webkit-transform"].match(/translateX\((-{0,1}\d+)px\)/)[1]);
-				} catch(e) {
+				} catch (e) {
 
 				}
 				me.moveLeft = moveLeft = moveLeft + distance;
@@ -331,5 +388,73 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 	setTabPanelStyle : function(css) {
 		var me = this;
 		$kit.css(me.tabPanel, css);
+	},
+	/**
+	 * 切换tab
+	 */
+	switchTab : function(id) {
+		var me = this, el;
+		if($kit.isNum(id)) {
+			el = $kit.els8cls(me.config.tabCls, me.innerTabContainerBox)[id];
+		} else if($kit.isStr(id)) {
+			$kit.each(me.innerTabContainerBox.children, function(o) {
+				if($kit.attr(o, me.config.attr_tabpageid) == id) {
+					el = o;
+					return true;
+				}
+			});
+		} else if($kit.isNode(id) && $kit.hsCls(id, me.config.tabCls)) {
+			el = id;
+		}
+		if(!$kit.isEmpty(el)) {
+			var a = $kit.el("." + me.config.tabPageCls);
+			for(var i = 0; i < a.length; i++) {
+				a[i].style.display = "none";
+			}
+			var targetEl = $kit.el("#" + $kit.attr(el, me.config.attr_tabpageid));
+			$kit.newEv({
+				ev : 'beforeSwitchTab',
+				el : targetEl
+			});
+			targetEl.style.display = "block";
+			$kit.newEv({
+				ev : 'switchTab',
+				el : targetEl
+			});
+			var selectedTab = $kit.el8cls(me.config.selectedTabCls, me.tabPanel);
+			$kit.rmCls(selectedTab, me.config.selectedTabCls);
+			$kit.adCls(el, me.config.selectedTabCls);
+			//
+			var moveLeft = 0;
+			var d = me.innerTabContainerBox.style['-webkit-transform'].match(/translateX\((-{0,1}\d+)px\)/);
+			if(d != null && d.length > 1) {
+				moveLeft = parseFloat(d[1]);
+			}
+			var marginLeft = parseFloat($kit.css(me.innerTabContainerBox, 'marginLeft'));
+			var marginRight = parseFloat($kit.css(me.innerTabContainerBox, 'marginRight'));
+			if(el.offsetLeft + moveLeft + marginLeft < 0) {
+				me.innerTabContainerBox.style['-webkit-transform'] = 'translateX(-' + el.offsetLeft + 'px)';
+			} else if(el.offsetLeft + el.offsetWidth + moveLeft + marginLeft + marginRight > me.tabPanelTab.offsetWidth) {
+				var d = me.tabPanelTab.offsetWidth - el.offsetLeft - el.offsetWidth - marginLeft - marginRight;
+				me.innerTabContainerBox.style['-webkit-transform'] = 'translateX(' + d + 'px)';
+			}
+			$kit.newEv({
+				ev : 'afterSwitchTab',
+				el : targetEl
+			});
+		}
+	},
+	/**
+	 * 显示和不显示所有
+	 */
+	showAll : function(bool) {
+		var me = this;
+		var bool = true || bool;
+		$kit.each($kit.els8cls(me.config.tabPageCls, me.tabPanel.body), function(o, idx, ary) {
+			o.style.display = bool ? 'block' : 'none';
+		});
+	},
+	hideAll : function() {
+		this.showAll(false);
 	}
 });
