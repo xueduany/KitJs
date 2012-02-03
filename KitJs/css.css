@@ -25,3 +25,10 @@ a {
 a:hover {
 	color: #000;
 }
+.indent {
+	margin-left: 2em;
+}
+.footer {
+	text-align: right;
+	font-size: 12px;
+}
