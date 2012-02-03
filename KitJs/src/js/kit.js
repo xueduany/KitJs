@@ -601,8 +601,6 @@ $Kit.prototype = {
 		var parent = null;
 		if(el.parentNode != null && el.parentNode != el) {
 			parent = el.parentNode;
-		}
-		if(parent != null) {
 			var condition = condition || null, scope = scope || null;
 			if(me.isFn(condition)) {
 				if(condition.call(scope, parent, el) == true) {

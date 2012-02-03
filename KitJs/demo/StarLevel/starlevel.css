@@ -1,0 +1,17 @@
+.five-star-level-choose {
+	height: 22px;
+}
+.five-star-level-choose li {
+	float: left;
+	display: block;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	background-color: #000;
+	border: 1px solid #aaa; 
+	-webkit-transition: all 500ms ease-in 0ms;
+}
+.five-star-level-choose li:hover {
+	-webkit-transform: scale(2);
+	z-index: 999;
+}

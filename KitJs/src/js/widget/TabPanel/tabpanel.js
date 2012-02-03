@@ -13,12 +13,14 @@ $kit.ui.TabPanel = function(config) {
 		tabPanelCls : 'kitjs-tabpanel',
 		tabPageCls : "J_tabpage",
 		tabContainerCls : "tabpanel_tab_container",
-		bodyContainerCls : "tabpanl_body_container",
+		bodyContainerCls : "tabpanel_body_container",
 		innerTabContainerBoxCls : "tabpanel-tabList",
 		attr_tabpageid : 'data-tabpageid',
 		tabCls : "tab",
 		tabTitle : "标签",
 		selectedTabCls : 'selected-tab',
+		selectedTabPageCls : 'selected-tabPage',
+		hiddenCls : 'hidden',
 		accelerationValve : [{
 			acceleration : 1,
 			times : 8
@@ -281,9 +283,8 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 						i++;
 					} else {
 						if(!first) {
-							tabPages[i].style.display = 'none';
+							$kit.adCls(tabPages[i], me.config.hiddenCls);
 						} else {
-							// tabPages[i].style.display = 'none';
 							first = false;
 						}
 						//
@@ -362,6 +363,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 	moveTab : function(ev, evConfig) {
 		var me = this;
 		if(me.flag_tabMove = true && (me.flag_mousedown || me.flag_touchstart) && ((ev.which == 1 && ev.type == "mousemove") || ev.type == "touchmove")) {
+			clearInterval('_timeout_motion_tabpanel_' + me.kitId);
 			if(!$kit.isEmpty(me.lastTimeStamp)) {
 				// unit ms
 				var keepTime = ev.timeStamp - me.lastTimeStamp;
@@ -409,14 +411,18 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		if(!$kit.isEmpty(el)) {
 			var a = $kit.el("." + me.config.tabPageCls);
 			for(var i = 0; i < a.length; i++) {
-				a[i].style.display = "none";
+				$kit.adCls(a[i], me.config.hiddenCls);
 			}
 			var targetEl = $kit.el("#" + $kit.attr(el, me.config.attr_tabpageid));
 			$kit.newEv({
 				ev : 'beforeSwitchTab',
 				el : targetEl
 			});
-			targetEl.style.display = "block";
+			$kit.each($kit.els8cls(me.config.selectedTabPageCls, me.tabPanelBody), function(o) {
+				$kit.rmCls(o, me.config.selectedTabPageCls);
+			});
+			$kit.rmCls(targetEl, me.config.hiddenCls);
+			$kit.adCls(targetEl, me.config.selectedTabPageCls);
 			$kit.newEv({
 				ev : 'switchTab',
 				el : targetEl
@@ -451,7 +457,11 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		var me = this;
 		var bool = true || bool;
 		$kit.each($kit.els8cls(me.config.tabPageCls, me.tabPanel.body), function(o, idx, ary) {
-			o.style.display = bool ? 'block' : 'none';
+			if(bool) {
+				$kit.rmCls(o, me.config.hiddenCls);
+			} else {
+				$kit.adCls(o, me.config.hiddenCls);
+			}
 		});
 	},
 	hideAll : function() {

@@ -100,14 +100,8 @@ a.backhome {
 	border-left: 2px solid #080808;
 	border-right: 1px solid #47474f;
 	position: absolute;
-	right: -6px;
+	right: -2px;
 	top: 10px;
-}
-
-.tabpanl_body_container {
-}
-.tab-move-animation {
-	
 }
 
 .tabpanel-tabList .selected-tab {
@@ -138,5 +132,11 @@ a.backhome {
 }
 
 .tabpanl_body_container .expHead {
+	display: none;
+}
+.showExpHead .expHead {
+	display: block!important;
+}
+.hidden {
 	display: none;
 }
