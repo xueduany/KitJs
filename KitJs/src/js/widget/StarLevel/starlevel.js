@@ -98,6 +98,11 @@ $kit.merge($kit.ui.StarLevel.prototype, {
 								$kit.rmCls(me.starLevelContainer, me.config.starLevelMoveCls);
 							}
 							level = parseFloat(level);
+							while ($kit.els8cls(me.config.starLevelChosenCls, me.starLevelContainer).length) {
+								$kit.rmCls($kit.el8cls(me.config.starLevelChosenCls, me.starLevelContainer), me.config.starLevelChosenCls);
+							}
+							$kit.adCls(me.starLevelContainer, me.config.starLevelChosenContainerCls);
+							$kit.adCls(currentEl, me.config.starLevelChosenCls);
 							// for ( var i = 1; i <= level; i++) {
 							// $kit.adCls($kit.el8cls(me.config.starLevelValueClsPrefix + '-' + i, me.starLevelContainer), me.config.starLevelChosenCls);
 							// }
