@@ -362,6 +362,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 	 },*/
 	moveTab : function(ev, evConfig) {
 		var me = this;
+		//鼠标左键ev.which == 1
 		if(me.flag_tabMove = true && (me.flag_mousedown || me.flag_touchstart) && ((ev.which == 1 && ev.type == "mousemove") || ev.type == "touchmove")) {
 			clearInterval('_timeout_motion_tabpanel_' + me.kitId);
 			if(!$kit.isEmpty(me.lastTimeStamp)) {

@@ -21,17 +21,48 @@
 				<li class="starlevel-value-5 starlevel-box"></li>
 			</ul>
 			<a class="studyCatPicker" href="#" id="J_BtnCatePicker"></a>
-			<div class="tips" id="J_LevelChooseDefaultTips">
-				(点击可以设置生词本等级!)
-			</div>
 			<div class="tips" id="J_LevelChooseSuccessTips">
-				生词本保存成功!
+				星星保存成功！
 			</div>
 		</div>
 		<script>
 			(new $kit.ui.StarLevel({
 				where : $kit.el('.five-star-level')[0],
-				starLevelContainerCls : 'five-star-level-choose'
+				starLevelContainerCls : 'five-star-level-choose',
+				succesTipsFn : function(level) {
+					var tips = $kit.el8id('J_LevelChooseSuccessTips');
+					$kit.anim.motion({
+						duration : 1000,
+						el : tips,
+						from : {
+							opacity : 0,
+							display : 'block'
+						},
+						to : {
+							opacity : 1
+						},
+						fx : $kit.anim.Fx.easeInQuad,
+						then : function() {
+							setTimeout(function() {
+								$kit.anim.motion({
+									duration : 1000,
+									el : tips,
+									from : {
+										opacity : 1,
+										display : 'block'
+									},
+									to : {
+										opacity : 0,
+										display : 'none'
+									},
+									fx : $kit.anim.Fx.easeInQuad,
+									timeout : 'timeout_starlevel'
+								});
+							}, 500);
+						},
+						timeout : 'timeout_starlevel'
+					});
+				}
 			})).init();
 
 		</script>
