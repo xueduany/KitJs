@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/textarea.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="../../src/css/form.css" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/textarea.js"></script>
+		<!--autowired-->
+		<script src="../../src/js/widget/Form/autowired.textarea.js"></script>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>选择器</h1>
+		<h2>基本选择器</h2>
+		<ul>
+			<li>
+				<h3>按照dom id选取</h3>
+				<pre class="code">
+var el = $kit.el8id('id');//返回id为'id'的元素
+</pre>
+			</li>
+			<li>
+				<h3>按照dom className选取</h3>
+				<pre class="code">
+var el = $kit.el8cls('class');//返回class为'class'的第一个元素
+var elAry = $kit.els8cls('class');//返回class为'class'的元素集合
+</pre>
+			</li>
+			<li>
+				<h3>按照dom name选取</h3>
+				<pre class="code">
+var el = $kit.el8name('name');//返回name为'name'的第一个元素
+var elAry = $kit.els8name('name');//返回name为'name'的元素集合
+</pre>
+			</li>
+		</ul>
+		<h2>综合选择器</h2>
+		<ul>
+			<li>
+				<h3>支持基本的css选择器</h3>
+				<pre class="code">
+var el = $kit.el8id('id') = $kit.el('#id');//返回id为'id'的元素
+var elAry = $kit.els8class('class') = $kit.el('.class');//返回class为'class'的元素集合
+var elAry = $kit.el8name('name') = $kit.el('@name');//返回name为'name'的元素集合
+</pre>
+			</li>
+		</ul>
+		<h2>高级Css3选择器</h2>
+		<ul>
+			<li>
+				<h3><a target="_blank" href="https://github.com/jquery/sizzle/wiki/Sizzle-Home">Sizzle选择器文档</a></h3>
+				<pre class="code">
+/**
+ * 需要引用加载selector.js
+ */
+var el = $kit.el('ul li a[target="blank"]');
+</pre>
+			</li>
+		</ul>
+		<div class="example">
+			<pre>
+<div id="id1" class="class1">
+	<div id="id2" class="class2">
+		<input type="text" name="name1" value="123">
+	</div>
+	<div id="id3" class="class2">
+		<span><input type="radio" name="name2" value="1">是</span>
+		<span><input type="radio" name="name2" value="0">否</span>
+	</div>
+</div>
+</pre>
+			<div id="id1" class="class1">
+				<div id="id2" class="class2">
+					<input type="text" name="name1" value="123">
+				</div>
+				<div id="id3" class="class2">
+					<span><input type="radio" name="name2" value="1">是</span>
+					<span><input type="radio" name="name2" value="0">否</span>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

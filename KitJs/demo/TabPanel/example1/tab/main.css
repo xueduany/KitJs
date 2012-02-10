@@ -396,16 +396,33 @@ a.backhome {
 	float: left;
 	display: block;
 	height: 25px;
+	width: 25px;
 	line-height: 25px;
-	border-radius: 5px;
-	background-color: orange;
-	padding: 0px 23px;
+	border-radius: 25px;
 	cursor: pointer;
 	color: white;
 	position: relative;
 	margin-top: 9px;
 	font-size: 14px;
 	margin-right: 20px;
+	border: 1px inset #3d6599;
+	text-align: center;
+	text-indent: -999px;
+	background-image: -webkit-gradient(linear,0 0,0 100%, from(#647fa3), to(#396297));
+}
+.tabpanel-tabList .spc-btn:before {
+	position: absolute;
+	display: block;
+	width: 20px;
+	height: 20px;
+	top: 4px;
+	left: 4px;
+	font-size: 20px;
+	line-height: 20px;
+	color: #000;
+	content: '←';
+	z-index: 999;
+	background-color: #fff;
 }
 .tabpanel-tabList .spc-btn a {
 	color: #fff;

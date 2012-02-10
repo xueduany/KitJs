@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/string.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<style>
+			textarea {
+				min-width: 300px;
+				min-height: 100px;
+			}
+			#HTMLEncodeOutHTML, #HTMLDecodeOutHTML {
+				background-color: #eee;
+				min-height: 20px;
+				padding: 5px;
+				border-radius: 5px;
+			}
+			#HTMLEncodeOutBox {
+				background-color: #eaa;
+				min-height: 20px;
+				padding: 5px;
+				border-radius: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>HTML源代码与HTML代码互转</h1>
+		<ul>
+			<li>
+				<h3>HTMLEncode</h3>
+				<textarea id="HTMLEncodeIn">
+&lt;textarea&gt;asd&lt;/textarea&gt;
+</textarea>
+				<button id="HTMLEncodeBtn">
+					HTMLEncode
+				</button>
+				<textarea id="HTMLEncodeOut"></textarea>
+				<button id="HTMLEncodeOutHTMLBtn">
+					显示HTML输出
+				</button>
+				<pre id="HTMLEncodeOutHTML"></pre>
+			</li>
+			<li>
+				<h3>HTMLDecode</h3>
+				<textarea id="HTMLDecodeIn">
+&amp;lt;textarea&amp;gt;asd&amp;lt;/textarea&amp;gt;
+</textarea>
+				<button id="HTMLDecodeBtn">
+					HTMLDecode
+				</button>
+				<textarea id="HTMLDecodeOut"></textarea>
+				<button id="HTMLDecodeOutHTMLBtn">
+					显示HTML输出
+				</button>
+				<pre id="HTMLDecodeOutHTML"></pre>
+			</li>
+		</ul>
+		<script>
+			$kit.$(function() {
+				$kit.ev({
+					el : '#HTMLEncodeBtn',
+					ev : 'click',
+					fn : function(e, cfg) {
+						$kit.el('#HTMLEncodeOut').value = $kit.str.HTMLEncode($kit.el('#HTMLEncodeIn').value);
+					}
+				});
+				$kit.ev({
+					el : '#HTMLEncodeOutHTMLBtn',
+					ev : 'click',
+					fn : function(e, cfg) {
+						$kit.el('#HTMLEncodeOutHTML').innerHTML = $kit.el('#HTMLEncodeOut').value;
+					}
+				});
+				$kit.ev({
+					el : '#HTMLEncodeBtn',
+					ev : 'click'
+				});
+				$kit.ev({
+					el : '#HTMLEncodeOutHTMLBtn',
+					ev : 'click'
+				})
+			});
+
+			$kit.$(function() {
+				$kit.ev({
+					el : '#HTMLDecodeBtn',
+					ev : 'click',
+					fn : function(e, cfg) {
+						$kit.el('#HTMLDecodeOut').value = $kit.str.HTMLDecode($kit.el('#HTMLDecodeIn').value);
+					}
+				});
+				$kit.ev({
+					el : '#HTMLDecodeOutHTMLBtn',
+					ev : 'click',
+					fn : function(e, cfg) {
+						$kit.el('#HTMLDecodeOutHTML').innerHTML = $kit.el('#HTMLDecodeOut').value;
+					}
+				});
+				$kit.ev({
+					el : '#HTMLDecodeBtn',
+					ev : 'click'
+				});
+				$kit.ev({
+					el : '#HTMLDecodeOutHTMLBtn',
+					ev : 'click'
+				})
+			});
+
+		</script>
+	</body>
+</html>

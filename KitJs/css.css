@@ -6,6 +6,7 @@ body {
 }
 h1, h2 {
 	text-align: center;
+	position: relative;
 }
 h1 {
 	color: #0092d3;
@@ -13,11 +14,17 @@ h1 {
 h2 {
 	color: #53bde8;
 }
+h3, h4, h5, h6 {
+	margin: 0;
+}
 ul, li {
 	margin: 0;
 	padding: 0;
 	text-align: left;
 	vertical-align: top;
+}
+li * {
+	vertical-align: middle;
 }
 a {
 	color: #7d7d7d;
@@ -31,4 +38,15 @@ a:hover {
 .footer {
 	text-align: right;
 	font-size: 12px;
+}
+h1 img {
+	vertical-align: middle;
+}
+.code {
+	margin-left: 2em;
+	background-color: #aaa;
+	border-radius: 5px;
+	padding: 5px;
+	font-size: 14px;
+	color: #fff;
 }
