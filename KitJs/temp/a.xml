@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="a.xsl"?>
+<info>
+	<item lang="en">
+		<title>Oxford Advanced Learner&apos;s Dictionary</title>
+		<edition>6</edition>
+		<description>The Oxford Advanced Learner&apos;s Dictionary is the world’s bestselling advanced learner’s dictionary, recommended by learners of English and their teachers, and used by 30 million people.</description>
+		<publisher>
+			<author>Oxford University Press</author>
+			<email>support@oed.com</email>
+			<website>http://www.oup.com/</website>
+			<copyright>? Oxford University Press, 2000</copyright>
+		</publisher>
+		<message />
+		<license />
+	</item>
+	<item lang="zh-CN">
+		<title>牛津高阶英语词典</title>
+		<edition>6</edition>
+		<description>《牛津高阶英语词典》是世界上第一部为非英语国家的人们学习英语而编纂的高阶英语学习词典，半个多世纪以来一直引领着世界的潮流，迄今已发行三千万册。本词典是牛津大学2000年推出的第六版，增收新词新义4500条，突出了语法信息与用法搭配，并将释义所用单词从3500个精选到3000以内，把学习词典普遍采用的以简释繁的原则贯彻得十分出色。</description>
+		<publisher>
+			<author>Oxford University Press</author>
+			<email>support@oed.com</email>
+			<website>http://www.oup.com/</website>
+			<copyright>? Oxford University Press, 2000</copyright>
+		</publisher>
+		<message />
+		<license />
+	</item>
+	<item lang="zh-TW">
+		<title>牛津高階英語詞典</title>
+		<edition>6</edition>
+		<description>《牛津高階英語詞典》是世界上第一部為非英語國家的人們學習英語而編纂的高階英語學習詞典，半個多世紀以來一直引領著世界的潮流，迄今已發行三千萬冊。本詞典是牛津大學2000年推出的第六版，增收新詞新義4500條，突出了語法信息與用法搭配，並將釋義所用單詞從3500個精選到3000以內，把學習詞典普遍采用的以簡釋繁的原則貫徹得十分出色。</description>
+		<publisher>
+			<author>Oxford University Press</author>
+			<email>support@oed.com</email>
+			<website>http://www.oup.com/</website>
+			<copyright>? Oxford University Press, 2000</copyright>
+		</publisher>
+		<message />
+		<license />
+	</item>
+</info>

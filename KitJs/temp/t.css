@@ -1,0 +1,58 @@
+c {
+	display: block;
+	font-size: 16px;
+}
+e {
+	display: block;
+	color: #00ff00;
+	margin-top: 1em;
+}
+e:before {
+	display: inline;
+	content: 'Candidate Words:'
+}
+g {
+	font-weight: bolder;
+}
+h {
+	font-style: italic;
+}
+i {
+	font-style: normal;
+}
+j {
+	display: block;
+}
+l {
+	font-style: normal;
+	font-weight: bolder;
+}
+m {
+	color: #009900;
+}
+n {
+	display: block;
+}
+q {
+	display: block;
+}
+r {
+	display: block;
+}
+t {
+	display: block;
+}
+u {
+	color: #c00000;
+}
+v {
+	color: #996633;
+}
+w {
+	color: #009999;
+	display: block;
+}
+x {
+	color: #808080;
+	display: block;
+}

@@ -1,7 +1,7 @@
 /*
  * Kit Js
  * a javascript library used to mobile phone web develop
- * author: xueduanyang1985@163.com
+ * author: 薛端阳<xueduanyang1985@163.com>
  * 3q & enjoy it!
  */
 $Kit = function(config) {
@@ -21,20 +21,16 @@ $Kit = function(config) {
 	/**
 	 * dom ready
 	 */
-	me.$ = function(fn) {
-		if(me.isIE() && IEContentLoaded) {
-			IEContentLoaded(window, function() {
-				me.ev({
-					ev : 'DOMContentLoaded',
-					fn : fn,
-					scope : document
-				});
-			});
+	me.$ = function(fn, caller) {
+		var caller = document || caller;
+		if($kit.isIE() && IEContentLoaded) {
+			IEContentLoaded(caller, fn);
 		} else {
-			me.ev({
+			$kit.ev({
+				el : caller,
 				ev : 'DOMContentLoaded',
 				fn : fn,
-				scope : document
+				scope : caller
 			});
 		}
 	}
@@ -331,6 +327,31 @@ $Kit.prototype = {
 		} else {
 			el.style[attr] = value;
 		}
+	},
+	/**
+	 * 取值
+	 * div等取innerHTML
+	 * textarea等form元素取value
+	 */
+	val : function(el) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		if(me.isNode(el) && ('value' in el)) {
+			return el.value;
+		} else if(me.isNodeList(el) && el.length > 1) { s
+			var a = [];
+			for(var i = 0; i < el.length; i++) {
+				if(el[i].checked && el[i].value) {
+					a.push(el[i].value);
+				}
+			}
+			return a.join(',');
+		} else if(el.length == 1) {
+			return me.val(el[0]);
+		}
+		return el.innerHTML;
 	},
 	/**
 	 * insert element

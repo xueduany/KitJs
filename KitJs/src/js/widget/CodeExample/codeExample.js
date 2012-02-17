@@ -4,6 +4,7 @@ $kit.ui.CodeExample = function(config) {
 		kitWidgetName : "kitCodeExample",
 		then : undefined,
 		where : undefined,
+		opener : 'about:blank',
 		pos : 'last',
 		what : '<button class="codeExampleViewBtn">Run Test</button>'
 	}
@@ -32,11 +33,18 @@ $kit.merge($kit.ui.CodeExample.prototype, {
 		}
 	},
 	runTest : function() {
-		var me = this, opener = window.open('about:blank');
-		$kit.dom.injectJs({
-			where : opener.document.body,
-			content : me.config.script,
-			then : me.config.then
+		var me = this;
+		var opener = window.open(me.config.opener);
+		$kit.ev({
+			el : opener,
+			ev : 'load',
+			fn : function() {
+				$kit.dom.injectJs({
+					where : opener.document.body,
+					content : me.config.script || me.config.scriptContainer ? $kit.val(me.config.scriptContainer) : '',
+					then : me.config.then
+				});
+			}
 		});
 	}
 });

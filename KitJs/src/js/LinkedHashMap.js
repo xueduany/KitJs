@@ -134,4 +134,4 @@ LinkedHashMap.prototype = {
 		me.array.sort(compare);
 	}
 };
-$kit.LinkedHashMap = LinkedHashMap;
+$kit.SortMap = $kit.LinkedHashMap = LinkedHashMap;

@@ -4,7 +4,12 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script src="../../src/js/kit.js"></script>
 		<script src="../../src/js/dom.js"></script>
+		<!--widget-->
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/textarea.js"></script>
 		<script src="../../src/js/widget/CodeExample/codeExample.js"></script>
+		<!--autowired-->
+		<script src="../../src/js/widget/Form/autowired.textarea.js"></script>
 		<script src="../../src/js/widget/CodeExample/autowired.codeExample.js"></script>
 		<br/>
 		<link rel="stylesheet" href="../../css.css" />
@@ -18,29 +23,12 @@
 			<li>
 				<h3>代码测试</h3>
 				<pre class="code kitjs_codeExample" id="zz">
+<textarea class="kitjs-form-textarea" cols="100">
 var a=1;
 b=a+1;
 alert(b);
+</textarea>
 </pre>
-				<!--<h3>测试代码</h3>
-				<pre class="code">
-				var o = new $kit.ui.CodeExample({
-				script : $kit.el('#zz').innerHTML,
-				then : function() {
-				alert('代码执行完毕!')
-				}
-				});
-				o.init();
-				</pre>-->
-				<script>
-					// var o = new $kit.ui.CodeExample({
-					// script : $kit.el('#zz').innerHTML,
-					// then : function() {
-					// alert('代码执行完毕!')
-					// }
-					// });
-					// o.init();
-				</script>
 			</li>
 		</ul>
 		</script>

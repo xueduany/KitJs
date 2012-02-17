@@ -3,15 +3,15 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script src="../../src/js/kit.js"></script>
-		<script src="../../src/js/widget/Form/form.js"></script>
-		<script src="../../src/js/widget/Form/textarea.js"></script>
 		<link rel="stylesheet" href="../../css.css" />
-		<link rel="stylesheet" href="../../src/css/form.css" />
-		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/dom.js"></script>
+		<!--widget-->
 		<script src="../../src/js/widget/Form/form.js"></script>
 		<script src="../../src/js/widget/Form/textarea.js"></script>
+		<script src="../../src/js/widget/CodeExample/codeExample.js"></script>
 		<!--autowired-->
 		<script src="../../src/js/widget/Form/autowired.textarea.js"></script>
+		<script src="../../src/js/widget/CodeExample/autowired.codeExample.js"></script>
 	</head>
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
@@ -20,22 +20,33 @@
 		<ul>
 			<li>
 				<h3>按照dom id选取</h3>
-				<pre class="code">
-var el = $kit.el8id('id');//返回id为'id'的元素
+				<pre class="code kitjs_codeExample" opener="testcase_sample_selector.html">
+<textarea class="kitjs-form-textarea" cols="100">
+var el = $kit.el8id('textarea1');//取id为textarea1的元素
+alert(el.value);
+</textarea>
 </pre>
 			</li>
 			<li>
 				<h3>按照dom className选取</h3>
-				<pre class="code">
-var el = $kit.el8cls('class');//返回class为'class'的第一个元素
-var elAry = $kit.els8cls('class');//返回class为'class'的元素集合
+				<pre class="code kitjs_codeExample" opener="testcase_sample_selector.html">
+<textarea class="kitjs-form-textarea" cols="100">
+var el = $kit.el8cls('textbox');//返回class为'class'的第一个元素
+alert(el.value);
+var elAry = $kit.els8cls('textbox');//返回class为'class'的元素集合
+alert(elAry.length);
+</textarea>
 </pre>
 			</li>
 			<li>
 				<h3>按照dom name选取</h3>
-				<pre class="code">
-var el = $kit.el8name('name');//返回name为'name'的第一个元素
-var elAry = $kit.els8name('name');//返回name为'name'的元素集合
+				<pre class="code kitjs_codeExample" opener="testcase_sample_selector.html">
+<textarea class="kitjs-form-textarea" cols="100">
+var el = $kit.el8name('gender');//返回name为'name'的第一个元素
+alert(el.value);
+var elAry = $kit.els8name('gender');//返回name为'name'的元素集合
+alert(elAry.length);
+</textarea>
 </pre>
 			</li>
 		</ul>
@@ -43,10 +54,15 @@ var elAry = $kit.els8name('name');//返回name为'name'的元素集合
 		<ul>
 			<li>
 				<h3>支持基本的css选择器</h3>
-				<pre class="code">
-var el = $kit.el8id('id') = $kit.el('#id');//返回id为'id'的元素
-var elAry = $kit.els8class('class') = $kit.el('.class');//返回class为'class'的元素集合
-var elAry = $kit.el8name('name') = $kit.el('@name');//返回name为'name'的元素集合
+				<pre class="code kitjs_codeExample" opener="testcase_sample_selector.html">
+<textarea class="kitjs-form-textarea" cols="100">
+var el = $kit.el('#textarea1');//取id为textarea1的元素
+alert(el.value);
+var elAry = $kit.el('.textbox');//返回class为'class'的元素集合
+alert(elAry.length);
+var elAry = $kit.el('@gender');//返回name为'name'的元素集合
+alert(elAry.length);
+</textarea>
 </pre>
 			</li>
 		</ul>
@@ -54,35 +70,17 @@ var elAry = $kit.el8name('name') = $kit.el('@name');//返回name为'name'的元�
 		<ul>
 			<li>
 				<h3><a target="_blank" href="https://github.com/jquery/sizzle/wiki/Sizzle-Home">Sizzle选择器文档</a></h3>
-				<pre class="code">
+				<pre class="code kitjs_codeExample" opener="testcase_sample_selector_css3.html">
+<textarea class="kitjs-form-textarea" cols="100">
 /**
  * 需要引用加载selector.js
  */
-var el = $kit.el('ul li a[target="blank"]');
+var el = $kit.el('ul a[href="b"]');
+alert(el.length);
+alert(el[0].innerHTML);
+</textarea>
 </pre>
 			</li>
 		</ul>
-		<div class="example">
-			<pre>
-<div id="id1" class="class1">
-	<div id="id2" class="class2">
-		<input type="text" name="name1" value="123">
-	</div>
-	<div id="id3" class="class2">
-		<span><input type="radio" name="name2" value="1">是</span>
-		<span><input type="radio" name="name2" value="0">否</span>
-	</div>
-</div>
-</pre>
-			<div id="id1" class="class1">
-				<div id="id2" class="class2">
-					<input type="text" name="name1" value="123">
-				</div>
-				<div id="id3" class="class2">
-					<span><input type="radio" name="name2" value="1">是</span>
-					<span><input type="radio" name="name2" value="0">否</span>
-				</div>
-			</div>
-		</div>
 	</body>
 </html>

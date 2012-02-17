@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+	</head>
+	<body>
+		<h1>事件测试页面</h1>
+		<div>
+			<button id="a">
+				这是一个按钮
+			</button>
+		</div>
+		<div>
+			<button id="b">
+				事件触发的按钮
+			</button>
+			<script>
+				$kit.ev({
+					el : '#b',
+					ev : 'click',
+					fn : function(e) {
+						alert(e.target.innerHTML);
+					}
+				});
+			</script>
+		</div>
+	</body>
+</html>
