@@ -340,7 +340,7 @@ $Kit.prototype = {
 		}
 		if(me.isNode(el) && ('value' in el)) {
 			return el.value;
-		} else if(me.isNodeList(el) && el.length > 1) { s
+		} else if(me.isNodeList(el) && el.length > 1) {
 			var a = [];
 			for(var i = 0; i < el.length; i++) {
 				if(el[i].checked && el[i].value) {
