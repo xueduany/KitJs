@@ -13,26 +13,38 @@ $Kit.IO.prototype = {
 		var xmlhttp = new XMLHttpRequest();
 		var defaultConfig = {
 			url : undefined,
+			params : undefined,
 			method : 'GET',
 			async : true,
 			head : undefined,
 			body : null,
-			onRequestProgress : undefined,
-			onRequestComplete : undefined,
-			onRequestError : undefined,
+			onProgress : undefined,
+			onSuccess : undefined,
+			onError : undefined,
+			onOvertime : undefined,
+			overtime : 3000,
 			readyStateChangeFn : function() {
 				if(xmlhttp.readyState == 3) {
-					config.onRequestProgress && config.onRequestProgress(xmlhttp, xmlhttp.responseText, xmlhttp);
+					clearTimeout(xmlhttp.timeoutOvertime);
+					config.onProgress && config.onProgress(xmlhttp, xmlhttp.responseText, xmlhttp);
+					//
+					if($kit.isFn(config.onError)) {
+						xmlhttp.timeoutOvertime = setTimeout(function() {
+							config.onError.call(xmlhttp, xmlhttp.responseText, xmlhttp);
+						}, config.overtime);
+					}
 				} else if(xmlhttp.readyState == 4) {
+					clearTimeout(xmlhttp.timeoutOvertime);
 					if(xmlhttp.status == '200') {
-						config.onRequestComplete && config.onRequestComplete.call(xmlhttp, xmlhttp.responseText, xmlhttp);
+						config.onSuccess && config.onSuccess.call(xmlhttp, xmlhttp.responseText, xmlhttp);
 					} else if(/^\d{3}$/.test(xmlhttp.status)) {
 						if(/^[45]\d{2}$/.test(xmlhttp.status)) {
-							config.onRequestError && config.onRequestError.call(xmlhttp, xmlhttp.responseText, xmlhttp);
+							config.onError && config.onError.call(xmlhttp, xmlhttp.responseText, xmlhttp);
 						}
-						var methodName = 'onHTTP' + xmlhttp.status;
-						config[methodName] && config[methodName].call(xmlhttp, xmlhttp.responseText, xmlhttp);
 					}
+					//
+					var methodName = 'onHTTP' + xmlhttp.status;
+					config[methodName] && config[methodName].call(xmlhttp, xmlhttp.responseText, xmlhttp);
 				}
 			}
 		}
@@ -44,9 +56,25 @@ $Kit.IO.prototype = {
 				xmlhttp.setRequestHeader(k, v);
 			}
 		}
-		xmlhttp.open(config.method, config.url, config.async);
+		var url = config.url;
+		if(!$kit.isEmpty(config.params)) {
+			if(config.url.indexOf('?') == config.url.length - 1) {
+				url += $kit.concat(config.params, '&', '=');
+			} else {
+				url += '?' + $kit.concat(config.params);
+			}
+		}
+		var body = $kit.concat(config.body, '&', '=');
+		//
+		xmlhttp.open(config.method, url, config.async);
 		xmlhttp.onreadystatechange = config.readyStateChangeFn;
 		xmlhttp.send(config.body);
+		//
+		if($kit.isFn(config.onOvertime)) {
+			xmlhttp.timeoutOvertime = setTimeout(function() {
+				config.onOvertime.call(xmlhttp, xmlhttp);
+			}, config.overtime);
+		}
 	},
 	/**
 	 * ajax get
@@ -54,13 +82,34 @@ $Kit.IO.prototype = {
 	get : function(config) {
 		var me = this;
 		var defaultConfig = {
-			url : config.url,
 			method : 'GET',
 			async : true,
-			head : config.head,
-			onRequestProgress : undefined,
-			onRequestComplete : config.onSuccess,
-
+			body : undefined
+		}
+		return me.ajax($kit.join(config, defaultConfig));
+	},
+	syncGet : function(config) {
+		var me = this;
+		var defaultConfig = {
+			method : 'GET',
+			async : false,
+			body : undefined
+		}
+		return me.ajax($kit.join(config, defaultConfig));
+	},
+	post : function(config) {
+		var me = this;
+		var defaultConfig = {
+			method : 'POST',
+			async : true
+		}
+		return me.ajax($kit.join(config, defaultConfig));
+	},
+	syncPost : function(config) {
+		var me = this;
+		var defaultConfig = {
+			method : 'POST',
+			async : false
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},

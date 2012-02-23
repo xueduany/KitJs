@@ -957,7 +957,9 @@ $Kit.prototype = {
 		}
 		for(var i = 0; i < a.length; i++) {
 			for(var r in a[i]) {
-				b[r] = a[i][r];
+				if(!$kit.isEmpty(a[i][r])) {
+					b[r] = a[i][r];
+				}
 			}
 		}
 		return b;
@@ -1127,11 +1129,43 @@ $Kit.prototype = {
 	// },
 	each : function(ary, fn, scope) {
 		var me = this;
-		if(me.isFn(fn) && me.isAry(ary)) {
-			for(var i = 0; i < ary.length; i++) {
-				fn.call(scope || window, ary[i], i, ary);
+		if(me.isFn(fn)) {
+			if(me.isAry(ary)) {
+				for(var i = 0; i < ary.length; i++) {
+					var re = fn.call(scope || window, ary[i], i, ary);
+					if(re == false) {
+						break;
+					}
+				}
+			} else if(me.isObj(ary)) {
+				var i = 0;
+				for(var k in ary) {
+					i++;
+					var re = fn.call(scope || window, ary[k], k, ary, i);
+					if(re == false) {
+						break;
+					}
+				}
 			}
 		}
+	},
+	/**
+	 * 合并字符串
+	 */
+	concat : function(o, connectStr, connectOper) {
+		if($kit.isStr(o)) {
+			return o;
+		}
+		var connectStr = '&' || connectStr;
+		var connectOper = '=' || connectOper;
+		if($kit.isAry(o)) {
+			return o.join(connectStr);
+		}
+		var reStr = [];
+		$kit.each(o, function(v, k) {
+			reStr.push(k + connectOper + v);
+		});
+		return reStr.join(connectStr);
 	},
 	/**
 	 * subClass inherit superClass
