@@ -19,21 +19,9 @@ $Kit = function(config) {
 		me.merge(me.SYSINFO, inf);
 	}
 	/**
-	 * dom ready
+	 * register widget
 	 */
-	me.$ = function(fn, caller) {
-		var caller = document || caller;
-		if($kit.isIE() && IEContentLoaded) {
-			IEContentLoaded(caller, fn);
-		} else {
-			$kit.ev({
-				el : caller,
-				ev : 'DOMContentLoaded',
-				fn : fn,
-				scope : caller
-			});
-		}
-	}
+	me.ui = {};
 }
 $Kit.prototype = {
 	//----------------------CONSTANTS----------------------
@@ -71,20 +59,11 @@ $Kit.prototype = {
 		KIT_DOM_ID_PREFIX : "J_Kit_"
 	},
 	// -----------------------------------is something-----------------------------------
-	/**
-	 * 是否ie...
-	 */
-	isIE : function(o) {
-		if(document.all) {
-			return true;
-		}
-		return false;
-	},
 	isChrome : function(o) {
-		return /Chrome/.test(navigator.userAgent);
+		return /Chrome/i.test(navigator.userAgent);
 	},
 	isFirefox : function(o) {
-
+		return /Firefox/i.test(navigator.userAgent);
 	},
 	/**
 	 * boolean isString
@@ -102,30 +81,29 @@ $Kit.prototype = {
 	 * boolean isObject
 	 */
 	isObj : function(o) {
-		return typeof (o) == "object" && o != null;
+		return !!(o && typeof (o) == "object" );
 	},
 	/**
 	 * boolean is function
 	 */
 	isFn : function(o) {
-		var me = this;
-		return !me.isEmpty(o) && typeof (o) == "function";
+		return !!(o && typeof (o) == "function");
 	},
 	/**
 	 * is it can iterator
 	 */
 	isAry : function(o) {
 		var me = this;
-		return me.isDefined(o) && o != null && ((o.constructor.name && o.constructor.name == "Array") || me.isNodeList(o));
+		return !!(o && (o.constructor && o.constructor.toString().indexOf("Array") > -1 || me.isNodeList(o)));
 	},
 	/**
 	 * 是否html元素
 	 */
 	isNodeList : function(o) {
-		return o.toString() == '[object NodeList]' || o.toString() == '[object HTMLCollection]';
+		return !!(o && (o.toString() == '[object NodeList]' || o.toString() == '[object HTMLCollection]'));
 	},
 	isNode : function(o) {
-		return o.nodeType && ((o.constructor.name && o.constructor.name.indexOf('Element') > -1) || (o.toString().indexOf('Element') > 1));
+		return !!(o && o.nodeType);
 	},
 	/**
 	 * is string can be split into a array which elements total > 2
@@ -409,10 +387,14 @@ $Kit.prototype = {
 		if(me.isEmpty(element) || me.isEmpty(html)) {
 			return;
 		}
-		var range = element.ownerDocument.createRange();
-		range.selectNodeContents(element);
-		element.parentNode.replaceChild(range.createContextualFragment(html), element);
-		range.detach();
+		if($kit.isStr(html)) {
+			var range = element.ownerDocument.createRange();
+			range.selectNodeContents(element);
+			element.parentNode.replaceChild(range.createContextualFragment(html), element);
+			range.detach();
+		} else if($kit.isNode(html)) {
+			element.parentNode.replaceChild(html, element);
+		}
 	},
 	/**
 	 * remove node
@@ -707,6 +689,7 @@ $Kit.prototype = {
 		}
 	},
 	// -----------------------------------event-----------------------------------
+	// -----------------------------------event-----------------------------------
 	/**
 	 * register event
 	 *
@@ -775,21 +758,30 @@ $Kit.prototype = {
 					if(window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
 						return;
 					}
-					var EV = arguments[0];
+					var EV = arguments[0] || window.event;
 
 					me.merge(EV, {
+						target : EV.target || EV.srcElement,
 						stopNow : function() {
 							EV.stopPropagation();
 							EV.preventDefault();
+							//
+							EV.cancelBubble = true;
+							EV.returnValue = false;
+							//
 							window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
 						},
 						stopDefault : function() {
 							EV.preventDefault();
+							EV.returnValue = false;
 						},
 						stopGoOn : function() {
 							EV.preventDefault();
 							EV.stopPropagation();
-						},
+							//
+							EV.cancelBubble = true;
+							EV.returnValue = false;
+						}
 					}, me.evExtra(EV));
 					var target = config.el;
 					var evQueue = target[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
@@ -809,16 +801,27 @@ $Kit.prototype = {
 					 };*/
 					return returnValue;
 				});
-				config.el.addEventListener(config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev], false);
+				if(document.attachEvent) {
+					config.el.attachEvent('on' + config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
+				} else {
+					config.el.addEventListener(config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev], false);
+				}
 				evRegEv[config.ev].push(config);
 			} else {
 				if(!me.isEmpty(config.el) && !me.isEmpty(config.ev) && me.isEmpty(config.fn)) {
 					if(window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT]) {
 						return;
 					}
-					var evt = document.createEvent('Event');
-					evt.initEvent(config.ev, true, true);
-					config.el.dispatchEvent(evt);
+					// var evt = document.createEvent('Event');
+					// evt.initEvent(config.ev, true, true);
+					// config.el.dispatchEvent(evt);
+					me.newEv({
+						el : config.el,
+						type : 'Events',
+						ev : config.ev,
+						bubbles : true,
+						cancelable : true
+					});
 				}
 			}
 		}
@@ -886,22 +889,30 @@ $Kit.prototype = {
 					}
 					if(evQueue.length == 0) {
 						delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
-						config.el.removeEventListener(config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev], false);
+						rm(config.el, config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
 						delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev];
 					}
 				} else {
 					delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
-					config.el.removeEventListener(config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev], false);
+					rm(config.el, config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
 					delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev];
 				}
 			} else {
 				for(var _ev in config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT]) {
-					config.el.removeEventListener(_ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][_ev], false);
+					rm(config.el, _ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][_ev]);
 				}
 				delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT];
 				delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION];
 			}
 		}
+		function rmEv(el, e, fn) {
+			if(document.attachEvent) {
+				el.detachEvent('on' + e, fn);
+			} else {
+				el.removeEventListener(e, fn, false);
+			}
+		}
+
 	},
 	newEv : function(config) {
 		var me = this, defaultConfig = {
@@ -913,9 +924,13 @@ $Kit.prototype = {
 		}
 		config = me.join(defaultConfig, config);
 		if(!$kit.isEmpty(config.ev)) {
-			var e = document.createEvent(config.type);
-			e.initEvent(config.ev, config.bubbles, config.cancelable);
-			config.el.dispatchEvent(e);
+			if(document.createEvent) {
+				var e = document.createEvent(config.type);
+				e.initEvent(config.ev, config.bubbles, config.cancelable);
+				config.el.dispatchEvent(e);
+			} else {
+				config.el.fireEvent('on' + config.ev);
+			}
 		}
 	},
 	/**
@@ -1213,6 +1228,14 @@ $Kit.prototype = {
 }
 $kit = new $Kit();
 /**
- * register widget
+ * dom ready
  */
-$kit.ui = {};
+$kit.$ = function(fn, caller) {
+	var caller = document || caller;
+	$kit.ev({
+		el : caller,
+		ev : 'DOMContentLoaded',
+		fn : fn,
+		scope : caller
+	});
+}

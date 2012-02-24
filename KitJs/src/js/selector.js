@@ -1343,6 +1343,13 @@
 
 	window.Sizzle = Sizzle;
 
-	$kit.el = Sizzle;
+	$kit._el = $kit.el;
+	$kit.el = function(selector, root) {
+		if ($kit.isEmpty($kit._el(selector, root))) {
+			return Sizzle(selector, root);
+		} else {
+			return $kit._el(selector, root);
+		}
+	}
 
 })();
