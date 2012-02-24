@@ -10,7 +10,7 @@ $Kit.IO.prototype = {
 	 */
 	ajax : function(config) {
 		var me = this;
-		var xmlhttp = new XMLHttpRequest();
+		var xmlhttp = XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 		var defaultConfig = {
 			url : undefined,
 			params : undefined,
@@ -116,8 +116,35 @@ $Kit.IO.prototype = {
 	/**
 	 * jsonp
 	 */
-	josnp : function() {
-
+	josnp : function(config) {
+		if(config.url) {
+			var url = config.url;
+			if(config.params) {
+				if(config.url.indexOf('?') == config.url.length - 1) {
+					url += $kit.concat(config.params, '&', '=');
+				} else {
+					url += '?' + $kit.concat(config.params);
+				}
+			}
+			var script = document.createElement('script');
+			if(config.callback) {
+				if(script.readyState) {//ie
+					script.onreadystatechange = function() {
+						a.push(script.readyState);
+						if(script.readyState == "loaded" || script.readyState == "complete") {
+							script.onreadystatechange = null;
+							config.callback && config.callback();
+						}
+					}
+				} else {
+					script.onload = function() {
+						config.callback && config.callback();
+					}
+				}
+			}
+			script.src = url;
+			document.body.appendChild(script);
+		}
 	}
 };
 $kit.io = new $Kit.IO();
