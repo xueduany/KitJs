@@ -1,5 +1,10 @@
 $kit.ui.TabPanel = function(config) {
-	var defaultConfig = {
+	var me = this;
+	me.config = $kit.join(me.constructor.defaultConfig, config);
+	me.init();
+};
+$kit.merge($kit.ui.TabPanel, {
+	defaultConfig : {
 		pos : 'last',
 		where : document.body,
 		what : [//
@@ -32,10 +37,7 @@ $kit.ui.TabPanel = function(config) {
 			times : 25
 		}]
 	}
-	var me = this;
-	me.config = $kit.join(defaultConfig, config);
-	me.init();
-};
+});
 $kit.merge($kit.ui.TabPanel.prototype, {
 	init : function() {
 		var me = this;
