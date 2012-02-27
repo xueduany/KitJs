@@ -4,7 +4,11 @@ $kit.ui.Form.TextArea = function(config) {
 		father : $kit.ui.Form
 	});
 	var me = this;
-	var defaultConfig = {
+	me.config = $kit.join(me.constructor.defaultConfig, config);
+	me.init();
+}
+$kit.merge($kit.ui.Form.TextArea, {
+	defaultConfig : {
 		el : undefined,
 		minRows : 1,
 		autoFixHeight : true,
@@ -12,12 +16,10 @@ $kit.ui.Form.TextArea = function(config) {
 		textNotEmptyFn : undefined,
 		blurFn : undefined,
 		focusFn : undefined,
-		kitWidgetName : "kitTextArea"
+		kitWidgetName : "kitTextArea",
+		textAreaCls : 'kitjs-form-textarea'
 	}
-	me.config = $kit.join(defaultConfig, config);
-	var me = this;
-	me.init();
-}
+});
 $kit.merge($kit.ui.Form.TextArea.prototype, {
 	init : function() {
 		var me = this;

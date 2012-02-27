@@ -1,10 +1,12 @@
 $kit.ui.Form = function(config) {
 	var me = this;
-	var defaultConfig = {
+	me.config = $kit.join(me.constructor.defaultConfig, config);
+};
+$kit.merge($kit.ui.Form, {
+	defaultConfig : {
 		kitWidgetName : "kitForm"
 	}
-	me.config = $kit.join(defaultConfig, config);
-};
+});
 $kit.merge($kit.ui.Form.prototype, {
 
 });

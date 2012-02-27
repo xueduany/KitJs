@@ -4,17 +4,18 @@ $kit.ui.Form.TimeInput = function(config) {
 		father : $kit.ui.Form
 	});
 	var me = this;
-	var defaultConfig = {
+	me.config = $kit.join(me.constructor.defaultConfig, config);
+	me.init();
+}
+$kit.merge($kit.ui.Form.TimeInput, {
+	defaultConfig : {
 		el : undefined,
 		kitWidgetName : "kitTimeInput",
 		timeFormatRegExp : /^((\d{2}:){1,2})((\d){2})$/,
 		then : undefined,
 		thenScope : undefined
 	}
-	me.config = $kit.join(defaultConfig, config);
-	var me = this;
-	me.init();
-}
+});
 $kit.merge($kit.ui.Form.TimeInput.prototype, {
 	init : function() {
 		var me = this;
