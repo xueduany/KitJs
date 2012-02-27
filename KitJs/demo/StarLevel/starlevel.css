@@ -1,0 +1,41 @@
+.five-star-level-choose {
+	height: 22px;
+}
+ul.five-star-level-choose {
+	display: inline-block;
+}
+.five-star-level-choose li {
+	float: left;
+	display: block;
+	width: 20px;
+	height: 20px;
+	background-size: 20px 20px;
+	background-image: url(starGhost.png);
+	cursor: pointer;
+	-webkit-transition: all 300ms ease-out 0ms;
+	cursor: pointer;
+}
+.starlevel-move li {
+}
+.starlevel-chosen-container li.starlevel-chosen {
+	-webkit-transform: scale(1);
+}
+.starlevel-chosen-container li:not(.starlevel-chosen) {
+	background-image: url(star.png);
+}
+.starlevel-chosen-container li.starlevel-chosen ~ li {
+	-webkit-transform: scale(1);
+	background-size: 20px 20px;
+	background-image: url(starGhost.png);
+}
+.starlevel-move li.starlevel-hover {
+	-webkit-transform: scale(2)!important;
+	z-index: 999!important;
+}
+.starlevel-chosen-container li.starlevel-chosen {
+	background-image: url(star.png);
+	-webkit-transform: scale(1);
+}
+.tips {
+	display: none;
+}

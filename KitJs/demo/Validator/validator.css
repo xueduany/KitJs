@@ -1,0 +1,16 @@
+.kitjs-validator {
+	display: none;
+	margin-left: 1em;
+}
+.validator-show {
+	display: inline;
+	-webkit-animation: validator-show-anim 300ms 1 ease-in;
+}
+@-webkit-keyframes validator-show-anim {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}

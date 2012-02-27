@@ -1,0 +1,65 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/selector.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<style>
+			#zz {
+				display: inline;
+				zoom: 1;
+				border: 1px solid #ccc;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>兼容IE9以下（完善中）</h1>
+		<ol>
+			<li>
+				<h3>alert($kit.el('@a'));</h2>
+			</li>
+			<li>
+				<h3>注册click事件</h2>
+			</li>
+			<li>
+				<h3>用HTML替换元素</h2>
+			</li>
+		</ol>
+		<div>
+			<input type="checkbox" name="a" value="1">
+			<input type="checkbox" name="a" value="2">
+			<div class="b"></div>
+			<div class="b"></div>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<div id="zz">
+				注册了click事件，请click我
+			</div>
+		</div>
+		<script>
+			$kit.$(function() {
+				alert($kit.el('@a'));
+
+				$kit.ev({
+					el : '#zz',
+					ev : 'click',
+					fn : function() {
+						alert('a');
+					}
+				});
+				$kit.rpEl($kit.el('.b')[0], '<img src="xxx">');
+			});
+
+		</script>
+	</body>
+</html>

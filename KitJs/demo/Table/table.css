@@ -1,0 +1,40 @@
+ul.kitjs-table {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	font-size: 16px;
+	font-family: '微软雅黑';
+	font-style: normal;
+	font-weight: normal;
+	overflow: hidden;
+}
+ul.kitjs-table li {
+	display: block;
+	overflow: hidden;
+	list-style: none;
+	clear: left;
+}
+ul.kitjs-table li.header {
+	text-align: center;
+	border-top: 1px solid #aaa;
+	font-weight: bold;
+}
+ul.kitjs-table li.footer {
+	text-align: right;
+}
+ul.kitjs-table li .col {
+	float: left;
+	margin-right: 2px;
+	height: 30px;
+	border-right: 1px solid #E5DAC8;
+	border-bottom: 1px solid #E5DAC8;
+}
+ul.kitjs-table li :last-child.col {
+	margin-right: 0;
+}
+ul.kitjs-table li:nth-child(odd) .col {
+	background-color: #EBF7FF;
+}
+ul.kitjs-table li:nth-child(even) .col {
+	background-color: #fff;
+}

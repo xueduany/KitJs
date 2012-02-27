@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/textarea.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="../../src/css/form.css" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/textarea.js"></script>
+		<!--autowired-->
+		<script src="../../src/js/widget/Form/autowired.textarea.js"></script>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>表单Demo</h1>
+		<h2 id="form">表单样式</h2>
+		<ul>
+			<li>
+				<textarea class="kitjs-form-textarea" rows="4" cols="20">文本框</textarea>
+			</li>
+			<li>
+				<input class="kitjs-form-textbox" type="text" size="30" value="输入框">
+			</li>
+			<li>
+				选择框<span class="kitjs-form-select"><select><option	value="1">1qweqweqweqwe</option><option value="2">2</option></select></span>
+			</li>
+			<li>
+				<label for="checkbox_01"><input id="checkbox_01" type="checkbox" class="kitjs-form-checkbox" name="checkbox" value="0">复选框</label>
+				<label for="checkbox_02"><input id="checkbox_02" type="checkbox" class="kitjs-form-checkbox" name="checkbox" value="0">复选框</label>
+			</li>
+			<li>
+				<label for="radio_01"><input id="radio_01" class="kitjs-form-radio" name="radio" type="radio" value="0">单选框</label>
+				<label for="radio_02"><input id="radio_02" class="kitjs-form-radio" name="radio" type="radio" value="0">单选框</label>
+			</li>
+			<li>
+				<fieldset class="kitjs-form-fieldset" style="width:200px">
+					<legend>表单区</legend>
+					表单区
+				</fieldset>
+			</li>
+		</ul>
+		<h2>表单js组件</h2>
+		<ul>
+			<li>
+				<h3 id="textarea">自适应高度文本框</h3>
+				<textarea class="kitjs-form-textarea" autowired autofixheight="true" rows="4" cols="20">文本框</textarea>
+			</li>
+		</ul>
+	</body>
+</html>

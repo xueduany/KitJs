@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="starlevel.css" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/anim.js"></script>
+		<script src="../../src/js/array.js"></script>
+		<script src="../../src/js/widget/StarLevel/starlevel.js"></script>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>StarLevel星级评定样例</h1>
+		<ul>
+			<li>
+				功能1:鼠标左键按下，移动选择星星级别
+			</li>
+			<li>
+				功能2:移动设备划动选择星星
+			</li>
+			<li>
+				功能3:设置成功给出提示
+			</li>
+		</ul>
+		<div class="five-star-level">
+			<ul class="five-star-level-choose">
+				<li class="starlevel-value-1 starlevel-box"></li>
+				<li class="starlevel-value-2 starlevel-box"></li>
+				<li class="starlevel-value-3 starlevel-box"></li>
+				<li class="starlevel-value-4 starlevel-box"></li>
+				<li class="starlevel-value-5 starlevel-box"></li>
+			</ul>
+			<a class="studyCatPicker" href="#" id="J_BtnCatePicker"></a>
+			<div class="tips" id="J_LevelChooseSuccessTips">
+				星星保存成功！
+			</div>
+		</div>
+		
+		<script>
+			(new $kit.ui.StarLevel({
+				where : $kit.el('.five-star-level')[0],
+				starLevelContainerCls : 'five-star-level-choose',
+				succesTipsFn : function(level) {
+					var tips = $kit.el8id('J_LevelChooseSuccessTips');
+					$kit.anim.motion({
+						duration : 1000,
+						el : tips,
+						from : {
+							opacity : 0,
+							display : 'block'
+						},
+						to : {
+							opacity : 1
+						},
+						fx : $kit.anim.Fx.easeInQuad,
+						then : function() {
+							setTimeout(function() {
+								$kit.anim.motion({
+									duration : 1000,
+									el : tips,
+									from : {
+										opacity : 1,
+										display : 'block'
+									},
+									to : {
+										opacity : 0,
+										display : 'none'
+									},
+									fx : $kit.anim.Fx.easeInQuad,
+									timeout : 'timeout_starlevel'
+								});
+							}, 500);
+						},
+						timeout : 'timeout_starlevel'
+					});
+				}
+			})).init();
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/dom.js"></script>
+		<!--widget-->
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/textarea.js"></script>
+		<script src="../../src/js/widget/CodeExample/codeExample.js"></script>
+		<!--autowired-->
+		<script src="../../src/js/widget/Form/autowired.textarea.js"></script>
+		<script src="../../src/js/widget/CodeExample/autowired.codeExample.js"></script>
+		<br/>
+		<link rel="stylesheet" href="../../css.css" />
+		<style>
+		</style>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>Ajax</h1>
+		<pre class="code kitjs_codeExample" opener="testcase_sample_ajax.html">
+<textarea class="kitjs-form-textarea" cols="100">
+$kit.io.ajax({
+	url : '1.js',
+	onSuccess: function(res){
+		eval('var t='+res);
+		alert(t);
+	}
+});
+</textarea>
+</pre>
+	</body>
+	</body>
+</html>

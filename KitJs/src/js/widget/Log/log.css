@@ -1,0 +1,9 @@
+.kit-log-view {
+	border: 1px solid #aaa;
+	background: #fff;
+	border-radius: 4px;
+}
+.kit-log-view .log {
+	margin-top: -1px;
+	border-top: 1px solid #ccc;
+}

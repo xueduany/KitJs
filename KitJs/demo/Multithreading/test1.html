@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=3.0;">
+		<script src="../../src/js/kit.js"></script>
+		<link rel="stylesheet" href="test1.css">
+	</head>
+	<body>
+		<div>
+			<h1>Multithreading Test</h1>
+			<input id="J_testArea" type="text">
+			<input id="J_testAreaIframe" type="text">
+			<script>
+				count = 0;
+				setInterval(function() {
+					$kit.el("#J_testArea").value = ++count;
+				}, 300);
+
+			</script>
+			<iframe src="test1_iframe.html"></iframe>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<script src="http://localhost/kitjs/kitjs/src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="http://localhost/kitjs/kitjs/src/js/ieFix.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<script src="http://localhost/kitjs/kitjs/src/js/selector.js"></script>
+		<div>
+			<input type="checkbox" name="a" value="1">
+			<input type="checkbox" name="a" value="2">
+			<div class="b"></div>
+			<div class="b"></div>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<div id="zz">
+				qweqwe
+			</div>
+		</div>
+		<script>
+			$kit.$(function() {
+				$kit.ev({
+					el : '#zz',
+					ev : 'click',
+					fn : function() {
+						alert(2);
+					}
+				})
+			});
+
+		</script>
+	</body>
+</html>

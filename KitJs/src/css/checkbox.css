@@ -1,0 +1,24 @@
+.kitjs-form-checkbox {
+	cursor: pointer;
+	-webkit-appearance: none;
+	position: relative;
+	outline: none;
+	vertical-align: middle;
+	line-height: 1em;
+	height: 1em;
+	width: 1em;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	margin: 0;
+	border: 1px solid #ccc;
+	background: none;
+	-webkit-transition: all 300ms ease-in 0;
+}
+.kitjs-form-checkbox:hover, .kitjs-form-checkbox:active {
+	border-color: #aaa;
+	box-shadow: 0 0 10px #aaa;
+}
+.kitjs-form-checkbox:checked {
+	background-color: #aaa;
+	border-color: #aaa;
+	box-shadow: inset 0px 0px 0px 2px white;
+}
