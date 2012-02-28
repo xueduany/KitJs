@@ -84,7 +84,14 @@ $Kit.IO.prototype = {
 		var defaultConfig = {
 			method : 'GET',
 			async : true,
-			body : undefined
+			body : undefined,
+			onSuccess : function(res, xmlhttp) {
+				try {
+					res = eval(res);
+				} catch(e) {
+				}
+				config.onSuccess.call(xmlhttp, res, xmlhttp);
+			}
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},
@@ -93,7 +100,14 @@ $Kit.IO.prototype = {
 		var defaultConfig = {
 			method : 'GET',
 			async : false,
-			body : undefined
+			body : undefined,
+			onSuccess : function(res, xmlhttp) {
+				try {
+					res = eval(res);
+				} catch(e) {
+				}
+				config.onSuccess.call(xmlhttp, res, xmlhttp);
+			}
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},
@@ -101,7 +115,14 @@ $Kit.IO.prototype = {
 		var me = this;
 		var defaultConfig = {
 			method : 'POST',
-			async : true
+			async : true,
+			onSuccess : function(res, xmlhttp) {
+				try {
+					res = eval(res);
+				} catch(e) {
+				}
+				config.onSuccess.call(xmlhttp, res, xmlhttp);
+			}
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},
@@ -109,7 +130,14 @@ $Kit.IO.prototype = {
 		var me = this;
 		var defaultConfig = {
 			method : 'POST',
-			async : false
+			async : false,
+			onSuccess : function(res, xmlhttp) {
+				try {
+					res = eval(res);
+				} catch(e) {
+				}
+				config.onSuccess.call(xmlhttp, res, xmlhttp);
+			}
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},

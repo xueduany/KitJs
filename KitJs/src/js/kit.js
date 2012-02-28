@@ -763,8 +763,8 @@ $Kit.prototype = {
 					me.merge(EV, {
 						target : EV.target || EV.srcElement,
 						stopNow : function() {
-							EV.stopPropagation();
-							EV.preventDefault();
+							EV.stopPropagation && EV.stopPropagation();
+							EV.preventDefault && EV.preventDefault();
 							//
 							EV.cancelBubble = true;
 							EV.returnValue = false;
@@ -772,12 +772,12 @@ $Kit.prototype = {
 							window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = true;
 						},
 						stopDefault : function() {
-							EV.preventDefault();
+							EV.preventDefault && EV.preventDefault();
 							EV.returnValue = false;
 						},
 						stopGoOn : function() {
-							EV.preventDefault();
-							EV.stopPropagation();
+							EV.preventDefault && EV.preventDefault();
+							EV.stopPropagation && EV.stopPropagation();
 							//
 							EV.cancelBubble = true;
 							EV.returnValue = false;
