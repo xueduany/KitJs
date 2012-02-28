@@ -1,0 +1,19 @@
+.J_WaterfallContainer {
+	width: 100%;
+	-webkit-column-gap: 5px;
+	-webkit-column-width: 120px;
+	height: 400px;
+	list-style: none;
+	display: block;
+	overflow: hidden;
+}
+.J_WaterfallContainer .J_Waterfall {
+	list-style: none !important;
+	margin: 0;
+	padding: 0;
+	display: block;
+	float: left;
+	width: 120px;
+	margin-bottom: 10px;
+	background-color: #aaa;
+}
