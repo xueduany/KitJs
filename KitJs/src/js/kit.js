@@ -416,65 +416,77 @@ $Kit.prototype = {
 	 * add className
 	 */
 	adCls : function(el, clss) {
-		var me = this;
-		if(me.isEmpty(el)) {
+		/*
+		 var me = this;
+		 if(me.isEmpty(el)) {
+		 return;
+		 }
+		 if(me.isAry(clss)) {
+		 for(var i = 0; i < clss.length; i++) {
+		 me.adCls(el, clss[i]);
+		 }
+		 } else {
+		 var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
+		 for(var i = 0; i < a.length; i++) {
+		 if(a[i] == clss) {
+		 flag = false;
+		 break;
+		 }
+		 }
+		 if(flag) {
+		 a.push(clss);
+		 el.className = a.join(" ");
+		 }
+		 }*/
+		var re = new RegExp('(\\s|^)' + clss + '(\\s|$)');
+		if(re.test(el.className))
 			return;
-		}
-		if(me.isAry(clss)) {
-			for(var i = 0; i < clss.length; i++) {
-				me.adCls(el, clss[i]);
-			}
-		} else {
-			var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
-			for(var i = 0; i < a.length; i++) {
-				if(a[i] == clss) {
-					flag = false;
-					break;
-				}
-			}
-			if(flag) {
-				a.push(clss);
-				el.className = a.join(" ");
-			}
-		}
+		el.className += ' ' + clss;
 	},
 	/**
 	 * remove className
 	 */
 	rmCls : function(el, clss) {
-		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
-		if(a.length) {
-			b = me.aryDel(a, clss);
-		}
-		if(b.length) {
-			el.className = b.join(" ");
-		} else {
-			el.className = "";
-			me.attr(el, 'class', null);
-		}
+		/*
+		 var me = this;
+		 if(me.isEmpty(el)) {
+		 return;
+		 }
+		 var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
+		 if(a.length) {
+		 b = me.aryDel(a, clss);
+		 }
+		 if(b.length) {
+		 el.className = b.join(" ");
+		 } else {
+		 el.className = "";
+		 me.attr(el, 'class', null);
+		 }*/
+		var re = new RegExp('(\\s|^)' + clss + '(\\s|$)');
+		el.className = el.className.replace(re, ' ');
 	},
 	/**
 	 * has class true?
 	 */
 	hsCls : function(el, cls) {
-		var me = this, flag = false;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		if(!me.isEmpty(el.className)) {
-			var a = el.className.split(me.CONSTANTS.REGEXP_SPACE);
-			for(var i = 0; i < a.length; i++) {
-				if(a[i] == cls) {
-					flag = true;
-					break;
-				}
-			}
-		}
-		return flag;
+		/*
+		 var me = this, flag = false;
+		 if(me.isEmpty(el)) {
+		 return;
+		 }
+		 if(!me.isEmpty(el.className)) {
+		 var a = el.className.split(me.CONSTANTS.REGEXP_SPACE);
+		 for(var i = 0; i < a.length; i++) {
+		 if(a[i] == cls) {
+		 flag = true;
+		 break;
+		 }
+		 }
+		 }
+		 return flag;
+		 */
+		var re = new RegExp('(\\s|^)' + clss + '(\\s|$)');
+		return re.test(el.className);
 	},
 	/**
 	 * 切换css，有则删，无则加

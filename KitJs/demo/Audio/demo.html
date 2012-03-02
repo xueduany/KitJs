@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=3.0;">
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="../../src/css/widget/Audio/audio.css" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/widget/Audio/audio.js"></script>
+		<style>
+		</style>
+	</head>
+	<body>
+		<audio id="bb" src="a.mp3" preload="auto"></audio>
+		<script>
+			$kit.$(function() {
+				var a = new $kit.ui.Audio({
+					el : $kit.el('#bb')
+				})
+			})
+		</script>
+	</body>
+</html>
