@@ -62,6 +62,11 @@ $kit.merge($kit.ui.Form.TimeInput.prototype, {
 			}
 			timeInput.value = $kit.date.formatTime(_t);
 			ev.stopDefault();
+		} else {
+			if(ev.keyCode == $kit.event.KEYCODE_ENTER) {
+				evCfg.el.blur();
+			}
+			ev.stopDefault();
 		}
 	},
 	evInputComplete : function(ev, evCfg) {

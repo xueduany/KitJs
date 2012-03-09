@@ -59,6 +59,9 @@ $Kit.prototype = {
 		KIT_DOM_ID_PREFIX : "J_Kit_"
 	},
 	// -----------------------------------is something-----------------------------------
+	isIE : function(o) {
+		return /MSIE/i.test(navigator.userAgent);
+	},
 	isChrome : function(o) {
 		return /Chrome/i.test(navigator.userAgent);
 	},
@@ -239,13 +242,17 @@ $Kit.prototype = {
 			return me.els8name(selector.substring(1), root);
 		} else {
 			if(selector.indexOf(".") > 0 && selector.indexOf(".") < selector.length) {
-				var a = me.els8cls(selector.substring(selector.indexOf(".") + 1));
+				var re = [];
+				re.item = function() {
+				};
+				var a = me.els8tag(selector.substring(0, selector.indexOf(".")), root);
+				var cls = selector.substr(selector.indexOf(".") + 1);
 				for(var i = 0; !me.isEmpty(a) && i < a.length; i++) {
-					if(a[i].tagName && a[i].tagName.toLowerCase() == selector.split(".")[0].toLowerCase()) {
-						return a[i];
+					if(me.hsCls(a[i], cls)) {
+						re.push(a[i]);
 					}
 				}
-				return null;
+				return re;
 			} else {
 				return me.els8tag(selector, root);
 			}
@@ -415,12 +422,12 @@ $Kit.prototype = {
 	/**
 	 * add className
 	 */
-	adCls : function(el, clss) {
+	adCls : function(el, cls) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
 		/*
-		 var me = this;
-		 if(me.isEmpty(el)) {
-		 return;
-		 }
 		 if(me.isAry(clss)) {
 		 for(var i = 0; i < clss.length; i++) {
 		 me.adCls(el, clss[i]);
@@ -438,20 +445,20 @@ $Kit.prototype = {
 		 el.className = a.join(" ");
 		 }
 		 }*/
-		var re = new RegExp('(\\s|^)' + clss + '(\\s|$)');
+		var re = new RegExp('(\\s|^)' + cls + '(\\s|$)');
 		if(re.test(el.className))
 			return;
-		el.className += ' ' + clss;
+		el.className += ' ' + cls;
 	},
 	/**
 	 * remove className
 	 */
-	rmCls : function(el, clss) {
+	rmCls : function(el, cls) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
 		/*
-		 var me = this;
-		 if(me.isEmpty(el)) {
-		 return;
-		 }
 		 var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
 		 if(a.length) {
 		 b = me.aryDel(a, clss);
@@ -462,18 +469,19 @@ $Kit.prototype = {
 		 el.className = "";
 		 me.attr(el, 'class', null);
 		 }*/
-		var re = new RegExp('(\\s|^)' + clss + '(\\s|$)');
-		el.className = el.className.replace(re, ' ');
+		var re = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+		if(el.className)
+			el.className = el.className.replace(re, ' ');
 	},
 	/**
 	 * has class true?
 	 */
 	hsCls : function(el, cls) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
 		/*
-		 var me = this, flag = false;
-		 if(me.isEmpty(el)) {
-		 return;
-		 }
 		 if(!me.isEmpty(el.className)) {
 		 var a = el.className.split(me.CONSTANTS.REGEXP_SPACE);
 		 for(var i = 0; i < a.length; i++) {
@@ -485,7 +493,7 @@ $Kit.prototype = {
 		 }
 		 return flag;
 		 */
-		var re = new RegExp('(\\s|^)' + clss + '(\\s|$)');
+		var re = new RegExp('(\\s|^)' + cls + '(\\s|$)');
 		return re.test(el.className);
 	},
 	/**
@@ -668,7 +676,9 @@ $Kit.prototype = {
 			top : top,
 			left : left,
 			width : width,
-			height : height
+			height : height,
+			bottom : top + height,
+			right : left + width
 		}
 	},
 	/**

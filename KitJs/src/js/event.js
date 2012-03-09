@@ -12,6 +12,7 @@ $Kit.Event.prototype = {
 	KEYCODE_ADD : 107,
 	KEYCODE_SUB : 109,
 	KEYCODE_MULTIPLY : 106,
-	KEYCODE_DIVIDE : 111
+	KEYCODE_DIVIDE : 111,
+	KEYCODE_ENTER : 13
 };
 $kit.event = new $Kit.Event();

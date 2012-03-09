@@ -9,14 +9,17 @@ $Kit.Date.prototype = {
 	 * 返回时间，单位秒 dd:dd:dd 时:分:秒
 	 */
 	parseTime : function(timeStr) {
+		if($kit.isEmpty(timeStr)) {
+			return undefined;
+		}
 		var me = this;
 		var a = timeStr.split(":");
 		var hours, minutes, seconds;
-		if (a.length == 3) {
+		if(a.length == 3) {
 			hours = parseFloat(a[0]);
 			minutes = parseFloat(a[1]);
 			seconds = parseFloat(a[2]);
-		} else if (a.length == 2) {
+		} else if(a.length == 2) {
 			hours = 0;
 			minutes = parseFloat(a[0]);
 			seconds = parseFloat(a[1]);

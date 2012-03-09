@@ -1,6 +1,10 @@
 $kit.merge(String.prototype, {
 	trim : function() {
-		return this.replace(/^\s+|\s+$/g, '');
+		if(/^\s+|\s+$/g.test(this)) {
+			return this.replace(/^\s+|\s+$/g, '');
+		} else {
+			return this;
+		}
 	}
 });
 $kit.merge($Kit.prototype, {
@@ -24,7 +28,7 @@ $kit.merge($Kit.prototype, {
 	 */
 	el8cls : function(cls, root) {
 		var a = (root || document), me = this, re = null;
-		me.each(document.getElementsByTagName("*"), function(o) {
+		me.each(document.getElementsByTagName('*', root), function(o) {
 			if(me.hsCls(o, cls)) {
 				re = o;
 				return false;
@@ -39,7 +43,7 @@ $kit.merge($Kit.prototype, {
 		var a = (root || document), me = this, re = [];
 		re.item = function() {
 		};
-		me.each(document.getElementsByTagName("*"), function(o) {
+		me.each(document.getElementsByTagName('*', root), function(o) {
 			if(me.hsCls(o, cls)) {
 				re.push(o);
 			}
