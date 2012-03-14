@@ -1,5 +1,6 @@
 $kit.ui.SlideBar = function(config) {
 	var me = this;
+	me.currentMoveTarget = null;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
@@ -37,12 +38,13 @@ $kit.merge($kit.ui.SlideBar.prototype, {
 			el : me.config.slideContainer,
 			ev : 'mousemove',
 			fn : function(e, cfg) {
+				var me = this;
 				var currentMoveTarget = me.config.locateElement(e, cfg);
 				if(!currentMoveTarget) {
 					return;
 				}
-				if(currentMoveTarget && currentMoveTarget != window._timeout_slideBar_move_target) {
-					window._timeout_slideBar_move_target = currentMoveTarget;
+				if(currentMoveTarget && currentMoveTarget != null && currentMoveTarget != me.currentMoveTarget) {
+					me.currentMoveTarget = currentMoveTarget;
 					clearTimeout(window[me.config.slideAnimDelayTimeout]);
 					window[me.config.slideAnimDelayTimeout] = setTimeout(function() {
 						$kit.anim.motion({
@@ -68,7 +70,8 @@ $kit.merge($kit.ui.SlideBar.prototype, {
 						})
 					}, me.config.slideAnimDelay);
 				}
-			}
+			},
+			scope : me
 		});
 		$kit.ev({
 			el : me.config.slideContainer,
@@ -91,6 +94,7 @@ $kit.merge($kit.ui.SlideBar.prototype, {
 							},
 							fx : me.config.slideAnimFx,
 							then : function() {
+								me.currentMoveTarget = null;
 								me.config.hideThen && me.config.hideThen.apply(me);
 							},
 							timeout : me.config.slideAnimTimeout
@@ -105,6 +109,10 @@ $kit.merge($kit.ui.SlideBar.prototype, {
 			fn : function(e, cfg) {
 				clearTimeout(window[me.config.slideAnimDelayTimeout]);
 				clearInterval(window[me.config.slideAnimTimeout]);
+				$kit.css(me.config.slideBar, {
+					display : 'block',
+					opacity : 1
+				});
 			}
 		});
 	}

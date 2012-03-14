@@ -186,7 +186,7 @@ $Kit.prototype = {
 	 */
 	el8cls : function(cls, root) {
 		var a = (root || document).getElementsByClassName(cls);
-		return (a != null && a.length ) ? a[0] : a;
+		return (a != null && a.length ) ? a[0] : null;
 	},
 	/**
 	 * by tagName
@@ -307,7 +307,8 @@ $Kit.prototype = {
 					el.style[l] = attr[l];
 				}
 			} else {
-				return getComputedStyle(el, null)[attr];
+				var re = getComputedStyle(el, null)[attr]
+				return parseFloat(re);
 			}
 		} else {
 			el.style[attr] = value;
@@ -662,13 +663,12 @@ $Kit.prototype = {
 		if(me.isEmpty(el)) {
 			return;
 		}
-		var offsetPar = el.offsetParent, //
-		top = el.offsetTop, //
+		var top = el.offsetTop, //
 		left = el.offsetLeft, //
 		width = el.offsetWidth, //
 		height = el.offsetHeight;
-		while(el != offsetPar) {
-			el = offsetPar;
+		while(el.offsetParent != null && el.offsetParent != document.body) {
+			el = el.offsetParent;
 			top += el.offsetTop;
 			left += el.offsetLeft;
 		}

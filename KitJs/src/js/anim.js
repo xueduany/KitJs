@@ -144,14 +144,22 @@ $Kit.Anim.prototype = {
 					if($kit.inAry(exceptStyleArray, styleName)) {
 						el[styleName] = styleValue;
 					} else {
-						el.style[styleName] = styleValue;
+						if(styleName.toLowerCase() == 'opacity' && $kit.isIE()) {
+							el.style.filter = 'alpha(opacity=' + styleValue * 100 + ')';
+						} else {
+							el.style[styleName] = styleValue;
+						}
 					}
 				} else if($kit.isNodeList(el)) {
 					for(var j = 0; j < el.length; j++) {
 						if($kit.inAry(exceptStyleArray, styleName)) {
 							el[j][styleName] = styleValue;
 						} else {
-							el[j].style[styleName] = styleValue;
+							if(styleName.toLowerCase() == 'opacity' && $kit.isIE()) {
+								el[j].style.filter = 'alpha(opacity=' + styleValue * 100 + ')';
+							} else {
+								el[j].style[styleName] = styleValue;
+							}
 						}
 					}
 				}

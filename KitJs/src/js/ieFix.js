@@ -61,13 +61,42 @@ $kit.merge($Kit.prototype, {
 		if(value == null) {
 			if(me.isObj(attr)) {
 				for(var l in attr) {
-					el.style[l] = attr[l];
+					if(l.toLowerCase() == 'opacity') {
+						try {
+							el.filters.item("alpha").opacity = attr[l] * 100;
+						} catch(e) {
+							try {
+								el.style.filter = 'alpha(opacity=' + attr[l] * 100 + ')';
+							} catch(e) {
+							}
+						}
+					} else {
+						el.style[l] = attr[l];
+					}
 				}
 			} else {
-				return parseFloat(el.currentStyle[attr]);
+				var re = el.currentStyle[attr];
+				if(attr.toLowerCase() == 'opacity' && el.filters.length) {
+					try {
+						re = el.filters.item("alpha").opacity / 100;
+					} catch(e) {
+					}
+				}
+				return parseFloat(re);
 			}
 		} else {
-			el.style[attr] = value;
+			if(attr.toLowerCase() == 'opacity') {
+				try {
+					el.filters.item("alpha").opacity = value * 100;
+				} catch(e) {
+					try {
+						el.style.filter = 'alpha(opacity=' + value * 100 + ')';
+					} catch(e) {
+					}
+				}
+			} else {
+				el.style[attr] = value;
+			}
 		}
 	},
 	/**
