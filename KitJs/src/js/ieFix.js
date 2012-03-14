@@ -64,7 +64,7 @@ $kit.merge($Kit.prototype, {
 					el.style[l] = attr[l];
 				}
 			} else {
-				return el.currentStyle[attr];
+				return parseFloat(el.currentStyle[attr]);
 			}
 		} else {
 			el.style[attr] = value;

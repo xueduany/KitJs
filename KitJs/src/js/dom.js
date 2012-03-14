@@ -8,19 +8,25 @@ $Kit.Dom.prototype = {
 	/**
 	 * 查找父元素
 	 */
-	parentEl8tag : function(el, tagName) {
+	parentEl8tag : function(el, tagName, topEl) {
 		return $kit.parentEl(el, function(p) {
-			if(p.tagName.toLowerCase() == tagName.toLowerCase()) {
+			if(p.tagName && p.tagName.toLowerCase() == tagName.toLowerCase()) {
 				return true;
 			}
-		});
+			if(p == topEl) {
+				return false;
+			}
+		}, topEl);
 	},
-	parentEl8cls : function(el, cls) {
+	parentEl8cls : function(el, cls, topEl) {
 		return $kit.parentEl(el, function(p) {
 			if($kit.hsCls(p, cls)) {
 				return true;
 			}
-		});
+			if(p == topEl) {
+				return false;
+			}
+		}, topEl);
 	},
 	/**
 	 * 注入js

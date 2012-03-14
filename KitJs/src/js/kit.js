@@ -784,6 +784,7 @@ $Kit.prototype = {
 
 					me.merge(EV, {
 						target : EV.target || EV.srcElement,
+						relatedTarget : EV.relatedTarget ? EV.relatedTarget : EV.toElement || EV.fromElement,
 						stopNow : function() {
 							EV.stopPropagation && EV.stopPropagation();
 							EV.preventDefault && EV.preventDefault();
