@@ -71,10 +71,12 @@ $kit.merge($Kit.prototype, {
 							}
 						}
 					} else {
+						l = me._camelCssName(l);
 						el.style[l] = attr[l];
 					}
 				}
 			} else {
+				attr = me._camelCssName(attr);
 				var re = el.currentStyle[attr];
 				if(attr.toLowerCase() == 'opacity' && el.filters.length) {
 					try {
@@ -85,6 +87,7 @@ $kit.merge($Kit.prototype, {
 				return parseFloat(re);
 			}
 		} else {
+			attr = me._camelCssName(attr);
 			if(attr.toLowerCase() == 'opacity') {
 				try {
 					el.filters.item("alpha").opacity = value * 100;
@@ -98,6 +101,15 @@ $kit.merge($Kit.prototype, {
 				el.style[attr] = value;
 			}
 		}
+	},
+	_camelCssName : function(str) {
+		var firstLetter = str.substr(0, 1);
+		var mainStr = str.substr(1);
+		var a = mainStr.split('-');
+		for(var i = 1; i < a.length; i++) {
+			a[i] = a[i].substr(0, 1).toUpperCase() + a[i].substr(1);
+		}
+		return firstLetter + a.join('');
 	},
 	/**
 	 * replace element
