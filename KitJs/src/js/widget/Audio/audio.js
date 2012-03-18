@@ -1,7 +1,7 @@
 $kit.ui.Audio = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
-	me.create();
+	me.init();
 }
 $kit.merge($kit.ui.Audio, {
 	defaultConfig : {
@@ -11,7 +11,7 @@ $kit.merge($kit.ui.Audio, {
 		autoplay : false,
 		loop : false,
 		preload : true,
-		swfLocation : 'http://localhost/KitJs/KitJs/demo/Audio/audiojs.swf',
+		swfLocation : 'audiojs.swf',
 		useFlash : (function() {
 			var a = document.createElement('audio');
 			return !(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
@@ -33,26 +33,34 @@ $kit.merge($kit.ui.Audio, {
 		})(),
 		// The default markup and classes for creating the player:
 		playerTemplate : {
-			markup : ['<div class="play-pause">', //
-			'<p class="play"></p>', //
-			'<p class="pause"></p>', //
-			'<p class="loading"></p>', //
-			'<p class="error"></p>', //
-			'</div>', '<div class="scrubber">', //
-			'<div class="progress"></div>', //
-			'<div class="loaded"></div>', //
+			markup : ['<div class="${playPauseClass}">', //
+			'<p class="${playButtonClass}"></p>', //
+			'<p class="${pauseButtonClass}"></p>', //
+			'<p class="${loadingStatusClass}"></p>', //
+			'<p class="${errorStatusClass}"></p>', //
 			'</div>', //
-			'<div class="time">', //
-			'<em class="played">00:00</em>/<strong class="duration">00:00</strong>', //
+			'<div class="${scrubberClass}">', //
+			'<div class="${progressClass}">', //
+			'<i class="${progressIcon}"></i>', //
+			'<div class="${timeClass}">', //
+			'<em class="${playedClass}">00:00</em>/<strong class="${durationClass}">00:00</strong>', //
 			'</div>', //
-			'<div class="error-message"></div>'//
+			'</div>', //
+			'<div class="${loaderClass}"></div>', //
+			'</div>', //
+			'<div class="${errorMessageClass}"></div>'//
 			].join(''),
 			playPauseClass : 'play-pause',
+			playButtonClass : 'play',
+			pauseButtonClass : 'pause',
+			loadingStatusClass : 'loading',
+			errorStatusClass : 'error',
 			scrubberClass : 'scrubber',
 			progressClass : 'progress',
-			loaderClass : 'loaded',
+			progressIcon : 'time-icon',
 			timeClass : 'time',
 			durationClass : 'duration',
+			loaderClass : 'loaded',
 			playedClass : 'played',
 			errorMessageClass : 'error-message',
 			playingClass : 'playing',
@@ -71,7 +79,7 @@ $kit.merge($kit.ui.Audio, {
 		},
 		flashError : function() {
 			var player = this.config.playerTemplate, //
-			errorMessage = this.getByClass(player.errorMessageClass, this.wrapper), //
+			errorMessage = $kit.el8cls(player.errorMessageClass, this.wrapper), //
 			html = 'Missing <a href="http://get.adobe.com/flashplayer/">flash player</a> plugin.';
 			if(this.mp3)
 				html += ' <a href="' + this.mp3 + '">Download audio file</a>.';
@@ -81,7 +89,7 @@ $kit.merge($kit.ui.Audio, {
 		},
 		loadError : function(e) {
 			var player = this.config.playerTemplate, //
-			errorMessage = this.getByClass(player.errorMessageClass, this.wrapper);
+			errorMessage = $kit.el8cls(player.errorMessageClass, this.wrapper);
 			$kit.rmCls(this.wrapper, this.config.playerTemplate.loadingClass);
 			$kit.adCls(this.wrapper, this.config.playerTemplate.errorClass);
 			errorMessage.innerHTML = 'Error loading: "' + this.mp3 + '"';
@@ -92,15 +100,15 @@ $kit.merge($kit.ui.Audio, {
 		},
 		loadStarted : function() {
 			var player = this.config.playerTemplate, //
-			duration = this.getByClass(player.durationClass, this.wrapper), //
+			duration = $kit.el8cls(player.durationClass, this.wrapper), //
 			m = Math.floor(this.duration / 60), s = Math.floor(this.duration % 60);
 			$kit.rmCls(this.wrapper, player.loadingClass);
 			duration.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
 		},
 		loadProgress : function(percent) {
 			var player = this.config.playerTemplate, //
-			scrubber = this.getByClass(player.scrubberClass, this.wrapper), //
-			loaded = this.getByClass(player.loaderClass, this.wrapper);
+			scrubber = $kit.el8cls(player.scrubberClass, this.wrapper), //
+			loaded = $kit.el8cls(player.loaderClass, this.wrapper);
 			loaded.style.width = (scrubber.offsetWidth * percent) + 'px';
 		},
 		playPause : function() {
@@ -119,11 +127,11 @@ $kit.merge($kit.ui.Audio, {
 		},
 		updatePlayhead : function(percent) {
 			var player = this.config.playerTemplate, //
-			scrubber = this.getByClass(player.scrubberClass, this.wrapper), //
-			progress = this.getByClass(player.progressClass, this.wrapper);
+			scrubber = $kit.el8cls(player.scrubberClass, this.wrapper), //
+			progress = $kit.el8cls(player.progressClass, this.wrapper);
 			progress.style.width = (scrubber.offsetWidth * percent) + 'px';
 
-			var played = this.getByClass(player.playedClass, this.wrapper), //
+			var played = $kit.el8cls(player.playedClass, this.wrapper), //
 			p = this.duration * percent, //
 			m = Math.floor(p / 60), s = Math.floor(p % 60);
 			played.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
@@ -131,8 +139,10 @@ $kit.merge($kit.ui.Audio, {
 	}
 });
 $kit.merge($kit.ui.Audio.prototype, {
-	//
-	create : function() {
+	/**
+	 * initilize
+	 */
+	init : function() {
 		var me = this, config = me.config;
 		if($kit.isEmpty(config.el)) {
 			return;
@@ -159,15 +169,14 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.duration = 1;
 		this.playing = false;
 		//
-		var id = $kit.onlyId();
 		// If `<audio>` or mp3 playback isn't supported, insert the swf & attach the required events for it.
 		if(config.useFlash && config.hasFlash) {
-			this.injectFlash(this, id);
-			this.attachFlashEvents(this.wrapper, this);
+			var flashId = $kit.onlyId();
+			this.injectFlash(flashId);
+			this.attachFlashEvents();
 		} else if(config.useFlash && !config.hasFlash) {
 			config.flashError.apply(this);
 		}
-
 		// Attach event callbacks to the new audiojs instance.
 		if(!config.useFlash || (config.useFlash && config.hasFlash)) {
 			this.attachEvents(this.wrapper, this);
@@ -176,32 +185,32 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.element[config.kitWidgetName] = this;
 		this.wrapper[config.kitWidgetName] = this;
 	},
-	// ### Creating and returning a new instance
-	// This goes through all the steps required to build out a usable `audiojs` instance.
-	// ### Helper methods for constructing a working player
-	// Inject a wrapping div and the markup for the html player.
-	createPlayer : function(element, player, id) {
-		var wrapper = document.createElement('div'), newElement = element.cloneNode(true);
+	/**
+	 * 生成自定义的播放器模板HTML
+	 */
+	createPlayer : function(element, template, wrapperId) {
+		var wrapper = document.createElement('div'), //
+		newElement = element.cloneNode(true);
 		wrapper.setAttribute('class', 'audiojs');
-		wrapper.setAttribute('className', 'audiojs');
-		wrapper.setAttribute('id', id);
+		wrapper.setAttribute('id', wrapperId);
+		var markup = $kit.tpl(template.markup, template);
 		// Fix IE's broken implementation of `innerHTML` & `cloneNode` for HTML5 elements.
 		if(newElement.outerHTML && !document.createElement('audio').canPlayType) {
-			newElement = this.cloneHtml5Node(element);
-			wrapper.innerHTML = player.markup;
+			newElement = this._ieCloneHtml5Node(element);
+			wrapper.innerHTML = markup;
 			wrapper.appendChild(newElement);
 			element.outerHTML = wrapper.outerHTML;
-			wrapper = document.getElementById(id);
+			wrapper = document.getElementById(wrapperId);
 		} else {
 			wrapper.appendChild(newElement);
-			wrapper.innerHTML = wrapper.innerHTML + player.markup;
+			wrapper.innerHTML = wrapper.innerHTML + markup;
 			element.parentNode.replaceChild(wrapper, element);
 		}
 		return wrapper.getElementsByTagName('audio')[0];
 	},
 	// **Handle all the IE6+7 requirements for cloning `<audio>` nodes**
 	// Create a html5-safe document fragment by injecting an `<audio>` element into the document fragment.
-	cloneHtml5Node : function(audioTag) {
+	_ieCloneHtml5Node : function(audioTag) {
 		var fragment = document.createDocumentFragment(), //
 		doc = fragment.createElement ? fragment : document;
 		doc.createElement('audio');
@@ -211,57 +220,122 @@ $kit.merge($kit.ui.Audio.prototype, {
 		return div.firstChild;
 	},
 	// Attaches useful event callbacks to an `audiojs` instance.
-	attachEvents : function(wrapper, audio) {
+	attachEvents : function() {
+		var wrapper = this.wrapper, audio = this;
 		if(!audio.config.playerTemplate)
 			return;
 		var player = audio.config.playerTemplate, //
-		playPause = this.getByClass(player.playPauseClass, wrapper), //
-		scrubber = this.getByClass(player.scrubberClass, wrapper), //
-		leftPos = function(elem) {
-			var curleft = 0;
-			if(elem.offsetParent) {
-				do {
-					curleft += elem.offsetLeft;
-				} while (elem = elem.offsetParent);
-			}
-			return curleft;
-		};
-
-		this.events.addListener(playPause, 'click', function(e) {
-			audio.playPause.apply(audio);
+		playPause = $kit.el8cls(player.playPauseClass, wrapper), //
+		scrubber = $kit.el8cls(player.scrubberClass, wrapper), //
+		progress = $kit.el8cls(player.progressClass, wrapper), //
+		progressIcon = $kit.el8cls(player.progressIcon, wrapper);
+		$kit.ev({
+			el : playPause,
+			ev : 'click',
+			fn : function(e) {
+				this.playPause.apply(audio);
+			},
+			scope : audio
 		});
-
-		this.events.addListener(scrubber, 'click', function(e) {
-			var relativeLeft = e.clientX - leftPos(this);
-			audio.skipTo(relativeLeft / scrubber.offsetWidth);
+		$kit.ev({
+			el : scrubber,
+			ev : 'click',
+			fn : function(e) {
+				var relativeLeft = e.clientX - $kit.offset(scrubber).left;
+				this.skipTo(relativeLeft / scrubber.offsetWidth);
+			},
+			scope : audio
+		});
+		//move timeIcon
+		$kit.ev({
+			el : progressIcon,
+			ev : 'mousedown',
+			fn : function(e, cfg) {
+				this._flag_dragStart = true;
+				e.stopDefault();
+			},
+			scope : audio
+		});
+		$kit.ev({
+			el : scrubber,
+			ev : 'mousemove',
+			fn : function(e, cfg) {
+				if(this._flag_dragStart == true) {
+					if(this.playing) {
+						this.pause();
+						this._flag_palying_when_drag = true;
+					}
+					var distance = e.clientX - $kit.offset(scrubber).left;
+					progress.style.width = distance + 'px';
+					var p = this.duration * $kit.css(progress, 'width') / $kit.css(scrubber, 'width'), //
+					m = Math.floor(p / 60), //
+					s = Math.floor(p % 60);
+					this.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
+				}
+				e.stopDefault();
+			},
+			scope : audio
+		});
+		$kit.ev({
+			el : progressIcon,
+			ev : 'mouseup mouseout',
+			fn : function(e, cfg) {
+				if(this._flag_dragStart == true) {
+					if(e.type == 'mouseup' || //
+					(e.type == 'mouseout' && e.relatedTarget && !$kit.contains(scrubber, e.relatedTarget))) {
+						this._flag_dragStart = false;
+						this.skipTo(parseFloat($kit.css(progress, 'width') / $kit.css(scrubber, 'width')));
+					}
+					if(this._flag_palying_when_drag == true) {
+						this.play();
+						this._flag_palying_when_drag = false;
+					}
+				}
+				e.stopDefault();
+			},
+			scope : audio
 		});
 		// _If flash is being used, then the following handlers don't need to be registered._
 		if(audio.config.useFlash)
 			return;
 
 		// Start tracking the load progress of the track.
-		this.events.trackLoadProgress(audio);
+		this.trackLoadProgress(audio);
 
-		this.events.addListener(audio.element, 'timeupdate', function(e) {
-			audio.updatePlayhead.apply(audio);
+		$kit.ev({
+			el : audio.element,
+			ev : 'timeupdate',
+			fn : function(e) {
+				audio.updatePlayhead.apply(audio);
+			},
+			scope : audio
 		});
-
-		this.events.addListener(audio.element, 'ended', function(e) {
-			audio.trackEnded.apply(audio);
+		$kit.ev({
+			el : audio.element,
+			ev : 'ended',
+			fn : function(e) {
+				audio.trackEnded.apply(audio);
+			},
+			scope : audio
 		});
-
-		this.events.addListener(audio.source, 'error', function(e) {
-			// on error, cancel any load timers that are running.
-			clearInterval(audio.readyTimer);
-			clearInterval(audio.loadTimer);
-			audio.config.loadError.apply(audio);
+		$kit.ev({
+			el : audio.source,
+			ev : 'error',
+			fn : function(e) {
+				// on error, cancel any load timers that are running.
+				clearInterval(audio.readyTimer);
+				clearInterval(audio.loadTimer);
+				audio.config.loadError.apply(audio);
+			},
+			scope : audio
 		});
 	},
 	// Flash requires a slightly different API to the `<audio>` element, so this method is used to overwrite the standard event handlers.
-	attachFlashEvents : function(element, audio) {
-		audio['swfReady'] = false;
+	attachFlashEvents : function() {
+		var audio = this;
+		audio.swfReady = false;
 		audio['load'] = function(mp3) {
-			// If the swf isn't ready yet then just set `audio.mp3`. `init()` will load it in once the swf is ready.
+			// If the swf isn't ready yet then just set `audio.mp3`. `loading()` will load it in once the swf is ready.
 			audio.mp3 = mp3;
 			if(audio.swfReady)
 				audio.element.load(mp3);
@@ -277,6 +351,12 @@ $kit.merge($kit.ui.Audio.prototype, {
 				return;
 			audio.updatePlayhead.call(audio, [percent])
 			audio.element.skipTo(percent);
+		}
+		audio['skipTimeTo'] = function(time) {
+			if(time > audio.duration)
+				return;
+			audio.updatePlayhead.call(audio, [time])
+			audio.element.skipTimeTo(time);
 		}
 		audio['updatePlayhead'] = function(percent) {
 			audio.config.updatePlayhead.apply(audio, [percent]);
@@ -306,49 +386,31 @@ $kit.merge($kit.ui.Audio.prototype, {
 		audio['loadStarted'] = function() {
 			// Load the mp3 specified by the audio element into the swf.
 			audio.swfReady = true;
-			if(audio.config.preload)
-				audio.element.loading(audio.mp3);
-			if(audio.config.autoplay)
+			if(audio.config.preload) {
+				audio.element.load(audio.mp3);
+			}
+			if(audio.config.autoplay) {
 				audio.play.apply(audio);
+			}
 		}
 	},
 	// ### Injecting an swf from a string
 	// Build up the swf source by replacing the `$keys` and then inject the markup into the page.
-	injectFlash : function(audio, id) {
+	injectFlash : function(id) {
 		var flashSource = $kit.tpl(this.config.flashSource, {
 			arg1 : id,
 			arg2 : this.config.swfLocation,
 			arg3 : (+new Date + Math.random()), // `(+new Date)` ensures the swf is not pulled out of cache. The fixes an issue with Firefox running multiple players on the same page.
-			arg4 : '$kit.el(\'#' + this.wrapper.id + '\')[\'' + this.config.kitWidgetName + '\']'
+			arg4 : "$kit.el('#" + id + "')['" + this.config.kitWidgetName + "']"//'$kit.el(\'#' + this.wrapper.id + '\')[\'' + this.config.kitWidgetName + '\']'
 		});
 		// Inject the player markup using a more verbose `innerHTML` insertion technique that works with IE.
-		var html = audio.wrapper.innerHTML, div = document.createElement('div');
+		var html = this.wrapper.innerHTML, div = document.createElement('div');
 		div.innerHTML = flashSource + html;
-		audio.wrapper.innerHTML = div.innerHTML;
-		audio.element = this.getSwf(id);
-	},
-	// **getElementsByClassName**
-	// Having to rely on `getElementsByTagName` is pretty inflexible internally, so a modified version of Dustin Diaz's `getElementsByClassName` has been included.
-	// This version cleans things up and prefers the native DOM method if it's available.
-	getByClass : function(searchClass, node) {
-		var matches = [];
-		node = node || document;
-
-		if(node.getElementsByClassName) {
-			matches = node.getElementsByClassName(searchClass);
-		} else {
-			var i, l, els = node.getElementsByTagName("*"), pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)");
-
-			for( i = 0, l = els.length; i < l; i++) {
-				if(pattern.test(els[i].className)) {
-					matches.push(els[i]);
-				}
-			}
-		}
-		return matches.length > 1 ? matches : matches[0];
+		this.wrapper.innerHTML = div.innerHTML;
+		this.element = this._getSwf(id);
 	},
 	// **Cross-browser `<object>` / `<embed>` element selection**
-	getSwf : function(name) {
+	_getSwf : function(name) {
 		var swf = document[name] || window[name];
 		return swf.length > 1 ? swf[swf.length - 1] : swf;
 	},
@@ -364,6 +426,12 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.element.currentTime = this.duration * percent;
 		this.updatePlayhead();
 	},
+	skipTimeTo : function(time) {
+		if(time > this.duration)
+			return;
+		this.element.currentTime = time;
+		this.updatePlayhead();
+	},
 	load : function(mp3) {
 		this.loadStartedCalled = false;
 		this.source.setAttribute('src', mp3);
@@ -375,7 +443,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 	loadError : function() {
 		this.config.loadError.apply(this);
 	},
-	init : function() {
+	loading : function() {
 		this.config.loading.apply(this);
 	},
 	loadStarted : function() {
@@ -407,7 +475,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 	},
 	play : function() {
 		var ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
-		// On iOS this interaction will trigger loading the mp3, so run `init()`.
+		// On iOS this interaction will trigger loading the mp3, so run `loading()`.
 		if(ios && this.element.readyState == 0)
 			this.loading.apply(this);
 		// If the audio hasn't started preloading, then start it now.
@@ -435,78 +503,33 @@ $kit.merge($kit.ui.Audio.prototype, {
 			this.pause.apply(this);
 		this.config.trackEnded.apply(this);
 	},
-	// ## Event-handling
-	events : {
-		memoryLeaking : false,
-		listeners : [],
-		// **A simple cross-browser event handler abstraction**
-		addListener : function(element, eventName, func) {
-			// For modern browsers use the standard DOM-compliant `addEventListener`.
-			if(element.addEventListener) {
-				element.addEventListener(eventName, func, false);
-				// For older versions of Internet Explorer, use `attachEvent`.
-				// Also provide a fix for scoping `this` to the calling element and register each listener so the containing elements can be purged on page unload.
-			} else if(element.attachEvent) {
-				this.listeners.push(element);
-				if(!this.memoryLeaking) {
-					window.attachEvent('onunload', function() {
-						if(this.listeners) {
-							for(var i = 0, ii = this.listeners.length; i < ii; i++) {
-								this.events.purge(this.listeners[i]);
-							}
-						}
-					});
-					this.memoryLeaking = true;
-				}
-				element.attachEvent('on' + eventName, function() {
-					func.call(element, window.event);
+	trackLoadProgress : function(audio) {
+		// If `preload` has been set to `none`, then we don't want to start loading the track yet.
+		if(!audio.config.preload)
+			return;
+
+		var readyTimer, loadTimer, audio = audio, ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
+
+		// Use timers here rather than the official `progress` event, as Chrome has issues calling `progress` when loading mp3 files from cache.
+		readyTimer = setInterval(function() {
+			if(audio.element.readyState > -1) {
+				// iOS doesn't start preloading the mp3 until the user interacts manually, so this stops the loader being displayed prematurely.
+				if(!ios)
+					audio.loading.apply(audio);
+			}
+			if(audio.element.readyState > 1) {
+				if(audio.config.autoplay)
+					audio.play.apply(audio);
+				clearInterval(readyTimer);
+				// Once we have data, start tracking the load progress.
+				loadTimer = setInterval(function() {
+					audio.loadProgress.apply(audio);
+					if(audio.loadedPercent >= 1)
+						clearInterval(loadTimer);
 				});
 			}
-		},
-		trackLoadProgress : function(audio) {
-			// If `preload` has been set to `none`, then we don't want to start loading the track yet.
-			if(!audio.config.preload)
-				return;
-
-			var readyTimer, loadTimer, audio = audio, ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
-
-			// Use timers here rather than the official `progress` event, as Chrome has issues calling `progress` when loading mp3 files from cache.
-			readyTimer = setInterval(function() {
-				if(audio.element.readyState > -1) {
-					// iOS doesn't start preloading the mp3 until the user interacts manually, so this stops the loader being displayed prematurely.
-					if(!ios)
-						audio.init.apply(audio);
-				}
-				if(audio.element.readyState > 1) {
-					if(audio.config.autoplay)
-						audio.play.apply(audio);
-					clearInterval(readyTimer);
-					// Once we have data, start tracking the load progress.
-					loadTimer = setInterval(function() {
-						audio.loadProgress.apply(audio);
-						if(audio.loadedPercent >= 1)
-							clearInterval(loadTimer);
-					});
-				}
-			}, 10);
-			audio.readyTimer = readyTimer;
-			audio.loadTimer = loadTimer;
-		},
-		// **Douglas Crockford's IE6 memory leak fix**
-		// <http://javascript.crockford.com/memory/leak.html>
-		// This is used to release the memory leak created by the circular references created when fixing `this` scoping for IE. It is called on page unload.
-		purge : function(d) {
-			var a = d.attributes, i;
-			if(a) {
-				for( i = 0; i < a.length; i += 1) {
-					if( typeof d[a[i].name] === 'function')
-						d[a[i].name] = null;
-				}
-			}
-			a = d.childNodes;
-			if(a) {
-				for( i = 0; i < a.length; i += 1)purge(d.childNodes[i]);
-			}
-		}
+		}, 10);
+		audio.readyTimer = readyTimer;
+		audio.loadTimer = loadTimer;
 	}
 });
