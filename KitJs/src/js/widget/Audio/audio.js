@@ -1,3 +1,12 @@
+/**
+ * HTML Audio实现
+ * 修改自github.com/kolber/audiojs/
+ * 代码做了重构
+ * 添加自定义事件支持，以及换肤支持
+ *
+ * @author:xueduanyang1985@163.com
+ * @date:2012/03/19
+ */
 $kit.ui.Audio = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
@@ -33,39 +42,40 @@ $kit.merge($kit.ui.Audio, {
 		})(),
 		// The default markup and classes for creating the player:
 		playerTemplate : {
-			markup : ['<div class="${playPauseClass}">', //
-			'<p class="${playButtonClass}"></p>', //
-			'<p class="${pauseButtonClass}"></p>', //
-			'<p class="${loadingStatusClass}"></p>', //
-			'<p class="${errorStatusClass}"></p>', //
+			markup : ['<div class="${playPauseCls}">', //
+			'<p class="${playButtonCls}"></p>', //
+			'<p class="${pauseButtonCls}"></p>', //
+			'<p class="${loadingStatusCls}"></p>', //
+			'<p class="${errorStatusCls}"></p>', //
 			'</div>', //
-			'<div class="${scrubberClass}">', //
-			'<div class="${progressClass}">', //
-			'<i class="${progressIcon}"></i>', //
-			'<div class="${timeClass}">', //
-			'<em class="${playedClass}">00:00</em>/<strong class="${durationClass}">00:00</strong>', //
+			'<div class="${scrubberCls}">', //
+			'<div class="${progressCls}">', //
+			'<i class="${progressIconCls}"></i>', //
+			'<div class="${timeCls}">', //
+			'<em class="${playedCls}">00:00</em>/<strong class="${durationCls}">00:00</strong>', //
 			'</div>', //
 			'</div>', //
-			'<div class="${loaderClass}"></div>', //
+			'<div class="${loaderCls}"></div>', //
 			'</div>', //
-			'<div class="${errorMessageClass}"></div>'//
+			'<div class="${errorMessageCls}"></div>'//
 			].join(''),
-			playPauseClass : 'play-pause',
-			playButtonClass : 'play',
-			pauseButtonClass : 'pause',
-			loadingStatusClass : 'loading',
-			errorStatusClass : 'error',
-			scrubberClass : 'scrubber',
-			progressClass : 'progress',
-			progressIcon : 'time-icon',
-			timeClass : 'time',
-			durationClass : 'duration',
-			loaderClass : 'loaded',
-			playedClass : 'played',
-			errorMessageClass : 'error-message',
-			playingClass : 'playing',
-			loadingClass : 'loading',
-			errorClass : 'error'
+			playPauseCls : 'play-pause',
+			playButtonCls : 'play',
+			pauseButtonCls : 'pause',
+			loadingStatusCls : 'loading',
+			errorStatusCls : 'error',
+			scrubberCls : 'scrubber',
+			progressCls : 'progress',
+			progressIconCls : 'time-icon',
+			timeCls : 'time',
+			durationCls : 'duration',
+			loaderCls : 'loaded',
+			playedCls : 'played',
+			errorMessageCls : 'error-message',
+			playingCls : 'playing',
+			loadingCls : 'loading',
+			errorCls : 'error',
+			timeHoverCls : 'time-hover'
 		},
 		flashSource : [//
 		'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" id="${arg1}" width="1" height="1" name="${arg1}" style="position: absolute; left: -1px;">', //
@@ -79,36 +89,36 @@ $kit.merge($kit.ui.Audio, {
 		},
 		flashError : function() {
 			var player = this.config.playerTemplate, //
-			errorMessage = $kit.el8cls(player.errorMessageClass, this.wrapper), //
+			errorMessage = $kit.el8cls(player.errorMessageCls, this.wrapper), //
 			html = 'Missing <a href="http://get.adobe.com/flashplayer/">flash player</a> plugin.';
 			if(this.mp3)
 				html += ' <a href="' + this.mp3 + '">Download audio file</a>.';
-			$kit.rmCls(this.wrapper, player.loadingClass);
-			$kit.adCls(this.wrapper, this.config.playerTemplate.errorClass);
+			$kit.rmCls(this.wrapper, player.loadingCls);
+			$kit.adCls(this.wrapper, this.config.playerTemplate.errorCls);
 			errorMessage.innerHTML = html;
 		},
 		loadError : function(e) {
 			var player = this.config.playerTemplate, //
-			errorMessage = $kit.el8cls(player.errorMessageClass, this.wrapper);
-			$kit.rmCls(this.wrapper, this.config.playerTemplate.loadingClass);
-			$kit.adCls(this.wrapper, this.config.playerTemplate.errorClass);
+			errorMessage = $kit.el8cls(player.errorMessageCls, this.wrapper);
+			$kit.rmCls(this.wrapper, this.config.playerTemplate.loadingCls);
+			$kit.adCls(this.wrapper, this.config.playerTemplate.errorCls);
 			errorMessage.innerHTML = 'Error loading: "' + this.mp3 + '"';
 		},
 		loading : function() {
 			var player = this.config.playerTemplate;
-			$kit.adCls(this.wrapper, this.config.playerTemplate.loadingClass);
+			$kit.adCls(this.wrapper, this.config.playerTemplate.loadingCls);
 		},
 		loadStarted : function() {
 			var player = this.config.playerTemplate, //
-			duration = $kit.el8cls(player.durationClass, this.wrapper), //
+			duration = $kit.el8cls(player.durationCls, this.wrapper), //
 			m = Math.floor(this.duration / 60), s = Math.floor(this.duration % 60);
-			$kit.rmCls(this.wrapper, player.loadingClass);
+			$kit.rmCls(this.wrapper, player.loadingCls);
 			duration.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
 		},
 		loadProgress : function(percent) {
 			var player = this.config.playerTemplate, //
-			scrubber = $kit.el8cls(player.scrubberClass, this.wrapper), //
-			loaded = $kit.el8cls(player.loaderClass, this.wrapper);
+			scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
+			loaded = $kit.el8cls(player.loaderCls, this.wrapper);
 			loaded.style.width = (scrubber.offsetWidth * percent) + 'px';
 		},
 		playPause : function() {
@@ -119,19 +129,24 @@ $kit.merge($kit.ui.Audio, {
 		},
 		play : function() {
 			var player = this.config.playerTemplate;
-			$kit.adCls(this.wrapper, this.config.playerTemplate.playingClass);
+			$kit.adCls(this.wrapper, this.config.playerTemplate.playingCls);
+			this.newEv('play');
 		},
 		pause : function() {
 			var player = this.config.playerTemplate;
-			$kit.rmCls(this.wrapper, player.playingClass);
+			$kit.rmCls(this.wrapper, player.playingCls);
+			this.newEv('pause');
 		},
 		updatePlayhead : function(percent) {
 			var player = this.config.playerTemplate, //
-			scrubber = $kit.el8cls(player.scrubberClass, this.wrapper), //
-			progress = $kit.el8cls(player.progressClass, this.wrapper);
-			progress.style.width = (scrubber.offsetWidth * percent) + 'px';
-
-			var played = $kit.el8cls(player.playedClass, this.wrapper), //
+			scrubber = $kit.el8cls(player.scrubberCls, this.wrapper)
+			progress = $kit.el8cls(player.progressCls, this.wrapper);
+			if(this.playing) {
+				if(parseFloat(progress.style.width) < scrubber.offsetWidth * percent) {
+					progress.style.width = (scrubber.offsetWidth * percent) + 'px';
+				}
+			}
+			var played = $kit.el8cls(player.playedCls, this.wrapper), //
 			p = this.duration * percent, //
 			m = Math.floor(p / 60), s = Math.floor(p % 60);
 			played.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
@@ -140,7 +155,7 @@ $kit.merge($kit.ui.Audio, {
 });
 $kit.merge($kit.ui.Audio.prototype, {
 	/**
-	 * initilize
+	 * initialize
 	 */
 	init : function() {
 		var me = this, config = me.config;
@@ -150,6 +165,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		var element = config.el;
 		//
 		var wrapperId = $kit.onlyId();
+		this.wrapperId = wrapperId;
 		if(config.playerTemplate) {
 			element = this.createPlayer(config.el, config.playerTemplate, wrapperId);
 		} else {
@@ -158,6 +174,8 @@ $kit.merge($kit.ui.Audio.prototype, {
 		// Constructor
 		this.element = element;
 		this.wrapper = element.parentNode;
+		// bind instance
+		this.wrapper[config.kitWidgetName] = this;
 		this.source = element.getElementsByTagName('source')[0] || element;
 		// First check the `<audio>` element directly for a src and if one is not found, look for a `<source>` element.
 		this.mp3 = (function(element) {
@@ -172,8 +190,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 		// If `<audio>` or mp3 playback isn't supported, insert the swf & attach the required events for it.
 		if(config.useFlash && config.hasFlash) {
 			var flashId = $kit.onlyId();
-			this.injectFlash(flashId);
+			this.flashId = flashId;
 			this.attachFlashEvents();
+			this.injectFlash(flashId);
 		} else if(config.useFlash && !config.hasFlash) {
 			config.flashError.apply(this);
 		}
@@ -181,9 +200,8 @@ $kit.merge($kit.ui.Audio.prototype, {
 		if(!config.useFlash || (config.useFlash && config.hasFlash)) {
 			this.attachEvents(this.wrapper, this);
 		}
-		// bind instance
-		this.element[config.kitWidgetName] = this;
-		this.wrapper[config.kitWidgetName] = this;
+		// add Event ArrayList
+		this.event = {};
 	},
 	/**
 	 * 生成自定义的播放器模板HTML
@@ -191,7 +209,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 	createPlayer : function(element, template, wrapperId) {
 		var wrapper = document.createElement('div'), //
 		newElement = element.cloneNode(true);
-		wrapper.setAttribute('class', 'audiojs');
+		wrapper.setAttribute('class', this.config.audioCls);
 		wrapper.setAttribute('id', wrapperId);
 		var markup = $kit.tpl(template.markup, template);
 		// Fix IE's broken implementation of `innerHTML` & `cloneNode` for HTML5 elements.
@@ -225,10 +243,12 @@ $kit.merge($kit.ui.Audio.prototype, {
 		if(!audio.config.playerTemplate)
 			return;
 		var player = audio.config.playerTemplate, //
-		playPause = $kit.el8cls(player.playPauseClass, wrapper), //
-		scrubber = $kit.el8cls(player.scrubberClass, wrapper), //
-		progress = $kit.el8cls(player.progressClass, wrapper), //
-		progressIcon = $kit.el8cls(player.progressIcon, wrapper);
+		playPause = $kit.el8cls(player.playPauseCls, wrapper), //
+		scrubber = $kit.el8cls(player.scrubberCls, wrapper), //
+		progress = $kit.el8cls(player.progressCls, wrapper), //
+		progressIcon = $kit.el8cls(player.progressIconCls, wrapper), //
+		timeBox = $kit.el8cls(player.timeCls, wrapper), //
+		playedBox = $kit.el8cls(player.playedCls, timeBox);
 		$kit.ev({
 			el : playPause,
 			ev : 'click',
@@ -241,6 +261,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : scrubber,
 			ev : 'click',
 			fn : function(e) {
+				this._flag_dragStart = false;
 				var relativeLeft = e.clientX - $kit.offset(scrubber).left;
 				this.skipTo(relativeLeft / scrubber.offsetWidth);
 			},
@@ -266,13 +287,17 @@ $kit.merge($kit.ui.Audio.prototype, {
 						this._flag_palying_when_drag = true;
 					}
 					var distance = e.clientX - $kit.offset(scrubber).left;
-					progress.style.width = distance + 'px';
+					$kit.css(progress, {
+						width : distance + 'px'
+					});
+					//progress.style.width = distance + 'px';
 					var p = this.duration * $kit.css(progress, 'width') / $kit.css(scrubber, 'width'), //
 					m = Math.floor(p / 60), //
 					s = Math.floor(p % 60);
-					this.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
+					var currentTime = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+					playedBox.innerHTML = currentTime;
+					e.stopDefault();
 				}
-				e.stopDefault();
 			},
 			scope : audio
 		});
@@ -290,8 +315,65 @@ $kit.merge($kit.ui.Audio.prototype, {
 						this.play();
 						this._flag_palying_when_drag = false;
 					}
+					e.stopDefault();
 				}
-				e.stopDefault();
+			},
+			scope : audio
+		});
+		/**
+		 * timebox hover
+		 */
+		$kit.ev({
+			el : [progressIcon, timeBox],
+			ev : 'mouseover',
+			fn : function(e, cfg) {
+				var me = this;
+				clearTimeout(this._timeout_timeBox_hover);
+				this._timeout_timeBox_hover = null;
+				timeBox.style.display = 'block';
+				setTimeout(function() {
+					$kit.adCls(timeBox, me.config.playerTemplate.timeHoverCls);
+				}, 0);
+			},
+			scope : audio
+		});
+		$kit.ev({
+			el : timeBox,
+			ev : 'mouseout',
+			fn : function(e, cfg) {
+				var me = this;
+				if(e.relatedTarget && !$kit.contains(timeBox, e.relatedTarget)) {
+					if(this._timeout_timeBox_hover == null && timeBox.style.display == 'block') {
+						this._timeout_timeBox_hover = setTimeout(function() {
+							timeBox.style.display = 'block';
+							$kit.rmCls(timeBox, me.config.playerTemplate.timeHoverCls);
+							setTimeout(function() {
+								timeBox.style.display = '';
+							}, 500);
+							this._timeout_timeBox_hover = null;
+						}, 500);
+					}
+				}
+			},
+			scope : audio
+		});
+		$kit.ev({
+			el : progressIcon,
+			ev : 'mouseout',
+			fn : function(e, cfg) {
+				var me = this;
+				if(e.relatedTarget && !$kit.contains(progressIcon, e.relatedTarget)) {
+					if(this._timeout_timeBox_hover == null && timeBox.style.display == 'block') {
+						this._timeout_timeBox_hover = setTimeout(function() {
+							timeBox.style.display = 'block';
+							$kit.rmCls(timeBox, me.config.playerTemplate.timeHoverCls);
+							setTimeout(function() {
+								timeBox.style.display = '';
+							}, 500);
+							this._timeout_timeBox_hover = null;
+						}, 500);
+					}
+				}
 			},
 			scope : audio
 		});
@@ -306,7 +388,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : audio.element,
 			ev : 'timeupdate',
 			fn : function(e) {
+				audio.currentTime = audio.element.currentTime;
 				audio.updatePlayhead.apply(audio);
+				audio.newEv('timeupdate');
 			},
 			scope : audio
 		});
@@ -315,6 +399,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 			ev : 'ended',
 			fn : function(e) {
 				audio.trackEnded.apply(audio);
+				audio.newEv('ended');
 			},
 			scope : audio
 		});
@@ -326,6 +411,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 				clearInterval(audio.readyTimer);
 				clearInterval(audio.loadTimer);
 				audio.config.loadError.apply(audio);
+				audio.newEv('error');
 			},
 			scope : audio
 		});
@@ -334,32 +420,56 @@ $kit.merge($kit.ui.Audio.prototype, {
 	attachFlashEvents : function() {
 		var audio = this;
 		audio.swfReady = false;
+		audio.currentTime = 0;
 		audio['load'] = function(mp3) {
+			this.newEv('beforeLoad');
 			// If the swf isn't ready yet then just set `audio.mp3`. `loading()` will load it in once the swf is ready.
 			audio.mp3 = mp3;
 			if(audio.swfReady)
 				audio.element.load(mp3);
+			this.newEv('afterLoad');
 		}
 		audio['loadProgress'] = function(percent, duration) {
+			audio._ie_loadProgressFlag = audio._ie_loadProgressFlag || false;
 			audio.loadedPercent = percent;
 			audio.duration = duration;
-			audio.config.loadStarted.apply(audio);
-			audio.config.loadProgress.apply(audio, [percent]);
+			if(audio._ie_loadProgressFlag == false || percent == 1) {
+				audio._ie_loadProgressFlag = true;
+				audio.config.loadStarted.apply(audio);
+				audio.config.loadProgress.apply(audio, [percent]);
+				this.newEv('loadProgress');
+				audio._timeout_loadProgress = setTimeout(function() {
+					audio._ie_loadProgressFlag = false;
+				}, 27);
+			}
 		}
 		audio['skipTo'] = function(percent) {
 			if(percent > audio.loadedPercent)
 				return;
-			audio.updatePlayhead.call(audio, [percent])
+			audio['updatePlayhead'].call(audio, [percent])
 			audio.element.skipTo(percent);
+			var player = audio.config.playerTemplate, //
+			scrubber = $kit.el8cls(player.scrubberCls, audio.wrapper), //
+			progress = $kit.el8cls(player.progressCls, audio.wrapper);
+			progress.style.width = (scrubber.offsetWidth * percent) + 'px';
+			audio.newEv('skipTo');
 		}
 		audio['skipTimeTo'] = function(time) {
-			if(time > audio.duration)
+			if(time > audio.duration) {
 				return;
-			audio.updatePlayhead.call(audio, [time])
+			}
+			audio['updatePlayhead'].call(audio, [time / audio.duration])
 			audio.element.skipTimeTo(time);
+			var player = this.config.playerTemplate, //
+			scrubber = $kit.el8cls(player.scrubberCls, audio.wrapper), //
+			progress = $kit.el8cls(player.progressCls, audio.wrapper);
+			progress.style.width = (scrubber.offsetWidth * (time / audio.duration)) + 'px';
+			audio.newEv('skipTo');
 		}
 		audio['updatePlayhead'] = function(percent) {
+			this.currentTime = percent * this.duration;
 			audio.config.updatePlayhead.apply(audio, [percent]);
+			audio.newEv('timeupdate');
 		}
 		audio['play'] = function() {
 			// If the audio hasn't started preloading, then start it now.
@@ -382,12 +492,13 @@ $kit.merge($kit.ui.Audio.prototype, {
 		}
 		audio['setVolume'] = function(v) {
 			audio.element.setVolume(v);
+			this.newEv('setVolume');
 		}
-		audio['loadStarted'] = function() {
+		audio['initialized'] = function() {
 			// Load the mp3 specified by the audio element into the swf.
 			audio.swfReady = true;
 			if(audio.config.preload) {
-				audio.element.load(audio.mp3);
+				this._getSwf(this.flashId).load(audio.mp3);
 			}
 			if(audio.config.autoplay) {
 				audio.play.apply(audio);
@@ -401,11 +512,13 @@ $kit.merge($kit.ui.Audio.prototype, {
 			arg1 : id,
 			arg2 : this.config.swfLocation,
 			arg3 : (+new Date + Math.random()), // `(+new Date)` ensures the swf is not pulled out of cache. The fixes an issue with Firefox running multiple players on the same page.
-			arg4 : "$kit.el('#" + id + "')['" + this.config.kitWidgetName + "']"//'$kit.el(\'#' + this.wrapper.id + '\')[\'' + this.config.kitWidgetName + '\']'
+			arg4 : "$kit.el('#" + this.wrapperId + "')['" + this.config.kitWidgetName + "']"//'$kit.el(\'#' + this.wrapper.id + '\')[\'' + this.config.kitWidgetName + '\']'
 		});
 		// Inject the player markup using a more verbose `innerHTML` insertion technique that works with IE.
-		var html = this.wrapper.innerHTML, div = document.createElement('div');
+		var html = this.wrapper.innerHTML, //
+		div = document.createElement('div');
 		div.innerHTML = flashSource + html;
+		this.element = null;
 		this.wrapper.innerHTML = div.innerHTML;
 		this.element = this._getSwf(id);
 	},
@@ -424,12 +537,20 @@ $kit.merge($kit.ui.Audio.prototype, {
 		if(percent > this.loadedPercent)
 			return;
 		this.element.currentTime = this.duration * percent;
+		var player = this.config.playerTemplate, //
+		scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
+		progress = $kit.el8cls(player.progressCls, this.wrapper);
+		progress.style.width = (scrubber.offsetWidth * percent) + 'px';
 		this.updatePlayhead();
 	},
 	skipTimeTo : function(time) {
 		if(time > this.duration)
 			return;
 		this.element.currentTime = time;
+		var player = this.config.playerTemplate, //
+		scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
+		progress = $kit.el8cls(player.progressCls, this.wrapper);
+		progress.style.width = (scrubber.offsetWidth * (time / this.duration)) + 'px';
 		this.updatePlayhead();
 	},
 	load : function(mp3) {
@@ -438,7 +559,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		// The now outdated `load()` method is required for Safari 4
 		this.element.load();
 		this.mp3 = mp3;
-		this.events.trackLoadProgress(this);
+		this.trackLoadProgress(this);
 	},
 	loadError : function() {
 		this.config.loadError.apply(this);
@@ -483,7 +604,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		if(!this.config.preload) {
 			this.config.preload = true;
 			this.element.setAttribute('preload', 'auto');
-			this.events.trackLoadProgress(this);
+			this.trackLoadProgress(this);
 		}
 		this.playing = true;
 		this.element.play();
@@ -514,12 +635,14 @@ $kit.merge($kit.ui.Audio.prototype, {
 		readyTimer = setInterval(function() {
 			if(audio.element.readyState > -1) {
 				// iOS doesn't start preloading the mp3 until the user interacts manually, so this stops the loader being displayed prematurely.
-				if(!ios)
+				if(!ios) {
 					audio.loading.apply(audio);
+				}
 			}
 			if(audio.element.readyState > 1) {
-				if(audio.config.autoplay)
+				if(audio.config.autoplay) {
 					audio.play.apply(audio);
+				}
 				clearInterval(readyTimer);
 				// Once we have data, start tracking the load progress.
 				loadTimer = setInterval(function() {
@@ -531,5 +654,59 @@ $kit.merge($kit.ui.Audio.prototype, {
 		}, 10);
 		audio.readyTimer = readyTimer;
 		audio.loadTimer = loadTimer;
+	},
+	/**
+	 * add event triggle
+	 */
+	ev : function() {
+		if(arguments.length == 1) {
+			var evCfg = arguments[0];
+			var scope = evCfg.scope || this;
+			if($kit.isFn(evCfg.fn) && $kit.isStr(evCfg.ev)) {
+				var evCfg = {
+					ev : evCfg.ev,
+					fn : evCfg.fn,
+					scope : this
+				};
+				this.event[evCfg.ev] = this.event[evCfg.ev] || [];
+				this.event[evCfg.ev].push(evCfg);
+			}
+		}
+	},
+	newEv : function() {
+		if(arguments.length == 1) {
+			var evAry, evCfg, _evCfg = {};
+			if($kit.isStr(arguments[0])) {
+				var ev = arguments[0];
+				evAry = this.event[ev];
+			} else if($kit.isObj(arguments[0])) {
+				_evCfg = arguments[0];
+				evAry = this.event[_evCfg.ev];
+			}
+			if(!$kit.isEmpty(evAry)) {
+				for(var i = 0; evAry != null && i < evAry.length; i++) {
+					evCfg = $kit.merge(evAry[i], _evCfg);
+					var e = {
+						target : this,
+						type : evCfg.ev
+					}
+					evCfg.fn.call(evCfg.scope, e, evCfg);
+				}
+			}
+		}
+	},
+	ready : function(fn) {
+		var count = 0, audio = this;
+		var intervalReady = setInterval(function() {
+			if(audio.swfReady == true || (audio.element != null && audio.element.readyState != null && audio.element.readyState > 1)) {
+				clearInterval(intervalReady);
+				fn.call(audio);
+			}
+			if(count > 100) {
+				clearInterval(intervalReady);
+				throw new Exception('error', 'iterate too many times!')
+			}
+			count++;
+		}, 300);
 	}
 });

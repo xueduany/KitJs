@@ -1,51 +1,53 @@
-.audiojs audio {
+.kitjs_audio audio {
 	position: absolute;
 	left: -1px;
 }
-.audiojs {
+.kitjs_audio {
 	width: 980px;
 	height: 40px;
 	display: block;
-	background: url(//static.cikuapp.com/Ciku/img/media/audio-controls.png) no-repeat 0 -118px;
+	background: url(audio-controls.png) no-repeat 0 -118px;
 	font-family: monospace;
 	font-size: 12px;
 	box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.8);
+	-webkit-transition: all 500ms ease-out 0ms;
+	-moz-transition: all 500ms ease-out 0ms;
+	transition: all 500ms ease-out 0ms;
 }
-.audiojs .play-pause {
+.kitjs_audio .play-pause {
 	width: 30px;
 	height: 30px;
 	margin: 5px 16px 0 20px;
 	float: left;
 	overflow: hidden;
 }
-.audiojs p {
+.kitjs_audio p {
 	display: none;
 	width: 30px;
 	height: 30px;
 	margin: 0px;
 	cursor: pointer;
 }
-.audiojs .play {
+.kitjs_audio .play {
 	display: block;
 }
-.audiojs .scrubber {
+.kitjs_audio .scrubber {
 	position: relative;
 	float: left;
 	width: 866px;
 	height: 17px;
 	margin-top: 12px;
 	cursor: pointer;
-	background: url(//static.cikuapp.com/Ciku/img/media/audio-controls.png) no-repeat 0 -226px;
+	background: url(audio-controls.png) no-repeat 0 -226px;
 }
-.audiojs .progress {
+.kitjs_audio .progress {
 	position: absolute;
 	top: 0px;
 	left: 0px;
 	height: 17px;
-	width: 0px;
 	z-index: 1;
 }
-.audiojs .progress i {
+.kitjs_audio .progress i.time-icon {
 	display: block;
 	cursor: pointer;
 	width: 17px;
@@ -54,17 +56,17 @@
 	right: -9px;
 	top: 0px;
 	overflow: hidden;
-	background: url(//static.cikuapp.com/Ciku/img/media/audio-controls.png) no-repeat -107px -3px;
+	background: url(audio-controls.png) no-repeat -107px -3px;
 }
-.audiojs .loaded {
+.kitjs_audio .loaded {
 	position: absolute;
 	top: 0px;
 	left: 0px;
 	height: 17px;
 	width: 0px;
-	background: url(//static.cikuapp.com/Ciku/img/media/audio-controls.png) no-repeat 0 -186px;
+	background: url(audio-controls.png) no-repeat 0 -186px;
 }
-.audiojs .time {
+.kitjs_audio .time {
 	position: absolute;
 	right: -60px;
 	text-align: center;
@@ -73,19 +75,24 @@
 	color: #fff;
 	line-height: 33px;
 	height: 50px;
-	background: url(//static.cikuapp.com/Ciku/img/media/audio-controls.png) no-repeat -226px 0; 
+	background: url(audio-controls.png) no-repeat -226px 0;
+	opacity: 0;
+	display: none;
+	-webkit-transition: all 500ms ease-out 0ms;
+	-moz-transition: all 500ms ease-out 0ms;
+	transition: all 500ms ease-out 0ms;
 }
-.audiojs .time em {
+.kitjs_audio .time em {
 	padding: 0px 2px 0px 0px;
 	color: #f9f9f9;
 	font-style: normal;
 }
-.audiojs .time strong {
+.kitjs_audio .time strong {
 	padding: 0px 0px 0px 2px;
 	font-weight: normal;
 	color: #fff;
 }
-.audiojs .error-message {
+.kitjs_audio .error-message {
 	float: left;
 	display: none;
 	margin: 0px 10px;
@@ -102,58 +109,74 @@
 	-moz-text-overflow: ellipsis;
 	-webkit-text-overflow: ellipsis;
 }
-.audiojs .error-message a {
+.kitjs_audio .error-message a {
 	color: #eee;
 	text-decoration: none;
 	padding-bottom: 1px;
 	border-bottom: 1px solid #999;
 	white-space: wrap;
 }
-.audiojs .play {
-	background: url(//static.cikuapp.com/Ciku/img/media/audio-controls.png) -43px 5px no-repeat;
+.kitjs_audio .play {
+	background: url(audio-controls.png) -43px 5px no-repeat;
 }
-.audiojs .play:hover {
+.kitjs_audio .play:hover {
 	background-position: -43px -28px;
 }
-.audiojs .play:active {
+.kitjs_audio .play:active {
 	background-position: -43px -65px;
 }
-.audiojs .loading {
+.kitjs_audio .loading {
 	display: block;
 }
-.audiojs .error {
+.kitjs_audio .error {
 }
-.audiojs .pause {
-	background: url(//static.cikuapp.com/Ciku/img/media/audio-controls.png) 6px 5px no-repeat;
+.kitjs_audio .pause {
+	background: url(audio-controls.png) 6px 5px no-repeat;
 }
-.audiojs .pause:hover {
+.kitjs_audio .pause:hover {
 	background-position: 6px -28px;
 }
-.audiojs .pause:active {
+.kitjs_audio .pause:active {
 	background-position: 6px -65px;
 }
-.playing .play, .playing .loading, .playing .error {
+.kitjs_audio.playing .play, .playing .loading, .playing .error {
 	display: none;
 }
-.playing .pause {
+.kitjs_audio.playing .pause {
 	display: block;
 }
-.loading .play, .loading .pause, .loading .error {
+.kitjs_audio.loading .play, .loading .pause, .loading .error {
 	display: none;
 }
-.loading .loading {
+.kitjs_audio.loading .loading {
 	display: block;
-	background: url(//static.cikuapp.com/Ciku/img/media/loading.gif) no-repeat 7px 7px;
+	background: url(loading.gif) no-repeat 7px 7px;
 }
-.error .time, .error .play, .error .pause, .error .scrubber, .error .loading {
+.kitjs_audio.error .time, .error .play, .error .pause, .error .scrubber, .error .loading {
 	display: none;
 }
-.error .error {
+.kitjs_audio.error .error {
 	display: block;
 }
-.error .play-pause p {
+.kitjs_audio.error .play-pause p {
 	cursor: auto;
 }
-.error .error-message {
+.kitjs_audio.error .error-message {
+	display: block;
+}
+.kitjs_audio.playing {
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
+.kitjs_audio.playing:hover {
+	opacity: 1;
+	filter: alpha(opacity=100);
+}
+.kitjs_audio .time-hover {
+	opacity: 1;
+	display: block;
+}
+.kitjs_audio.playing .time {
+	opacity: 1;
 	display: block;
 }

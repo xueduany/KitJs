@@ -54,7 +54,7 @@
 			ExternalInterface.addCallback('skipTimeTo', skipTimeTo);
 			ExternalInterface.addCallback('setVolume', setVolume);
 			
-			ExternalInterface.call(this.playerInstance + 'loadStarted');
+			ExternalInterface.call(this.playerInstance + 'initialized');
 		}
 		
 		private function updatePlayhead(e:TimerEvent = null):void
@@ -91,10 +91,13 @@
 		private function load(mp3:String):void
 		{
 			if (this.channel)
+			{
 				this.channel.stop();
+			}
 			if (this.sound)
+			{
 				this.sound.removeEventListener(ProgressEvent.PROGRESS, this.loadProgress);
-			
+			}
 			this.channel = new SoundChannel();
 			this.sound = new Sound(new URLRequest(mp3));
 			
@@ -157,7 +160,7 @@
 		private function skipTimeTo(time:Number):void
 		{
 			this.channel.stop();
-			this.pausePoint = time;
+			this.pausePoint = time * 1000;
 			if (this.playing)
 			{
 				this.channel = this.sound.play(this.pausePoint);
