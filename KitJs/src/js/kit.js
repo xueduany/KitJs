@@ -58,7 +58,8 @@ $Kit.prototype = {
 		//DOM ID 默认前缀
 		KIT_DOM_ID_PREFIX : "J_Kit_"
 	},
-	// -----------------------------------is something-----------------------------------
+	// -----------------------------------is
+	// something-----------------------------------
 	isIE : function(o) {
 		return /MSIE/i.test(navigator.userAgent);
 	},
@@ -241,10 +242,8 @@ $Kit.prototype = {
 		} else if(selector.indexOf("@") == 0) {
 			return me.els8name(selector.substring(1), root);
 		} else {
+			var re = [];
 			if(selector.indexOf(".") > 0 && selector.indexOf(".") < selector.length) {
-				var re = [];
-				re.item = function() {
-				};
 				var a = me.els8tag(selector.substring(0, selector.indexOf(".")), root);
 				var cls = selector.substr(selector.indexOf(".") + 1);
 				for(var i = 0; !me.isEmpty(a) && i < a.length; i++) {
@@ -252,11 +251,12 @@ $Kit.prototype = {
 						re.push(a[i]);
 					}
 				}
-				return re;
 			} else {
-				return me.els8tag(selector, root);
+				re = me.els8tag(selector, root);
 			}
+			return re.length == 0 ? null : re;
 		}
+
 	},
 	// -----------------------------------dom manipulate-----------------------------------
 	/**
@@ -431,7 +431,8 @@ $Kit.prototype = {
 		 me.adCls(el, clss[i]);
 		 }
 		 } else {
-		 var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
+		 var a = me.isEmpty(el.className) ? [] :
+		 el.className.split(me.CONSTANTS.REGEXP_SPACE), flag = true;
 		 for(var i = 0; i < a.length; i++) {
 		 if(a[i] == clss) {
 		 flag = false;
@@ -457,7 +458,8 @@ $Kit.prototype = {
 			return;
 		}
 		/*
-		 var a = me.isEmpty(el.className) ? [] : el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
+		 var a = me.isEmpty(el.className) ? [] :
+		 el.className.split(me.CONSTANTS.REGEXP_SPACE), b = [];
 		 if(a.length) {
 		 b = me.aryDel(a, clss);
 		 }
@@ -766,7 +768,8 @@ $Kit.prototype = {
 		} else {
 			config.ev = config.ev.toString().trim();
 			if(!me.isEmpty(config.el) && !me.isEmpty(config.ev) && !me.isEmpty(config.fn)) {
-				// -------webkit support stopImmediatePropagation, so comment this template
+				// -------webkit support stopImmediatePropagation, so comment
+				// this template
 				var evReg = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] || {};
 				var evRegEv = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_EVENT] = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_EVENT] || {};
 				var evRegFn = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION] = evReg[me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION] || {};
@@ -1149,7 +1152,8 @@ $Kit.prototype = {
 		return re;
 	},
 	/**
-	 * config include array, exclude, fn, scope iterator each element in array not include exclude
+	 * config include array, exclude, fn, scope iterator each element in array
+	 * not include exclude
 	 */
 	// each : function(config) {
 	// var me = this;
