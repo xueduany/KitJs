@@ -142,7 +142,13 @@ $Kit.Anim.prototype = {
 				var el = $kit.el(elArray[k]);
 				if($kit.isNode(el)) {
 					if($kit.inAry(exceptStyleArray, styleName)) {
-						el[styleName] = styleValue;
+						if(styleName.toLowerCase() == 'scrolltop' && el == document.body) {
+							scrollTo($kit.viewport().scrollLeft, styleValue);
+						} else if(styleName.toLowerCase() == 'scrollleft' && el == document.body) {
+							scrollTo(styleValue, $kit.viewport().scrollTop);
+						} else {
+							el[styleName] = styleValue;
+						}
 					} else {
 						if(styleName.toLowerCase() == 'opacity' && $kit.isIE()) {
 							el.style.filter = 'alpha(opacity=' + styleValue * 100 + ')';
@@ -153,7 +159,13 @@ $Kit.Anim.prototype = {
 				} else if($kit.isNodeList(el)) {
 					for(var j = 0; j < el.length; j++) {
 						if($kit.inAry(exceptStyleArray, styleName)) {
-							el[j][styleName] = styleValue;
+							if(styleName.toLowerCase() == 'scrolltop' && el[j] == document.body) {
+								scrollTo($kit.viewport().scrollLeft, styleValue);
+							} else if(styleName.toLowerCase() == 'scrollleft' && el[j] == document.body) {
+								scrollTo(styleValue, $kit.viewport().scrollTop);
+							} else {
+								el[j][styleName] = styleValue;
+							}
 						} else {
 							if(styleName.toLowerCase() == 'opacity' && $kit.isIE()) {
 								el[j].style.filter = 'alpha(opacity=' + styleValue * 100 + ')';

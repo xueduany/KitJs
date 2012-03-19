@@ -280,10 +280,7 @@ $Kit.prototype = {
 					el.setAttribute(l, attr[l]);
 				}
 			} else {
-				if(el.hasAttribute(attr)) {
-					return el.getAttribute(attr);
-				}
-				return undefined;
+				return el.getAttribute(attr);
 			}
 		} else {
 			if(value == null) {
