@@ -41,14 +41,12 @@ $kit.merge($Kit.prototype, {
 	 */
 	els8cls : function(cls, root) {
 		var a = (root || document), me = this, re = [];
-		re.item = function() {
-		};
 		me.each(document.getElementsByTagName('*', root), function(o) {
 			if(me.hsCls(o, cls)) {
 				re.push(o);
 			}
 		});
-		return re;
+		return re.length ? re : null;
 	},
 	/**
 	 * set/get style
@@ -124,6 +122,96 @@ $kit.merge($Kit.prototype, {
 		} else if($kit.isNode(html)) {
 			element.parentNode.replaceChild(html, element);
 		}
+	},
+	/**
+	 * nextElementSibling/Dom traversal
+	 */
+	nextEl : function(el, condition, scope) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		var next = null;
+		if(el.nextSibling != null) {
+			next = el.nextSibling;
+		} else {
+			var parent = el.parentNode;
+			while(parent != null && parent.parentNode != null && parent == parent.parentNode.lastChild) {
+				parent = parent.parentNode;
+			}
+			var firstEl = parent.nextSibling.firstChild;
+			while(firstEl != null && firstEl.children.length > 0 && firstEl.firstChild != null) {
+				firstEl = firstEl.firstChild;
+			}
+			next = firstEl;
+		}
+		if(next != null) {
+			if(next.nodeType && next.nodeType == 1) {
+				var condition = condition || null, scope = scope || null;
+				if(me.isFn(condition)) {
+					if(condition.call(scope, next, el) == true) {
+						return next;
+					} else if(condition.call(scope, next, el) == false) {
+						return null;
+					} else {
+						var allNodes = document.getElementsByTagName("*");
+						if(next != allNodes[allNodes.length - 1]) {
+							return me.nextEl(next, condition, scope);
+						} else {
+							return null;
+						}
+					}
+				}
+			} else {
+				return me.nextEl(next, condition, scope);
+			}
+		}
+		return next;
+	},
+	/**
+	 * previousElementSibling/Dom traversal
+	 */
+	prevEl : function(el, condition, scope) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		var prev = null;
+		if(el.previousSibling != null) {
+			prev = el.previousSibling;
+		} else {
+			var parent = el.parentNode;
+			while(parent != null && parent.parentNode != null && parent == parent.parentNode.firstChild) {
+				parent = parent.parentNode;
+			}
+			var lastEl = parent.previousSibling.lastChild;
+			while(lastEl != null && lastEl.children.length > 0 && lastEl.lastChild != null) {
+				lastEl = lastEl.lastChild;
+			}
+			prev = lastEl;
+		}
+		if(prev != null) {
+			if(prev.nodeType && prev.nodeType == 1) {
+				var condition = condition || null, scope = scope || null;
+				if(me.isFn(condition)) {
+					if(condition.call(scope, prev, el) == true) {
+						return prev;
+					} else if(condition.call(scope, prev, el) == false) {
+						return null;
+					} else {
+						var allNodes = document.getElementsByTagName("*");
+						if(prev != allNodes[0]) {
+							return me.prevEl(prev, condition, scope);
+						} else {
+							return null;
+						}
+					}
+				}
+			} else {
+				return me.prevEl(prev, condition, scope);
+			}
+		}
+		return prev;
 	}
 });
 //reinit

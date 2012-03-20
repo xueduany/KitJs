@@ -186,39 +186,42 @@ $Kit.prototype = {
 	 * by cls
 	 */
 	el8cls : function(cls, root) {
-		var a = (root || document).getElementsByClassName(cls);
-		return (a != null && a.length ) ? a[0] : null;
+		var re = (root || document).getElementsByClassName(cls);
+		return (re != null && re.length ) ? re[0] : null;
 	},
 	/**
 	 * by tagName
 	 */
 	els8tag : function(tagName, root) {
-		return (root || document).getElementsByTagName(tagName);
+		var re = (root || document).getElementsByTagName(tagName);
+		return re != null && re.length ? re : null;
 	},
 	el8tag : function(tagName, root) {
 		var me = this;
 		var re = me.els8tag(tagName, root);
-		return re != null && re.length ? re[0] : re;
+		return re != null && re.length ? re[0] : null;
 	},
 	/**
 	 * els by cls
 	 */
 	els8cls : function(cls, root) {
-		return (root || document).getElementsByClassName(cls);
+		var re = (root || document).getElementsByClassName(cls);
+		return re != null && re.length ? re : null;
 	},
 	/**
 	 * els by name
 	 */
 	el8name : function(name, root) {
-		var a = (root || document).getElementsByName(name);
-		return (a != null && a.length ) ? a[0] : a;
+		var re = (root || document).getElementsByName(name);
+		return (re != null && re.length ) ? re[0] : null;
 	},
 	el8nm : function(name, root) {
 		var me = this;
 		return me.el8name(name, root);
 	},
 	els8name : function(name, root) {
-		return (root || document).getElementsByName(name);
+		var re = (root || document).getElementsByName(name);
+		return re != null && re.length ? re : null;
 	},
 	els8nm : function(name, root) {
 		var me = this;
@@ -254,7 +257,7 @@ $Kit.prototype = {
 			} else {
 				re = me.els8tag(selector, root);
 			}
-			return re.length == 0 ? null : re;
+			return re;
 		}
 
 	},

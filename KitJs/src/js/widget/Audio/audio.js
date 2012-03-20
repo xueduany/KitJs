@@ -86,6 +86,7 @@ $kit.merge($kit.ui.Audio, {
 		].join(''),
 		// The default event callbacks:
 		trackEnded : function(e) {
+			this.newEv('ended');
 		},
 		flashError : function() {
 			var player = this.config.playerTemplate, //
@@ -138,18 +139,26 @@ $kit.merge($kit.ui.Audio, {
 			this.newEv('pause');
 		},
 		updatePlayhead : function(percent) {
+			if(this._flag_dragStart) {
+				return;
+			}
 			var player = this.config.playerTemplate, //
 			scrubber = $kit.el8cls(player.scrubberCls, this.wrapper)
 			progress = $kit.el8cls(player.progressCls, this.wrapper);
 			if(this.playing) {
-				if(parseFloat(progress.style.width) < scrubber.offsetWidth * percent) {
+				var progressWidth = progress.style.width ? parseFloat(progress.style.width) : 0;
+				if(progressWidth <= scrubber.offsetWidth * percent) {
 					progress.style.width = (scrubber.offsetWidth * percent) + 'px';
 				}
 			}
 			var played = $kit.el8cls(player.playedCls, this.wrapper), //
 			p = this.duration * percent, //
 			m = Math.floor(p / 60), s = Math.floor(p % 60);
-			played.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
+			var currentTime = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+			if(played.innerHTML != currentTime) {
+				played.innerHTML = currentTime;
+			}
+			this.trackLoadProgress(this);
 		}
 	}
 });
@@ -174,6 +183,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		// Constructor
 		this.element = element;
 		this.wrapper = element.parentNode;
+		this.currentTime = 0;
 		// bind instance
 		this.wrapper[config.kitWidgetName] = this;
 		this.source = element.getElementsByTagName('source')[0] || element;
@@ -287,16 +297,20 @@ $kit.merge($kit.ui.Audio.prototype, {
 						this._flag_palying_when_drag = true;
 					}
 					var distance = e.clientX - $kit.offset(scrubber).left;
+					if(distance > $kit.offset(scrubber).width) {
+						distance = $kit.offset(scrubber).width;
+					}
 					$kit.css(progress, {
 						width : distance + 'px'
 					});
 					//progress.style.width = distance + 'px';
-					var p = this.duration * $kit.css(progress, 'width') / $kit.css(scrubber, 'width'), //
-					m = Math.floor(p / 60), //
+					var p = this.duration * distance / $kit.css(scrubber, 'width');
+					//
+					var m = Math.floor(p / 60), //
 					s = Math.floor(p % 60);
 					var currentTime = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-					playedBox.innerHTML = currentTime;
-					e.stopDefault();
+					playedBox.innerText = currentTime;
+					//e.stopDefault();
 				}
 			},
 			scope : audio
@@ -382,6 +396,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 			return;
 
 		// Start tracking the load progress of the track.
+		audio.element.load(audio.mp3);
 		this.trackLoadProgress(audio);
 
 		$kit.ev({
@@ -391,6 +406,11 @@ $kit.merge($kit.ui.Audio.prototype, {
 				audio.currentTime = audio.element.currentTime;
 				audio.updatePlayhead.apply(audio);
 				audio.newEv('timeupdate');
+				console.log(audio.element.currentTime + '  ' + audio.element.duration);
+				if(audio.element.currentTime >= audio.element.duration) {
+					console.log('asd');
+					audio.trackEnded.apply(audio);
+				}
 			},
 			scope : audio
 		});
@@ -398,8 +418,8 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : audio.element,
 			ev : 'ended',
 			fn : function(e) {
+				console.log(11);
 				audio.trackEnded.apply(audio);
-				audio.newEv('ended');
 			},
 			scope : audio
 		});
@@ -407,6 +427,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : audio.source,
 			ev : 'error',
 			fn : function(e) {
+				console.log('zxczxc');
 				// on error, cancel any load timers that are running.
 				clearInterval(audio.readyTimer);
 				clearInterval(audio.loadTimer);
@@ -420,7 +441,6 @@ $kit.merge($kit.ui.Audio.prototype, {
 	attachFlashEvents : function() {
 		var audio = this;
 		audio.swfReady = false;
-		audio.currentTime = 0;
 		audio['load'] = function(mp3) {
 			this.newEv('beforeLoad');
 			// If the swf isn't ready yet then just set `audio.mp3`. `loading()` will load it in once the swf is ready.
@@ -444,14 +464,13 @@ $kit.merge($kit.ui.Audio.prototype, {
 			}
 		}
 		audio['skipTo'] = function(percent) {
-			if(percent > audio.loadedPercent)
-				return;
+			/*if(percent > audio.loadedPercent)
+			 return;
+			 */
+			percent = percent > 1 ? 1 : percent;
 			audio['updatePlayhead'].call(audio, [percent])
 			audio.element.skipTo(percent);
-			var player = audio.config.playerTemplate, //
-			scrubber = $kit.el8cls(player.scrubberCls, audio.wrapper), //
-			progress = $kit.el8cls(player.progressCls, audio.wrapper);
-			progress.style.width = (scrubber.offsetWidth * percent) + 'px';
+			audio.adjustProgressIconPos(audio.duration * percent);
 			audio.newEv('skipTo');
 		}
 		audio['skipTimeTo'] = function(time) {
@@ -460,10 +479,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 			}
 			audio['updatePlayhead'].call(audio, [time / audio.duration])
 			audio.element.skipTimeTo(time);
-			var player = this.config.playerTemplate, //
-			scrubber = $kit.el8cls(player.scrubberCls, audio.wrapper), //
-			progress = $kit.el8cls(player.progressCls, audio.wrapper);
-			progress.style.width = (scrubber.offsetWidth * (time / audio.duration)) + 'px';
+			audio.adjustProgressIconPos(time);
 			audio.newEv('skipTo');
 		}
 		audio['updatePlayhead'] = function(percent) {
@@ -534,23 +550,20 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.config.updatePlayhead.apply(this, [percent]);
 	},
 	skipTo : function(percent) {
-		if(percent > this.loadedPercent)
-			return;
-		this.element.currentTime = this.duration * percent;
-		var player = this.config.playerTemplate, //
-		scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
-		progress = $kit.el8cls(player.progressCls, this.wrapper);
-		progress.style.width = (scrubber.offsetWidth * percent) + 'px';
+		/*if(percent > this.loadedPercent)
+		 return;
+		 */
+		percent = percent > 1 ? 1 : percent;
+		var time = this.duration * percent;
+		this.element.currentTime = time;
+		this.adjustProgressIconPos(time);
 		this.updatePlayhead();
 	},
 	skipTimeTo : function(time) {
 		if(time > this.duration)
 			return;
 		this.element.currentTime = time;
-		var player = this.config.playerTemplate, //
-		scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
-		progress = $kit.el8cls(player.progressCls, this.wrapper);
-		progress.style.width = (scrubber.offsetWidth * (time / this.duration)) + 'px';
+		this.adjustProgressIconPos(time);
 		this.updatePlayhead();
 	},
 	load : function(mp3) {
@@ -619,21 +632,32 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.element.volume = v;
 	},
 	trackEnded : function(e) {
-		this.skipTo.apply(this, [0]);
-		if(!this.config.loop)
+		if(!this.config.loop) {
 			this.pause.apply(this);
+		}
+		this.skipTo.apply(this, [0]);
 		this.config.trackEnded.apply(this);
 	},
 	trackLoadProgress : function(audio) {
 		// If `preload` has been set to `none`, then we don't want to start loading the track yet.
-		if(!audio.config.preload)
+		if(!audio.config.preload) {
 			return;
+		}
 
+		if(audio.loadedPercent >= 1) {
+			return;
+		}
 		var readyTimer, loadTimer, audio = audio, ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
 
 		// Use timers here rather than the official `progress` event, as Chrome has issues calling `progress` when loading mp3 files from cache.
+		var count = 0;
 		readyTimer = setInterval(function() {
-			if(audio.element.readyState > -1) {
+			if(count > 100) {
+				count = 0;
+				console && console.log('too many times!')
+				return;
+			}
+			if(audio.element.readyState > -1 && audio.element.readyState < 1) {
 				// iOS doesn't start preloading the mp3 until the user interacts manually, so this stops the loader being displayed prematurely.
 				if(!ios) {
 					audio.loading.apply(audio);
@@ -645,15 +669,26 @@ $kit.merge($kit.ui.Audio.prototype, {
 				}
 				clearInterval(readyTimer);
 				// Once we have data, start tracking the load progress.
+				var loaderPercent = 0;
 				loadTimer = setInterval(function() {
 					audio.loadProgress.apply(audio);
-					if(audio.loadedPercent >= 1)
+					if(audio.loadedPercent == loaderPercent || audio.loadedPercent >= 1) {
 						clearInterval(loadTimer);
-				});
+					} else {
+						loaderPercent = audio.loadedPercent;
+					}
+				}, 100);
 			}
-		}, 10);
+			count++;
+		}, 100);
 		audio.readyTimer = readyTimer;
 		audio.loadTimer = loadTimer;
+	},
+	adjustProgressIconPos : function(time) {
+		var player = this.config.playerTemplate, //
+		scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
+		progress = $kit.el8cls(player.progressCls, this.wrapper);
+		progress.style.width = (scrubber.offsetWidth * (time / this.duration)) + 'px';
 	},
 	/**
 	 * add event triggle
