@@ -3,6 +3,7 @@
  * 修改自github.com/kolber/audiojs/
  * 代码做了重构
  * 添加自定义事件支持，以及换肤支持
+ * 部分代码做了性能优化
  *
  * @author:xueduanyang1985@163.com
  * @date:2012/03/19
