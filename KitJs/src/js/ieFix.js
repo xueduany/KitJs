@@ -27,8 +27,8 @@ $kit.merge($Kit.prototype, {
 	 * by cls
 	 */
 	el8cls : function(cls, root) {
-		var a = (root || document), me = this, re = null;
-		me.each(document.getElementsByTagName('*', root), function(o) {
+		var root = root || document, me = this, re = null;
+		me.each(root.getElementsByTagName('*'), function(o) {
 			if(me.hsCls(o, cls)) {
 				re = o;
 				return false;
@@ -40,8 +40,8 @@ $kit.merge($Kit.prototype, {
 	 * els by cls
 	 */
 	els8cls : function(cls, root) {
-		var a = (root || document), me = this, re = [];
-		me.each(document.getElementsByTagName('*', root), function(o) {
+		var root = root || document, me = this, re = [];
+		me.each(root.getElementsByTagName('*'), function(o) {
 			if(me.hsCls(o, cls)) {
 				re.push(o);
 			}

@@ -17,17 +17,20 @@ $kit.merge($kit.ui.TagInput, {
 		wrapperId : undefined,
 		template : {
 			markup : [//
-			'<div class="${wrapperCls}">', //
+			'<div class="${wrapperCls}" id=${wrapperId}>', //
+			'<span class="${tagInputWrapperCls}">', //
 			'<input type="text" name="${tagInputName}" class="${tagInputCls}">', //
+			'</span>', //
 			'</div>'//
 			].join(''),
 			wrapperCls : 'tag-wrapper',
 			tagInputCls : 'tag-input',
+			tagInputWrapperCls : 'taginput-wrapper',
 			//
 			tagMarkup : [//
-			'<div class="${tagCls}">', //
+			'<div class="${tagCls}" alt=${tagValue}>', //
 			'${tagValue}', //
-			'<s class="${closeBtnCls}"></s>', //
+			'<s class="${closeBtnCls}">x</s>', //
 			'</div>'//
 			].join(''),
 			tagCls : 'tag',
@@ -41,34 +44,135 @@ $kit.merge($kit.ui.TagInput.prototype, {
 		if(me.config.wrapperId && $kit.el('#' + me.config.wrapperId)) {
 			//
 		} else {
-			$kit.rpEl(me.config.el, $kit.newHTML($kit.tpl(me.config.template.markup, $kit.merge(me.config.template, {
-				tagInputName : me.config.el.name
-			}))));
+			me.config.wrapperId = $kit.onlyId();
+			$kit.insEl({
+				pos : 'before',
+				where : me.config.el,
+				what : $kit.tpl(me.config.template.markup, $kit.merge(me.config.template, {
+					tagInputName : me.config.el.name,
+					wrapperId : me.config.wrapperId
+				}))
+			});
+			me.config.el.style.display = 'none';
+			me.ev({
+				ev : 'input',
+				fn : me.handleInput
+			});
 		}
 		me.wrapper = $kit.el('#' + me.config.wrapperId);
 		me.tagInput = $kit.el8cls(me.config.template.tagInputCls, me.wrapper);
-		$kit.ev({
-			el : me.tagInput,
-			ev : 'input',
-			fn : function(e) {
-				var me = this;
-				me.handleInput();
-			},
-			scope : me
-		})
+		me.tagInputWrapper = me.tagInput.parentNode;
+		if($kit.isIE()) {
+			$kit.ev({
+				el : me.tagInput,
+				ev : 'propertychange',
+				fn : function(e) {
+					if(e.propertyName == 'value') {
+						this.newEv('input');
+					}
+				},
+				scope : me
+			});
+		} else {
+			$kit.ev({
+				el : me.tagInput,
+				ev : 'input change',
+				fn : function(e) {
+					this.newEv('input');
+				},
+				scope : me
+			});
+		}
 	},
 	handleInput : function() {
 		var me = this;
 		var inputStr = me.tagInput.value.toString();
-		var lastChar = inputStr.substring(inputStr.length - 2);
+		var lastChar = inputStr.substring(inputStr.length - 1);
 		var tagStr = inputStr.substring(0, inputStr.length - 1);
+		var _html = $kit.tpl(me.config.template.tagMarkup, $kit.merge(me.config.template, {
+			tagValue : tagStr
+		}));
 		if(lastChar == me.config.splitChar) {
-			$kit.insEl({
-				pos : 'before',
-				where : me.tagInput,
-				what : $kit.newHTML($kit.tpl(me.config.template.tagMarkup, me.config.template))
-			})
+			var existedTagArray = me.config.el.value.split(me.config.splitChar);
+			var flagExisted = $kit.array.hs(existedTagArray, tagStr, {
+				ignoreCase : true
+			});
+			if(!flagExisted) {
+				$kit.insEl({
+					pos : 'before',
+					where : me.tagInputWrapper,
+					what : _html,
+				});
+				var tagNode = $kit.prevEl(me.tagInputWrapper, function(el) {
+					if(!$kit.contains(me.wrapper, el)) {
+						return false;
+					}
+					if($kit.hsCls(el, me.config.template.tagCls)) {
+						return true;
+					}
+				});
+				$kit.ev({
+					el : $kit.el8cls(me.config.template.closeBtnCls, tagNode),
+					ev : 'click',
+					fn : function(e) {
+						var tag = e.target.parentNode;
+						this.removeTag(tag);
+					},
+					scope : me
+				});
+				me.tagInput.value = '';
+				me.config.el.value = me.config.el.value.length > 0 ? me.config.el.value + ',' + tagStr : tagStr;
+			}
 		}
 		me.tagInput.value == '';
+	},
+	removeTag : function(tag) {
+		var me = this;
+		var tagValue = $kit.attr(tag, 'alt');
+		var existedTagArray = me.config.el.value.split(me.config.splitChar);
+		$kit.array.rm(existedTagArray, tagValue);
+		me.config.el.value = existedTagArray.join(me.config.splitChar);
+		$kit.rmEl(tag);
+	},
+	/**
+	 * add event triggle
+	 */
+	ev : function() {
+		if(arguments.length == 1) {
+			var evCfg = arguments[0];
+			var scope = evCfg.scope || this;
+			if($kit.isFn(evCfg.fn) && $kit.isStr(evCfg.ev)) {
+				var evCfg = {
+					ev : evCfg.ev,
+					fn : evCfg.fn,
+					scope : this
+				};
+				this.event = this.event || {};
+				this.event[evCfg.ev] = this.event[evCfg.ev] || [];
+				this.event[evCfg.ev].push(evCfg);
+			}
+		}
+	},
+	newEv : function() {
+		if(arguments.length == 1) {
+			var evAry, evCfg, _evCfg = {};
+			if($kit.isStr(arguments[0])) {
+				var ev = arguments[0];
+				evAry = this.event[ev];
+			} else if($kit.isObj(arguments[0])) {
+				_evCfg = arguments[0];
+				evAry = this.event[_evCfg.ev];
+			}
+			if(!$kit.isEmpty(evAry)) {
+				for(var i = 0; evAry != null && i < evAry.length; i++) {
+					evCfg = $kit.merge(evAry[i], _evCfg);
+					var e = {
+						target : this,
+						type : evCfg.ev
+					}
+					evCfg.fn.call(evCfg.scope, e, evCfg);
+				}
+			}
+		}
 	}
 });

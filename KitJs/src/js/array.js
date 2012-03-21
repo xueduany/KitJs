@@ -22,11 +22,11 @@ $Kit.Array.prototype = {
 		var defaultSetting = {
 			ignoreCase : false
 		}
-		var settting = $kit.merge(defaultSetting, settting);
+		var setting = $kit.merge(defaultSetting, setting);
 		for(var i = 0; i < ary.length; i++) {
 			var o = ary[i];
 			if(o.toString() == check.toString()//
-			|| (settting.ignoreCase && o.toString.toLowerCase() == check.toString().toLowerCase())) {
+			|| (setting.ignoreCase && o.toString().toLowerCase() == check.toString().toLowerCase())) {
 				return true;
 			}
 		}
@@ -35,7 +35,7 @@ $Kit.Array.prototype = {
 	/**
 	 * 添加元素
 	 */
-	ad : function(ary, add, settting) {
+	ad : function(ary, add, setting) {
 		var me = this;
 		if(!$kit.isAry(ary)) {
 			return;
@@ -44,17 +44,17 @@ $Kit.Array.prototype = {
 			ifExisted : false,
 			ignoreCase : false
 		}
-		var settting = $kit.merge(defaultSetting, settting);
+		var setting = $kit.merge(defaultSetting, setting);
 		if($kit.isAry(add)) {
 			for(var i = 0; i < add.length; i++) {
-				me.ad(ary, add[i], settting);
+				me.ad(ary, add[i], setting);
 			}
 		} else {
-			if(settting.ifExisted) {
+			if(setting.ifExisted) {
 				for(var i = 0; i < ary.length; i++) {
 					var o = ary[i];
 					if(o.toString() == add.toString()//
-					|| (settting.ignoreCase && o.toString.toLowerCase() == add.toString().toLowerCase())) {
+					|| (setting.ignoreCase && o.toString().toLowerCase() == add.toString().toLowerCase())) {
 						break;
 					} else if(i == ary.length - 1) {
 						ary.push(add);
@@ -68,7 +68,7 @@ $Kit.Array.prototype = {
 	/**
 	 * 删除元素
 	 */
-	rm : function(ary, del, settting) {
+	rm : function(ary, del, setting) {
 		var me = this;
 		if(!$kit.isAry(ary)) {
 			return;
@@ -77,16 +77,16 @@ $Kit.Array.prototype = {
 			ignoreCase : false,
 			isGlobal : true
 		}
-		var settting = $kit.merge(defaultSetting, settting);
-		if($kit.isAry(add)) {
-			for(var i = 0; i < add.length; i++) {
-				me.rm(ary, add[i], settting);
+		var setting = $kit.merge(defaultSetting, setting);
+		if($kit.isAry(del)) {
+			for(var i = 0; i < del.length; i++) {
+				me.rm(ary, del[i], setting);
 			}
 		} else {
 			for(var i = 0; i < ary.length; i++) {
 				var o = ary[i];
-				if(o.toString() == add.toString()//
-				|| (settting.ignoreCase && o.toString.toLowerCase() == add.toString().toLowerCase())) {
+				if(o.toString() == del.toString()//
+				|| (setting.ignoreCase && o.toString().toLowerCase() == del.toString().toLowerCase())) {
 					ary.splice(i, 1);
 					if(setting.isGlobal) {
 						continue;

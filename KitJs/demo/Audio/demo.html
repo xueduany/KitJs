@@ -12,20 +12,91 @@
 		<style></style>
 	</head>
 	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>音频播放器</h1>
 		<br/>
 		<br/>
 		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<audio id="audio" src="a.mp3" preload="auto"></audio>
 		<ul>
 			<li id="currentTime">
 				currentTime:<span id="J_currentTime"></span>
 			</li>
 		</ul>
+		<audio id="audio" src="a.mp3" preload="auto"></audio>
+		<br/>
+		<br/>
+		<ol>
+			<li>
+				兼容HTML5浏览器以及IE
+			</li>
+			<li>
+				audio API
+				<ul>
+					<li>
+						<button onclick="window.a.play()">
+							audio.play()//播放
+						</button>
+					</li>
+					<li>
+						<button onclick="window.a.pause()">
+							audio.pause()//暂停
+						</button>
+					</li>
+					<li>
+						<button onclick="window.a.skipTo(0.5)">
+							audio.skipTo(0.5)//按百分比跳转
+						</button>
+					</li>
+					<li>
+						<button onclick="window.a.skipTimeTo(120)">
+							audio.skipTimeTo(120)//按播放到多少秒跳转
+						</button>
+					</li>
+				</ul>
+			</li>
+			<li>
+				audio 自定义事件
+				<ul>
+					<li>
+						timeupdate
+						<br/>
+						例如
+						<br/>
+						<textarea>
+audio.ev({
+	ev: 'timeupdate',
+	fn: function(e){
+		alert(1);
+	}
+})</textarea>
+					</li>
+					<li>
+						loadProgress
+					</li>
+					<li>
+						beforeLoad
+					</li>
+					<li>
+						afterLoad
+					</li>
+					<li>
+						ended
+					</li>
+					<li>
+						play
+					</li>
+					<li>
+						pause
+					</li>
+					<li>
+						skipTo
+					</li>
+					<li>
+						error
+					</li>
+				</ul>
+			</li>
+		</ol>
 		<script>
 			$kit.$(function() {
 				window.a = new $kit.ui.Audio({

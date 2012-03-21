@@ -417,6 +417,9 @@ $Kit.prototype = {
 				me.rmEl(element[i]);
 			}
 		} else {
+			me.delEv({
+				el : element
+			});
 			element.parentNode.removeChild(element, true);
 		}
 	},
@@ -769,8 +772,8 @@ $Kit.prototype = {
 				}));
 			}
 		} else {
-			config.ev = config.ev.toString().trim();
 			if(!me.isEmpty(config.el) && !me.isEmpty(config.ev) && !me.isEmpty(config.fn)) {
+				config.ev = config.ev.toString().trim();
 				// -------webkit support stopImmediatePropagation, so comment
 				// this template
 				var evReg = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] = config.el[me.CONSTANTS.KIT_EVENT_REGISTER] || {};
@@ -903,8 +906,8 @@ $Kit.prototype = {
 				}));
 			}
 		} else {
-			config.ev = config.ev.toString().trim();
 			if(!me.isEmpty(config.ev)) {
+				config.ev = config.ev.toString().trim();
 				if(!me.isEmpty(config.fn)) {
 					var evQueue = config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
 					for(var i = 0; i < evQueue.length; i++) {
@@ -924,6 +927,9 @@ $Kit.prototype = {
 					delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev];
 				}
 			} else {
+				if($kit.isEmpty(config.el[me.CONSTANTS.KIT_EVENT_REGISTER]) || $kit.isEmpty(config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT])) {
+					return;
+				}
 				for(var _ev in config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT]) {
 					rm(config.el, _ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][_ev]);
 				}

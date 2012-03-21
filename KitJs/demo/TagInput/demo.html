@@ -8,25 +8,44 @@
 		<!--[if IE]>
 		<script src="../../src/js/ieFix.js"></script>
 		<![endif]-->
+		<script src="../../src/js/array.js"></script>
 		<script src="../../src/js/widget/TagInput/tagInput.js"></script>
 		<style></style>
 	</head>
 	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>tag输入框</h1>
+		<h3><a href="http://stackoverflow.com/questions/ask">仿http://stackoverflow.com/questions/ask</a></h3>
 		<br/>
 		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<input type="text" id="asd">
+		输入框：默认输入逗号分隔<input type="text" id="asd">
 		<script>
 			$kit.$(function() {
 				window.a = new $kit.ui.TagInput({
-					el : $kit.el('#asd')
+					el : $kit.el('#asd'),
+					splitChar : ','
 				});
+				window.a.ev({
+					ev : 'input',
+					fn : function(e) {
+						console.log(this.tagInput.value);
+					}
+				})
 			})
 		</script>
-	</body>
+		<div>
+			示范代码如下：<br/>
+			<textarea cols="60" rows="10">
+window.a = new $kit.ui.TagInput({
+	el : $kit.el('#asd'),
+	splitChar : ','
+});
+window.a.ev({
+	ev : 'input',
+	fn : function(e) {
+		console.log(this.tagInput.value);
+	}
+})
+		</textarea>
+</div>	</body>
 </html>
