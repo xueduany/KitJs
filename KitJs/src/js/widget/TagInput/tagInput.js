@@ -101,7 +101,7 @@ $kit.merge($kit.ui.TagInput.prototype, {
 				$kit.insEl({
 					pos : 'before',
 					where : me.tagInputWrapper,
-					what : _html,
+					what : _html
 				});
 				var tagNode = $kit.prevEl(me.tagInputWrapper, function(el) {
 					if(!$kit.contains(me.wrapper, el)) {

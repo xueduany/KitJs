@@ -5,6 +5,9 @@
  * 添加自定义事件支持，以及换肤支持
  * 部分代码做了性能优化
  *
+ * @update-2012/03/22
+ * 优化播放器load性能
+ *
  * @author:xueduanyang1985@163.com
  * @date:2012/03/19
  */
@@ -132,12 +135,10 @@ $kit.merge($kit.ui.Audio, {
 		play : function() {
 			var player = this.config.playerTemplate;
 			$kit.adCls(this.wrapper, this.config.playerTemplate.playingCls);
-			this.newEv('play');
 		},
 		pause : function() {
 			var player = this.config.playerTemplate;
 			$kit.rmCls(this.wrapper, player.playingCls);
-			this.newEv('pause');
 		},
 		updatePlayhead : function(percent) {
 			if(this._flag_dragStart) {
@@ -159,7 +160,7 @@ $kit.merge($kit.ui.Audio, {
 			if(played.innerHTML != currentTime) {
 				played.innerHTML = currentTime;
 			}
-			this.trackLoadProgress(this);
+			this.trackLoadProgress();
 		}
 	}
 });
@@ -397,8 +398,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 			return;
 
 		// Start tracking the load progress of the track.
-		audio.element.load(audio.mp3);
-		this.trackLoadProgress(audio);
+		audio.trackLoadProgress();
 
 		$kit.ev({
 			el : audio.element,
@@ -407,9 +407,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 				audio.currentTime = audio.element.currentTime;
 				audio.updatePlayhead.apply(audio);
 				audio.newEv('timeupdate');
-				console.log(audio.element.currentTime + '  ' + audio.element.duration);
 				if(audio.element.currentTime >= audio.element.duration) {
-					console.log('asd');
 					audio.trackEnded.apply(audio);
 				}
 			},
@@ -419,7 +417,6 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : audio.element,
 			ev : 'ended',
 			fn : function(e) {
-				console.log(11);
 				audio.trackEnded.apply(audio);
 			},
 			scope : audio
@@ -428,7 +425,6 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : audio.source,
 			ev : 'error',
 			fn : function(e) {
-				console.log('zxczxc');
 				// on error, cancel any load timers that are running.
 				clearInterval(audio.readyTimer);
 				clearInterval(audio.loadTimer);
@@ -443,26 +439,19 @@ $kit.merge($kit.ui.Audio.prototype, {
 		var audio = this;
 		audio.swfReady = false;
 		audio['load'] = function(mp3) {
-			this.newEv('beforeLoad');
 			// If the swf isn't ready yet then just set `audio.mp3`. `loading()` will load it in once the swf is ready.
 			audio.mp3 = mp3;
-			if(audio.swfReady)
+			if(audio.swfReady) {
 				audio.element.load(mp3);
-			this.newEv('afterLoad');
+			}
+			this.newEv('load');
 		}
 		audio['loadProgress'] = function(percent, duration) {
-			audio._ie_loadProgressFlag = audio._ie_loadProgressFlag || false;
 			audio.loadedPercent = percent;
 			audio.duration = duration;
-			if(audio._ie_loadProgressFlag == false || percent == 1) {
-				audio._ie_loadProgressFlag = true;
-				audio.config.loadStarted.apply(audio);
-				audio.config.loadProgress.apply(audio, [percent]);
-				this.newEv('loadProgress');
-				audio._timeout_loadProgress = setTimeout(function() {
-					audio._ie_loadProgressFlag = false;
-				}, 27);
-			}
+			audio.config.loadStarted.apply(audio);
+			audio.config.loadProgress.apply(audio, [percent]);
+			this.newEv('loadProgress');
 		}
 		audio['skipTo'] = function(percent) {
 			/*if(percent > audio.loadedPercent)
@@ -500,20 +489,23 @@ $kit.merge($kit.ui.Audio.prototype, {
 			// <http://dev.nuclearrooster.com/2008/07/27/externalinterfaceaddcallback-can-cause-ie-js-errors-with-certain-keyworkds/>
 			audio.element.pplay();
 			audio.config.play.apply(audio);
+			audio.newEv('play');
 		}
 		audio['pause'] = function() {
 			audio.playing = false;
 			// Use `ppause()` for consistency with `pplay()`, even though it isn't really required.
 			audio.element.ppause();
 			audio.config.pause.apply(audio);
+			audio.newEv('pause');
 		}
 		audio['setVolume'] = function(v) {
 			audio.element.setVolume(v);
-			this.newEv('setVolume');
+			audio.newEv('setVolume');
 		}
 		audio['initialized'] = function() {
 			// Load the mp3 specified by the audio element into the swf.
 			audio.swfReady = true;
+			audio.ready = true;
 			if(audio.config.preload) {
 				this._getSwf(this.flashId).load(audio.mp3);
 			}
@@ -559,6 +551,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.element.currentTime = time;
 		this.adjustProgressIconPos(time);
 		this.updatePlayhead();
+		this.newEv('skipTo');
 	},
 	skipTimeTo : function(time) {
 		if(time > this.duration)
@@ -566,6 +559,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.element.currentTime = time;
 		this.adjustProgressIconPos(time);
 		this.updatePlayhead();
+		this.newEv('skipTo');
 	},
 	load : function(mp3) {
 		this.loadStartedCalled = false;
@@ -573,7 +567,8 @@ $kit.merge($kit.ui.Audio.prototype, {
 		// The now outdated `load()` method is required for Safari 4
 		this.element.load();
 		this.mp3 = mp3;
-		this.trackLoadProgress(this);
+		this.trackLoadProgress();
+		this.newEv('load');
 	},
 	loadError : function() {
 		this.config.loadError.apply(this);
@@ -600,6 +595,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 			this.loadedPercent = durationLoaded / this.duration;
 
 			this.config.loadProgress.apply(this, [this.loadedPercent]);
+			this.newEv('loadProgress');
 		}
 	},
 	playPause : function() {
@@ -618,19 +614,22 @@ $kit.merge($kit.ui.Audio.prototype, {
 		if(!this.config.preload) {
 			this.config.preload = true;
 			this.element.setAttribute('preload', 'auto');
-			this.trackLoadProgress(this);
+			this.trackLoadProgress();
 		}
 		this.playing = true;
 		this.element.play();
 		this.config.play.apply(this);
+		this.newEv('play');
 	},
 	pause : function() {
 		this.playing = false;
 		this.element.pause();
 		this.config.pause.apply(this);
+		this.newEv('pause');
 	},
 	setVolume : function(v) {
 		this.element.volume = v;
+		this.newEv('setVolume');
 	},
 	trackEnded : function(e) {
 		if(!this.config.loop) {
@@ -639,7 +638,8 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.skipTo.apply(this, [0]);
 		this.config.trackEnded.apply(this);
 	},
-	trackLoadProgress : function(audio) {
+	trackLoadProgress : function() {
+		var audio = this;
 		// If `preload` has been set to `none`, then we don't want to start loading the track yet.
 		if(!audio.config.preload) {
 			return;
@@ -648,42 +648,42 @@ $kit.merge($kit.ui.Audio.prototype, {
 		if(audio.loadedPercent >= 1) {
 			return;
 		}
-		var readyTimer, loadTimer, audio = audio, ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
+		var readyTimer, loadTimer, ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
 
 		// Use timers here rather than the official `progress` event, as Chrome has issues calling `progress` when loading mp3 files from cache.
-		var count = 0;
-		readyTimer = setInterval(function() {
-			if(count > 100) {
-				count = 0;
-				console && console.log('too many times!')
-				return;
-			}
+		audio.loadCount = 0;
+		clearInterval(audio.readyTimer);
+		audio.readyTimer = setInterval(function() {
 			if(audio.element.readyState > -1 && audio.element.readyState < 1) {
 				// iOS doesn't start preloading the mp3 until the user interacts manually, so this stops the loader being displayed prematurely.
 				if(!ios) {
 					audio.loading.apply(audio);
 				}
+				if(audio.loadCount > 100) {
+					audio.load(audio.mp3);
+					audio.loadCount = 0;
+				}
 			}
 			if(audio.element.readyState > 1) {
+				audio.ready = true;
 				if(audio.config.autoplay) {
 					audio.play.apply(audio);
 				}
-				clearInterval(readyTimer);
+				clearInterval(audio.readyTimer);
 				// Once we have data, start tracking the load progress.
 				var loaderPercent = 0;
-				loadTimer = setInterval(function() {
+				clearInterval(audio.loadTimer);
+				audio.loadTimer = setInterval(function() {
 					audio.loadProgress.apply(audio);
-					if(audio.loadedPercent == loaderPercent || audio.loadedPercent >= 1) {
-						clearInterval(loadTimer);
+					if(audio.loadedPercent >= 1) {
+						clearInterval(audio.loadTimer);
 					} else {
 						loaderPercent = audio.loadedPercent;
 					}
-				}, 100);
+				}, 300);
 			}
-			count++;
-		}, 100);
-		audio.readyTimer = readyTimer;
-		audio.loadTimer = loadTimer;
+			audio.loadCount++;
+		}, 300);
 	},
 	adjustProgressIconPos : function(time) {
 		var player = this.config.playerTemplate, //
@@ -732,17 +732,31 @@ $kit.merge($kit.ui.Audio.prototype, {
 		}
 	},
 	ready : function(fn) {
-		var count = 0, audio = this;
-		var intervalReady = setInterval(function() {
-			if(audio.swfReady == true || (audio.element != null && audio.element.readyState != null && audio.element.readyState > 1)) {
-				clearInterval(intervalReady);
-				fn.call(audio);
-			}
-			if(count > 100) {
-				clearInterval(intervalReady);
-				throw new Exception('error', 'iterate too many times!')
-			}
-			count++;
-		}, 300);
+		/*
+		 var count = 0, audio = this;
+		 var intervalReady = setInterval(function() {
+		 if(audio.swfReady == true || (audio.element != null && audio.element.readyState != null && audio.element.readyState > 1)) {
+		 clearInterval(intervalReady);
+		 fn.call(audio);
+		 }
+		 if(count > 100) {
+		 clearInterval(intervalReady);
+		 throw new Exception('error', 'iterate too many times!')
+		 }
+		 count++;
+		 }, 300);
+		 */
+		var audio = this;
+		clearInterval(audio.intervalReady);
+		if(audio.ready) {
+			fn.call(audio);
+		} else {
+			audio.intervalReady = setInterval(function() {
+				if(audio.ready) {
+					clearInterval(audio.intervalReady);
+					fn.call(audio);
+				}
+			}, 300);
+		}
 	}
 });

@@ -412,7 +412,7 @@ $Kit.prototype = {
 		if(me.isEmpty(element)) {
 			return;
 		}
-		if(me.isNodeList(element)) {
+		if(me.isAry(element)) {
 			for(var i = 0; i < element.length; i++) {
 				me.rmEl(element[i]);
 			}
@@ -790,6 +790,7 @@ $Kit.prototype = {
 
 					me.merge(EV, {
 						target : EV.target || EV.srcElement,
+						currentTarget : config.el,
 						relatedTarget : EV.relatedTarget ? EV.relatedTarget : EV.toElement || EV.fromElement,
 						stopNow : function() {
 							EV.stopPropagation && EV.stopPropagation();

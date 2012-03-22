@@ -139,9 +139,6 @@
 .kitjs_audio .pause:active {
 	background-position: 6px -65px;
 }
-.kitjs_audio.playing .play, .playing .loading, .playing .error {
-	display: none;
-}
 .kitjs_audio.playing .pause {
 	display: block;
 }
@@ -179,4 +176,7 @@
 .kitjs_audio.playing .time {
 	opacity: 1;
 	display: block;
+}
+.kitjs_audio.playing .play, .playing .loading, .playing .error {
+	display: none;
 }
