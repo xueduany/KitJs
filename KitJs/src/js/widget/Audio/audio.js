@@ -505,7 +505,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		audio['initialized'] = function() {
 			// Load the mp3 specified by the audio element into the swf.
 			audio.swfReady = true;
-			audio.ready = true;
+			audio.readyState = true;
 			if(audio.config.preload) {
 				this._getSwf(this.flashId).load(audio.mp3);
 			}
@@ -665,7 +665,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 				}
 			}
 			if(audio.element.readyState > 1) {
-				audio.ready = true;
+				audio.readyState = true;
 				if(audio.config.autoplay) {
 					audio.play.apply(audio);
 				}
@@ -748,11 +748,11 @@ $kit.merge($kit.ui.Audio.prototype, {
 		 */
 		var audio = this;
 		clearInterval(audio.intervalReady);
-		if(audio.ready) {
+		if(audio.readyState) {
 			fn.call(audio);
 		} else {
 			audio.intervalReady = setInterval(function() {
-				if(audio.ready) {
+				if(audio.readyState) {
 					clearInterval(audio.intervalReady);
 					fn.call(audio);
 				}
