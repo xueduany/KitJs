@@ -104,7 +104,7 @@ $Kit.prototype = {
 	 * 是否html元素
 	 */
 	isNodeList : function(o) {
-		return !!(o && (o.toString() == '[object NodeList]' || o.toString() == '[object HTMLCollection]'));
+		return !!(o && (o.toString() == '[object NodeList]' || o.toString() == '[object HTMLCollection]' || (o.length && this.isNode(o[0]))));
 	},
 	isNode : function(o) {
 		return !!(o && o.nodeType);
@@ -180,7 +180,14 @@ $Kit.prototype = {
 	 * by id
 	 */
 	el8id : function(id, root) {
-		return (root || document).getElementById(id);
+		var me = this, re = document.getElementById(id);
+		if(root) {
+			if(me.contains(root, re)) {
+				return re;
+			}
+			return null;
+		}
+		return re;
 	},
 	/**
 	 * by cls
@@ -212,7 +219,15 @@ $Kit.prototype = {
 	 * els by name
 	 */
 	el8name : function(name, root) {
-		var re = (root || document).getElementsByName(name);
+		var me = this, re = document.getElementsByName(name);
+		if(root) {
+			for(var i = 0; i < re.length; i++) {
+				if(me.contains(root, re[i])) {
+					return re[i];
+				}
+			}
+			return null;
+		}
 		return (re != null && re.length ) ? re[0] : null;
 	},
 	el8nm : function(name, root) {
@@ -220,7 +235,16 @@ $Kit.prototype = {
 		return me.el8name(name, root);
 	},
 	els8name : function(name, root) {
-		var re = (root || document).getElementsByName(name);
+		var me = this, re = document.getElementsByName(name);
+		if(root) {
+			var _re = [];
+			for(var i = 0; i < re.length; i++) {
+				if(me.contains(root, re[i])) {
+					_re.push(re[i]);
+				}
+			}
+			return _re.length ? _re : null;
+		}
 		return re != null && re.length ? re : null;
 	},
 	els8nm : function(name, root) {
@@ -267,7 +291,7 @@ $Kit.prototype = {
 	 * 如果a包含b返回true，否则返回false
 	 */
 	contains : function(a, b) {
-		return a.contains ? a != b && a.contains(b) : !!(a.compareDocumentPosition(arg) & 16);
+		return a.contains ? a != b && a.contains(b) : !!(a.compareDocumentPosition(b) & 16);
 	},
 	/**
 	 * get/set attr
@@ -417,8 +441,13 @@ $Kit.prototype = {
 				me.rmEl(element[i]);
 			}
 		} else {
-			me.delEv({
-				el : element
+			me.traversal({
+				root : element,
+				fn : function(node) {
+					me.delEv({
+						el : node
+					});
+				}
 			});
 			element.parentNode.removeChild(element, true);
 		}
@@ -453,7 +482,8 @@ $Kit.prototype = {
 		var re = new RegExp('(\\s|^)' + cls + '(\\s|$)');
 		if(re.test(el.className))
 			return;
-		el.className += ' ' + cls;
+		//el.className += ' ' + cls;
+		el.className = el.className.split(/\s+/).join(' ') + ' ' + cls;
 	},
 	/**
 	 * remove className
@@ -524,18 +554,18 @@ $Kit.prototype = {
 		if(me.isEmpty(config.node)) {
 			config.node = config.root;
 		}
+		if($kit.isFn(config.fn)) {
+			config.fn.apply(o, [o, config.root])
+		} else {
+			return;
+		}
 		for(var i = 0; i < config.node.childNodes.length; i++) {
 			var o = config.node.childNodes[i];
-			if(o.childNodes.length) {
-				me.traversal(me.merge(config, {
-					node : o
-				}));
-			} else {
-				if(!me.isEmpty(config.fn)) {
-					config.fn.apply(o, [o, config.root])
-				}
-			}
+			me.traversal(me.merge(config, {
+				node : o
+			}));
 		}
+
 	},
 	/**
 	 * nextElementSibling/Dom traversal

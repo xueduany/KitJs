@@ -9,6 +9,7 @@ $Kit.Dom.prototype = {
 	 * 查找父元素
 	 */
 	parentEl8tag : function(el, tagName, topEl) {
+		var topEl = topEl || document.body;
 		return $kit.parentEl(el, function(p) {
 			if(p.tagName && p.tagName.toLowerCase() == tagName.toLowerCase()) {
 				return true;
@@ -19,6 +20,7 @@ $Kit.Dom.prototype = {
 		}, topEl);
 	},
 	parentEl8cls : function(el, cls, topEl) {
+		var topEl = topEl || document.body;
 		return $kit.parentEl(el, function(p) {
 			if($kit.hsCls(p, cls)) {
 				return true;

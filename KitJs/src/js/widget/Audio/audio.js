@@ -8,6 +8,10 @@
  * @update-2012/03/22
  * 优化播放器load性能
  *
+ * @update-2012/03/23
+ * 加入loading过程时候，不能移动进度条
+ * 去掉loading次数限制，避免因为网路原因，导致出错
+ *
  * @author:xueduanyang1985@163.com
  * @date:2012/03/19
  */
@@ -273,6 +277,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : scrubber,
 			ev : 'click',
 			fn : function(e) {
+				if(!this.readyState) {
+					return;
+				}
 				this._flag_dragStart = false;
 				var relativeLeft = e.clientX - $kit.offset(scrubber).left;
 				this.skipTo(relativeLeft / scrubber.offsetWidth);
@@ -284,6 +291,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : progressIcon,
 			ev : 'mousedown',
 			fn : function(e, cfg) {
+				if(!this.readyState) {
+					return;
+				}
 				this._flag_dragStart = true;
 				e.stopDefault();
 			},
@@ -293,6 +303,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : scrubber,
 			ev : 'mousemove',
 			fn : function(e, cfg) {
+				if(!this.readyState) {
+					return;
+				}
 				if(this._flag_dragStart == true) {
 					if(this.playing) {
 						this.pause();
@@ -321,6 +334,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : progressIcon,
 			ev : 'mouseup mouseout',
 			fn : function(e, cfg) {
+				if(!this.readyState) {
+					return;
+				}
 				if(this._flag_dragStart == true) {
 					if(e.type == 'mouseup' || //
 					(e.type == 'mouseout' && e.relatedTarget && !$kit.contains(scrubber, e.relatedTarget))) {
@@ -343,6 +359,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : [progressIcon, timeBox],
 			ev : 'mouseover',
 			fn : function(e, cfg) {
+				if(!this.readyState) {
+					return;
+				}
 				var me = this;
 				clearTimeout(this._timeout_timeBox_hover);
 				this._timeout_timeBox_hover = null;
@@ -357,6 +376,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : timeBox,
 			ev : 'mouseout',
 			fn : function(e, cfg) {
+				if(!this.readyState) {
+					return;
+				}
 				var me = this;
 				if(e.relatedTarget && !$kit.contains(timeBox, e.relatedTarget)) {
 					if(this._timeout_timeBox_hover == null && timeBox.style.display == 'block') {
@@ -377,6 +399,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : progressIcon,
 			ev : 'mouseout',
 			fn : function(e, cfg) {
+				if(!this.readyState) {
+					return;
+				}
 				var me = this;
 				if(e.relatedTarget && !$kit.contains(progressIcon, e.relatedTarget)) {
 					if(this._timeout_timeBox_hover == null && timeBox.style.display == 'block') {
@@ -404,6 +429,9 @@ $kit.merge($kit.ui.Audio.prototype, {
 			el : audio.element,
 			ev : 'timeupdate',
 			fn : function(e) {
+				if(!this.readyState) {
+					return;
+				}
 				audio.currentTime = audio.element.currentTime;
 				audio.updatePlayhead.apply(audio);
 				audio.newEv('timeupdate');
@@ -584,6 +612,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.duration = this.element.duration;
 		this.updatePlayhead();
 		this.config.loadStarted.apply(this);
+		return true;
 	},
 	loadProgress : function() {
 		if(this.element.buffered != null && this.element.buffered.length) {
@@ -651,7 +680,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 		var readyTimer, loadTimer, ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
 
 		// Use timers here rather than the official `progress` event, as Chrome has issues calling `progress` when loading mp3 files from cache.
-		audio.loadCount = 0;
+		//audio.loadCount = 0;
 		clearInterval(audio.readyTimer);
 		audio.readyTimer = setInterval(function() {
 			if(audio.element.readyState > -1 && audio.element.readyState < 1) {
@@ -659,10 +688,10 @@ $kit.merge($kit.ui.Audio.prototype, {
 				if(!ios) {
 					audio.loading.apply(audio);
 				}
-				if(audio.loadCount > 100) {
-					audio.load(audio.mp3);
-					audio.loadCount = 0;
-				}
+				//if(audio.loadCount > 100) {
+				// audio.load(audio.mp3);
+				// audio.loadCount = 0;
+				//}
 			}
 			if(audio.element.readyState > 1) {
 				audio.readyState = true;
@@ -675,6 +704,11 @@ $kit.merge($kit.ui.Audio.prototype, {
 				clearInterval(audio.loadTimer);
 				audio.loadTimer = setInterval(function() {
 					audio.loadProgress.apply(audio);
+					if(audio.loadedPercent < audio.currentTime / audio.duration) {
+						audio.loading.apply(audio);
+					} else {
+						$kit.rmCls(audio.wrapper, audio.config.playerTemplate.loadingCls);
+					}
 					if(audio.loadedPercent >= 1) {
 						clearInterval(audio.loadTimer);
 					} else {
@@ -682,7 +716,7 @@ $kit.merge($kit.ui.Audio.prototype, {
 					}
 				}, 300);
 			}
-			audio.loadCount++;
+			//audio.loadCount++;
 		}, 300);
 	},
 	adjustProgressIconPos : function(time) {
