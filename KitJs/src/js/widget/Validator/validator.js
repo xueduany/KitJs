@@ -101,6 +101,9 @@ $kit.merge($kit.ui.Validator.prototype, {
 						break;
 					}
 				}
+				if(re == false) {
+					return re;
+				}
 				var originFormSubmitRe = true;
 				if(form._onsubmit) {
 					originFormSubmitRe = form._onsubmit.call(this);

@@ -1,0 +1,103 @@
+#regist-main {
+	width: 980px;
+	height: 900px;
+	position: relative;
+	font-size: 12px;
+}
+ol {
+	list-style: none;
+}
+#regist-main .cap {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	top: 98px;
+	left: 300px;
+	width: 400px;
+}
+#registForm {
+	height: 416px;
+	position: relative;
+	border: 1px solid #d7d7d7;
+	box-shadow: 0 0 10px #d7d7d7;
+	background-color: #fff;
+	position: absolute;
+	width: 382px;
+	top: 154px;
+	left: 300px;
+	color: #818181;
+}
+#regist-main .cap h3 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	height: 40px;
+	line-height: 40px;
+}
+#regist-main .cap a {
+	position: absolute;
+	color: #818181;
+	left: 173px;
+	top: 27px;
+}
+.cap .login-error {
+	position: absolute;
+	top: 24px;
+	left: 91px;
+}
+#regist-main a {
+	text-decoration: none;
+}
+#regist-main a:hover {
+	text-decoration: underline;
+}
+#registForm ol {
+	padding-top: 20px;
+	padding-left: 40px;
+}
+#registForm li {
+	line-height: 30px;
+}
+#registForm li input {
+	width: 295px;
+	height: 33px;
+	line-height: 33px;
+	border: 1px solid #ccd1d5;
+	display: block;
+	border-radius: 5px;
+}
+#registForm input.btn-submit {
+	position: absolute;
+	display: block;
+	overflow: hidden;
+	width: 88px;
+	height: 31px;
+	line-height: 31px;
+	cursor: pointer;
+	color: #fff;
+	top: 363px;
+	left: 40px;
+	border: 0;
+	background: url(loginbutton.png) no-repeat 0 0;
+}
+#registForm input.btn-submit:hover {
+	background-position: 0 -31px;
+}
+#registForm input.btn-submit:active {
+	background-position: 0 -62px;
+}
+#registForm .registError {
+	position: absolute;
+	width: 298px;
+	top: 301px;
+	left: 40px;
+	color: #BF1623;
+}
+.field-validation-error {
+	color: #BF1623;
+}
+.kitjs-validator {
+	color: #BF1623;
+}

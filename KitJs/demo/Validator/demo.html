@@ -6,7 +6,7 @@
 		<script src="../../src/js/dom.js"></script>
 		<script src="../../src/js/widget/Form/form.js"></script>
 		<link rel="stylesheet" href="../../css.css" />
-		<link rel="stylesheet" href="../../src/css/form.css" />
+		<link rel="stylesheet" href="login.css" />
 		<link rel="stylesheet" href="validator.css" />
 		<!--validator-->
 		<script src="../../src/js/widget/Validator/validator.js"></script>
@@ -24,33 +24,41 @@
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>验证器Validator</h1>
-		<form action="success.html" method="get">
-			<table>
-				<caption>
-					<ol>
-						<li>
-							名字不能为a
-						</li>
-						<li>
-							名字不能为6个字符
-						</li>
-						<li>
-							性别不能为空
-						</li>
-					</ol>
-				</caption>
-				<tr>
-					<td>Name</td>
-					<td><input type="text" class="kitjs-form-textbox" name="name" value="a"><span class="kitjs-validator" for="@name" rules="[{regExp:/^\w{6}$/i, message:'不能为6个字符!'},{regExp:/^a$/i, message:'不能为a或者A!'}]"></span></td>
-				</tr>
-				<tr>
-					<td>Gender</td>
-					<td><label for="gender_male"><input id="gender_male" type="radio" name="gender" class="kitjs-form-radio" value="男">男</label><label for="gender_female"><input id="gender_female" name="gender" type="radio" class="kitjs-form-radio" value="女">女</label><span class="kitjs-validator" for="@gender"></span></td>
-				</tr>
-				<tr>
-					<td colspan="2"><input type="submit" class="kitjs-form-button" value="提交"></td>
-				</tr>
-			</table>
-		</form>
+		<div id="regist-main">
+			<form id="registForm" action="/Account/Register" method="post" onsubmit="alert('验证通过，可以提交！');return false;">
+				<ol>
+					<li>
+						<label for="UserName">用户名：
+						<span class="kitjs-validator" for="@UserName" rules="[{notNull:true, message:'用户名不能为空'}]"></span>
+						</label>
+						<span class="field-validation-valid" data-valmsg-for="UserName" data-valmsg-replace="true"></span>
+						<input id="UserName" name="UserName" type="text" value="">
+					</li>
+					<li>
+						<label for="Email">电子邮件：
+						<span class="kitjs-validator" for="@Email" rules="[{notNull:true, message:'电子邮件不能为空'},{isEmail:true,message:'电子邮件格式不正确'}]"></span>
+						</label>
+						<span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+						<input id="Email" name="Email" type="text" value="">
+					</li>
+					<li>
+						<label for="Password">密码：
+						<span class="kitjs-validator" for="@Password" rules="[{notNull:true, message:'密码不能为空'},{minLength:'6',message:'密码长度最少为6位'}]"></span>
+						</label>
+						<span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+						<input id="Password" name="Password" type="password">
+					</li>
+					<li>
+						<label for="ConfirmPassword">重新输入密码：
+						<span class="kitjs-validator" for="@ConfirmPassword" rules="[{notNull:true, message:'重新输入密码不能为空'},{equalWith:'@Password',message:'两次输入密码必须一致'},{minLength:'6',message:'密码长度最少为6位'}]"></span>
+						</label>
+						<span class="field-validation-valid" data-valmsg-for="ConfirmPassword" data-valmsg-replace="true"></span>
+						<input id="ConfirmPassword" name="ConfirmPassword" type="password">
+					</li>
+				</ol>
+				<div class="registError"></div>
+				<input type="submit" value="注册" class="btn-submit">
+			</form>
+		</div>
 	</body>
 </html>

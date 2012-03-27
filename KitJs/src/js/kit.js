@@ -374,7 +374,7 @@ $Kit.prototype = {
 		}
 		config = me.join(defaultConfig, config);
 		var what = config.what, where = config.where;
-		if(what != null && "nodeType" in where) {
+		if(!me.isEmpty(what) && me.isNode(where)) {
 			switch (config.pos.toString().toLowerCase()) {
 				case "first" :
 					if(me.isStr(what)) {

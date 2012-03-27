@@ -6,7 +6,6 @@ $kit.ui.TabPanel = function(config) {
 $kit.merge($kit.ui.TabPanel, {
 	defaultConfig : {
 		pos : 'last',
-		where : document.body,
 		what : [//
 		'<div class="${tabPanelCls}">', //
 		'<div class="${tabContainerCls}">', //
@@ -50,7 +49,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 			var html = $kit.tpl(me.config.what, me.config);
 			$kit.insEl({
 				pos : me.config.pos,
-				where : me.config.where,
+				where : me.config.where || document.body,
 				what : html
 			});
 		}
@@ -265,7 +264,7 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 		var me = this;
 		var tabTotalWidth = 0;
 		var tabPages = $kit.els8cls(me.config.tabPageCls);
-		if(tabPages.length == 0 && !$kit.isEmpty($kit.el8cls(me.config.innerTabContainerBoxCls, me.tabPanelTab))) {
+		if($kit.isEmpty(tabPages) && !$kit.isEmpty($kit.el8cls(me.config.innerTabContainerBoxCls, me.tabPanelTab))) {
 			$kit.each($kit.el8cls(me.config.innerTabContainerBoxCls, me.tabPanelTab).children, function(o) {
 				var id = $kit.attr(o, me.config.attr_tabpageid);
 				$kit.adCls($kit.el8id(id), me.config.tabPageCls);

@@ -6,24 +6,67 @@
 		<script src="src/js/kit.js"></script>
 		<link rel="stylesheet" href="css.css" />
 		<link rel="shortcut icon" href="panda.gif" />
-<script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-30210234-1']);
-  _gaq.push(['_trackPageview']);
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-</script>
+		</script>
+		<style>
+			a.widget-name {
+				display: block;
+				height: 40px;
+				color: #0092D3;
+				line-height: 40px;
+				font-size: 16px;
+				font-weight: bold;
+			}
+			.widget-gallary {
+				width: 100%;
+				clear: both;
+				margin: 0;
+				padding: 0;
+			}
+			.widget-gallary td {
+				height: 300px;
+				vertical-align: top;
+				width: 33.3333%;
+				text-align: center;
+			}
+			.widget-gallary a {
+				display: block;
+			}
+		</style>
 	</head>
 	<body>
 		<h1><img src="panda.gif">欢迎使用KitJs!</h1>
 		<h2>develop with ---- HTML5+CSS3+Javascript</h2>
 		<ul>
 			<li>
-				<h3>kitjs api</h3>
+				<h3>Kit组件列表</h3>
+				<table class="widget-gallary">
+					<tr>
+						<td><a class="widget-name" href="demo/TabPanel/example1/demo.html">选项卡(Css3)</a><a class="widget-preview" href="demo/TabPanel/demo.html" target="_blank"><img src="demo/TabPanel/demo.png" width="300"></a></td>
+						<td><a class="widget-name" href="demo/SlideBar/demo.html">侧边栏鼠标跟随滑块</a><a class="widget-preview" href="demo/SlideBar/demo.html" target="_blank"><img src="demo/SlideBar/demo.png"></a></td>
+						<td><a class="widget-name" href="demo/Audio/demo.html">音频播放器</a><a class="widget-preview" href="demo/Audio/demo.html" target="_blank"><img src="demo/Audio/demo.png"></a></td>
+					</tr>
+					<tr>
+						<td><a class="widget-name" href="demo/Validator/demo.html">表单验证框架</a><a class="widget-preview" href="demo/Validator/demo.html" target="_blank"><img src="demo/Validator/demo.png" width="300"></a></td>
+						<td><a class="widget-name" href="demo/StarLevel/demo.html">划动星星等级</a><a class="widget-preview" href="demo/StarLevel/demo.html" target="_blank"><img src="demo/StarLevel/demo.png"></a></td>
+						<td><a class="widget-name" href="demo/TagInput/demo.html">Tag输入框</a><a class="widget-preview" href="demo/TagInput/demo.html" target="_blank"><img src="demo/TagInput/demo.png" width="300"></a></td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<h3>KitJs API</h3>
 				<ul class="indent">
 					<li>
 						<h4><a target="_blank" href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/kit.js">core</a></h3>
@@ -32,7 +75,7 @@
 								<a href="demo/Core/selector.html">Dom选择器</a>
 							</li>
 							<li>
-								<a href="demo/Core/event.html">事件</a>
+								<a href="demo/Core/event.html">事件（支持自定义事件和委托）</a>
 							</li>
 							<li>
 								对象判断
@@ -115,7 +158,7 @@
 					</li>
 				</ul>
 			</li>
-			<li>
+			<!--<li>
 				kitjs widget ---- 表单
 				<div class="indent">
 					<ul>
@@ -161,7 +204,7 @@
 			</li>
 			<li>
 				<b><a style="color:red" href="demo/TagInput/demo.html">仿stackOverflow样式的tag输入框</a></b>
-			</li>
+			</li>-->
 		</ul>
 		<div class="footer">
 			<p>
