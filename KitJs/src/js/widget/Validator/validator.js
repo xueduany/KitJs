@@ -49,6 +49,10 @@ $kit.merge($kit.ui.Validator, {
 					if(rule.regExp.test(checkStr)) {
 						return rule.message;
 					}
+				} else if(rule.fn) {
+					if(rule.fn.call(this, checkStr)) {
+						return rule.message;
+					}
 				}
 			}
 			return false;
