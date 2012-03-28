@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/event.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<style>
+			.drag-obj1 {
+				display: inline-block;
+				width: 100px;
+				height: 20px;
+				background-color: green;
+			}
+			.t1 {
+				display: block;
+				position: absolute;
+				top: 100px;
+				left: 20px;
+				width: 200px;
+				height: 30px;
+				background-color: red;
+			}
+			.box {
+				position: absolute;
+				top: 30px;
+				width: 500px;
+				border: 1px dashed #000;
+				left: 30px;
+				height: 200px;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>拖拽</h1>
+		<div class="box">
+			<span>左边</span><span class="drag-obj1" id="J_1"></span><span>右边</span>
+			<div class="t1" id="t1"></div>
+		</div>
+		<script>
+			$kit.$(function() {
+				$kit.event.ev({
+					el : '#J_1',
+					ev : 'dragstart',
+					fn : function(e) {
+						/*
+						e.dataTransfer.effectAllowed = "move";
+						e.dataTransfer.setData("text", e.target.innerHTML);
+						e.dataTransfer.setDragImage(e.target, 0, 0);
+						console.log('a122');
+						var el = e.target;
+						el.lastEvOffsetX = e.offsetX;
+						el.lastEvOffsetY = e.offsetY;
+						$kit.css(el, {
+							position : 'absolute',
+							top : el.offsetTop + 'px',
+							left : el.offsetLeft + 'px'
+						});
+						*/
+						console.log('a122');
+					}
+				});
+				/*
+				$kit.event.ev({
+					el : '#J_1',
+					ev : 'dragstart',
+					fn : function(e) {
+						e.dataTransfer.effectAllowed = "move";
+						e.dataTransfer.setData("text", e.target.innerHTML);
+						//e.dataTransfer.setDragImage(e.target, 0, 0);
+						//console.log('a122');
+						var el = e.target;
+						el.lastEvOffsetX = e.offsetX;
+						el.lastEvOffsetY = e.offsetY;
+						$kit.css(el, {
+							position : 'absolute',
+							top : el.offsetTop + 'px',
+							left : el.offsetLeft + 'px'
+						});
+					}
+				});
+				$kit.event.ev({
+					el : '#J_1',
+					ev : 'drag',
+					fn : function(e) {
+						var el = e.currentTarget;
+						console.log(el.offsetTop + e.offsetY - el.lastEvOffsetY);
+						$kit.css(el, {
+							position : 'absolute',
+							top : el.offsetTop + e.offsetY - el.lastEvOffsetY + 'px',
+							left : el.offsetLeft + e.offsetX - el.lastEvOffsetX + 'px',
+							'z-index' : 99999
+						});
+					}
+				});
+				$kit.event.ev({
+					el : '#J_1',
+					ev : 'dragend',
+					fn : function(e) {
+						var el = e.currentTarget;
+						console.log(el.offsetTop + e.offsetY - el.lastEvOffsetY);
+						$kit.css(el, {
+							position : 'absolute',
+							top : el.offsetTop + e.offsetY - el.lastEvOffsetY + 'px',
+							left : el.offsetLeft + e.offsetX - el.lastEvOffsetX + 'px',
+							'z-index' : 99999
+						});
+					}
+				});
+				*/
+				$kit.event.ev({
+					el : '#J_1',
+					ev : 'dragend',
+					fn : function(e) {
+						console.log('a2');
+					}
+				});
+				$kit.event.ev({
+					el : '#t1',
+					ev : 'drop',
+					fn : function(e) {
+						console.log('zxczxc');
+					}
+				});
+				$kit.event.ev({
+					el : '#t1',
+					ev : 'dragover',
+					fn : function(e) {
+						var el = e.target;
+						el.style.backgroundColor = 'black';
+						//e.dataTransfer.dropEffect = 'move';
+						e.stopNow();
+					}
+				});
+				/*
+				$kit.event.ev({
+				el : '#t1',
+				ev : 'dragleave',
+				fn : function(e) {
+				var el = e.target;
+				el.style.backgroundColor = 'red';
+				}
+				});
+				$kit.event.ev({
+				el : '#t1',
+				ev : 'dragenter',
+				fn : function(e) {
+				var el = e.target;
+				}
+				});
+				*/
+				// $kit.el('#J_1').ondrag = function() {
+				// alert(2);
+				// }
+			});
+
+		</script>
+	</body>
+</html>

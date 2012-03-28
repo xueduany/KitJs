@@ -69,8 +69,7 @@ $kit.merge($Kit.prototype, {
 							}
 						}
 					} else {
-						l = me._camelCssName(l);
-						el.style[l] = attr[l];
+						el.style[me._camelCssName(l)] = attr[l];
 					}
 				}
 			} else {
@@ -107,7 +106,7 @@ $kit.merge($Kit.prototype, {
 		for(var i = 1; i < a.length; i++) {
 			a[i] = a[i].substr(0, 1).toUpperCase() + a[i].substr(1);
 		}
-		return firstLetter + a.join('');
+		return firstLetter.toLowerCase() + a.join('');
 	},
 	/**
 	 * replace element

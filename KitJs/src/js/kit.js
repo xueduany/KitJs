@@ -788,7 +788,7 @@ $Kit.prototype = {
 					el : _el
 				}));
 			}
-		} else if(me.isAry(config.ev)) { a
+		} else if(me.isAry(config.ev)) {
 			for(var i = 0; i < config.ev.length; i++) {
 				me.ev(me.join(config, {
 					ev : config.ev[i]
@@ -818,10 +818,12 @@ $Kit.prototype = {
 					}
 					var EV = arguments[0] || window.event;
 
-					me.merge(EV, {
+					me.mergeIf(EV, {
 						target : EV.target || EV.srcElement,
 						currentTarget : config.el,
-						relatedTarget : EV.relatedTarget ? EV.relatedTarget : EV.toElement || EV.fromElement,
+						relatedTarget : EV.relatedTarget ? EV.relatedTarget : EV.toElement || EV.fromElement
+					});
+					me.mergeIf(EV, {
 						stopNow : function() {
 							EV.stopPropagation && EV.stopPropagation();
 							EV.preventDefault && EV.preventDefault();
@@ -936,7 +938,7 @@ $Kit.prototype = {
 					ev : a[i]
 				}));
 			}
-		} else {
+		} else if(!me.isEmpty(config.el)) {
 			if(!me.isEmpty(config.ev)) {
 				config.ev = config.ev.toString().trim();
 				if(!me.isEmpty(config.fn)) {
@@ -1002,7 +1004,12 @@ $Kit.prototype = {
 	 */
 	evExtra : function(ev) {
 		var me = this;
-		return me.merge({}, me.evPos(ev))
+		var pageX = ev.pageX || ev.clientX + me.viewport().scrollLeft;
+		var pageY = ev.pageY || ev.clientY + me.viewport().scrollTop;
+		return me.merge({
+			pageX : pageX,
+			pageY : pageY
+		}, me.evPos(ev))
 	},
 	/**
 	 * get event coordinate info

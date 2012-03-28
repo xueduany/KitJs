@@ -153,7 +153,7 @@ $kit.merge($kit.ui.Audio, {
 			progress = $kit.el8cls(player.progressCls, this.wrapper);
 			if(this.playing) {
 				var progressWidth = progress.style.width ? parseFloat(progress.style.width) : 0;
-				if(progressWidth <= scrubber.offsetWidth * percent) {
+				if(progressWidth <= scrubber.offsetWidth * percent || (progressWidth - scrubber.offsetWidth * percent) > 5) {
 					progress.style.width = (scrubber.offsetWidth * percent) + 'px';
 				}
 			}
@@ -435,9 +435,6 @@ $kit.merge($kit.ui.Audio.prototype, {
 				audio.currentTime = audio.element.currentTime;
 				audio.updatePlayhead.apply(audio);
 				audio.newEv('timeupdate');
-				if(audio.element.currentTime >= audio.element.duration) {
-					audio.trackEnded.apply(audio);
-				}
 			},
 			scope : audio
 		});
@@ -702,24 +699,27 @@ $kit.merge($kit.ui.Audio.prototype, {
 				// Once we have data, start tracking the load progress.
 				var loaderPercent = 0;
 				clearInterval(audio.loadTimer);
-				audio.loadTimer = setInterval(function() {
-					audio.loadProgress.apply(audio);
-					if(audio.loadedPercent < audio.currentTime / audio.duration) {
-						audio.loading.apply(audio);
-					} else {
-						$kit.rmCls(audio.wrapper, audio.config.playerTemplate.loadingCls);
-					}
-					if(audio.loadedPercent >= 1) {
-						clearInterval(audio.loadTimer);
-					} else {
-						loaderPercent = audio.loadedPercent;
-					}
-				}, 300);
+				if($kit.isEmpty(audio.loadedPercent) || audio.loadedPercent < 1) {
+					audio.loadTimer = setInterval(function() {
+						audio.loadProgress.apply(audio);
+						if(audio.loadedPercent < audio.currentTime / audio.duration) {
+							audio.loading.apply(audio);
+						} else {
+							$kit.rmCls(audio.wrapper, audio.config.playerTemplate.loadingCls);
+						}
+						if(audio.loadedPercent >= 1) {
+							clearInterval(audio.loadTimer);
+						} else {
+							loaderPercent = audio.loadedPercent;
+						}
+					}, 300);
+				}
 			}
 			//audio.loadCount++;
 		}, 300);
 	},
 	adjustProgressIconPos : function(time) {
+		console.log(time);
 		var player = this.config.playerTemplate, //
 		scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
 		progress = $kit.el8cls(player.progressCls, this.wrapper);
