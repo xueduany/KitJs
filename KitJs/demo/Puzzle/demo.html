@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/event.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="demo.css" />
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>拖拽</h1>
+		<ul>
+			<li class="dragDraoDemoLi">
+				<h3>图片拖拽排序（拼图游戏）</h3>
+				<div class="puzzle">
+					<ul>
+						<li class="l1"></li>
+						<li class="l2"></li>
+						<li class="l3"></li>
+						<li class="l4"></li>
+						<li class="l5"></li>
+						<li class="l6"></li>
+						<li class="l7"></li>
+						<li class="l8"></li>
+						<li class="l9"></li>
+					</ul>
+				</div>
+			</li>
+		</ul>
+		<script>
+			$kit.$(function() {
+				$kit.event.ev({
+					el : $kit.el('li', $kit.el('.puzzle')[0]),
+					ev : 'drag',
+					fn : function(e) {
+						//必须给可以drag的元素绑定任意dragXXXX系列事件，这样才会触发kitjs的drag初始化事件，才能拖拽
+						//你可以绑定一个空fn
+					}
+				});
+				$kit.event.ev({
+					el : $kit.el('li', $kit.el('.puzzle')[0]),
+					ev : 'drop',
+					fn : function(e) {
+						var originPosNextEl = $kit.nextEl(e.dragElement, function(el) {
+							if(el.tagName && el.tagName.toLowerCase() == 'li') {
+								return true;
+							}
+						});
+						$kit.insEl({
+							pos : 'after',
+							where : e.currentTarget,
+							what : e.dragElement
+						});
+						$kit.insEl({
+							pos : 'before',
+							where : originPosNextEl,
+							what : e.currentTarget
+						});
+					}
+				});
+			});
+
+		</script>
+	</body>
+</html>

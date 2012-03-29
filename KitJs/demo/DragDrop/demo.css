@@ -1,0 +1,43 @@
+.dragDraoDemoLi {
+	overflow: hidden;
+	*display: block;
+	*zoom: 1;
+}
+#t1, #t2 {
+	margin: 30px;
+	float: left;
+	height: 300px;
+	width: 200px;
+	border: 1px dashed #ccc;
+	padding: 30px
+}
+#t2 {
+	margin-left: 20px;
+}
+.J_move {
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+	width: 150px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	color: #fff;
+	margin: 10px;
+}
+#m1 {
+	background-color: red;
+}
+#m2 {
+	background-color: orange;
+}
+#m3 {
+	background-color: blue;
+}
+#t2 {
+	display: block;
+	width: 200px;
+}
+#n3 {
+	color: #000;
+}

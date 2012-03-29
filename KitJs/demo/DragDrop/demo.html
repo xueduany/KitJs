@@ -8,132 +8,172 @@
 		<![endif]-->
 		<script src="../../src/js/event.js"></script>
 		<link rel="stylesheet" href="../../css.css" />
-		<style>
-			.drag-obj1 {
-				display: inline-block;
-				width: 100px;
-				height: 20px;
-				background-color: green;
-			}
-			.t1 {
-				display: block;
-				position: absolute;
-				top: 100px;
-				left: 20px;
-				width: 200px;
-				height: 30px;
-				background-color: red;
-			}
-			.box {
-				position: absolute;
-				top: 30px;
-				width: 500px;
-				border: 1px dashed #000;
-				left: 30px;
-				height: 200px;
-			}
-		</style>
+		<link rel="stylesheet" href="demo.css" />
 	</head>
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>拖拽</h1>
-		<div class="box">
-			<span>左边</span><span class="drag-obj1" id="J_1"></span><span>右边</span>
-			<div class="t1" id="t1"></div>
-		</div>
+		<ul>
+			<li class="dragDraoDemoLi">
+				<h3>拖拽</h3>
+				<div id="t1">
+					<div id="m1" class="J_move">
+						可拖动元素1
+					</div>
+					<div id="m2" class="J_move">
+						可拖动元素1
+					</div>
+					<div id="m3" class="J_move">
+						可拖动元素1
+					</div>
+				</div>
+				<div id="t2">
+					<div id="n3" class="J_move">
+						可拖放区域
+					</div>
+				</div>
+			</li>
+		</ul>
 		<script>
 			$kit.$(function() {
 				$kit.event.ev({
-					el : '#J_1',
+					el : $kit.el('.J_move', $kit.el('#t1')),
 					ev : 'dragstart',
 					fn : function(e) {
-						/*
-						e.dataTransfer.effectAllowed = "move";
-						e.dataTransfer.setData("text", e.target.innerHTML);
-						e.dataTransfer.setDragImage(e.target, 0, 0);
-						console.log('a122');
-						var el = e.target;
-						el.lastEvOffsetX = e.offsetX;
-						el.lastEvOffsetY = e.offsetY;
+						//必须给可以drag的元素绑定任意dragXXXX系列事件，这样才会触发kitjs的drag初始化事件，才能拖拽
+						//你可以绑定一个空fn
+						var el = e.currentTarget;
+						el._lastEvPos = {
+							pageY : e.pageY,
+							pageX : e.pageX
+						}
+						//var top = el.offsetTop - $kit.css(el, 'marginTop');
+						//var left = el.offsetLeft - $kit.css(el, 'marginLeft');
+						var top = e.pageY;
+						var left = e.pageX;
+						if(el.offsetParent && el.offsetParent != el) {
+							var parent = el.offsetParent;
+							top = top - $kit.offset(parent).top;
+							left = left - $kit.offset(parent).left;
+						}
+						top += 2;
+						left += 2;
+						console.log(top);
+						console.log(left);
 						$kit.css(el, {
 							position : 'absolute',
-							top : el.offsetTop + 'px',
-							left : el.offsetLeft + 'px'
+							top : top,
+							left : left,
+							'z-index' : 99999
 						});
-						*/
-						console.log('a122');
+					}
+				});
+
+				$kit.event.ev({
+					el : $kit.el('.J_move', $kit.el('#t1')),
+					ev : 'drag',
+					fn : function(e) {
+						//必须给可以drag的元素绑定任意dragXXXX系列事件，这样才会触发kitjs的drag初始化事件，才能拖拽
+						//你可以绑定一个空fn
+						var el = e.currentTarget;
+						$kit.css(el, {
+							position : 'absolute',
+							top : $kit.css(el, 'top') + e.pageY - el._lastEvPos.pageY,
+							left : $kit.css(el, 'left') + e.pageX - el._lastEvPos.pageX,
+							zIndex : -1
+						});
+						el._lastEvPos = {
+							pageY : e.pageY,
+							pageX : e.pageX
+						}
+					}
+				});
+				$kit.event.ev({
+					el : $kit.el('.J_move', $kit.el('#t1')),
+					ev : 'dragend',
+					fn : function(e) {
+						//必须给可以drag的元素绑定任意dragXXXX系列事件，这样才会触发kitjs的drag初始化事件，才能拖拽
+						//你可以绑定一个空fn
+						var el = e.currentTarget;
+						$kit.css(el, {
+							position : 'static',
+							top : '',
+							left : '',
+							zIndex : 0
+						});
+					}
+				});
+				$kit.event.ev({
+					el : '#t2',
+					ev : 'dragover',
+					fn : function(e) {
+						e.stopDefault();
+					}
+				});
+				$kit.event.ev({
+					el : '#t2',
+					ev : 'drop',
+					fn : function(e) {
+						$kit.insEl({
+							pos : 'last',
+							where : e.currentTarget,
+							what : e.dragElement
+						});
 					}
 				});
 				/*
-				$kit.event.ev({
-					el : '#J_1',
-					ev : 'dragstart',
-					fn : function(e) {
-						e.dataTransfer.effectAllowed = "move";
-						e.dataTransfer.setData("text", e.target.innerHTML);
-						//e.dataTransfer.setDragImage(e.target, 0, 0);
-						//console.log('a122');
-						var el = e.target;
-						el.lastEvOffsetX = e.offsetX;
-						el.lastEvOffsetY = e.offsetY;
-						$kit.css(el, {
-							position : 'absolute',
-							top : el.offsetTop + 'px',
-							left : el.offsetLeft + 'px'
-						});
-					}
-				});
-				$kit.event.ev({
-					el : '#J_1',
-					ev : 'drag',
-					fn : function(e) {
-						var el = e.currentTarget;
-						console.log(el.offsetTop + e.offsetY - el.lastEvOffsetY);
-						$kit.css(el, {
-							position : 'absolute',
-							top : el.offsetTop + e.offsetY - el.lastEvOffsetY + 'px',
-							left : el.offsetLeft + e.offsetX - el.lastEvOffsetX + 'px',
-							'z-index' : 99999
-						});
-					}
-				});
-				$kit.event.ev({
-					el : '#J_1',
-					ev : 'dragend',
-					fn : function(e) {
-						var el = e.currentTarget;
-						console.log(el.offsetTop + e.offsetY - el.lastEvOffsetY);
-						$kit.css(el, {
-							position : 'absolute',
-							top : el.offsetTop + e.offsetY - el.lastEvOffsetY + 'px',
-							left : el.offsetLeft + e.offsetX - el.lastEvOffsetX + 'px',
-							'z-index' : 99999
-						});
-					}
-				});
-				*/
+				 $kit.event.ev({
+				 el : '#J_1',
+				 ev : 'dragstart',
+				 fn : function(e) {
+				 e.dataTransfer.effectAllowed = "move";
+				 e.dataTransfer.setData("text", e.target.innerHTML);
+				 //e.dataTransfer.setDragImage(e.target, 0, 0);
+				 //console.log('a122');
+				 var el = e.target;
+				 el.lastEvOffsetX = e.offsetX;
+				 el.lastEvOffsetY = e.offsetY;
+				 $kit.css(el, {
+				 position : 'absolute',
+				 top : el.offsetTop + 'px',
+				 left : el.offsetLeft + 'px'
+				 });
+				 }
+				 });
+				 $kit.event.ev({
+				 el : '#J_1',
+				 ev : 'drag',
+				 fn : function(e) {
+				 var el = e.currentTarget;
+				 console.log(el.offsetTop + e.offsetY - el.lastEvOffsetY);
+				 $kit.css(el, {
+				 position : 'absolute',
+				 top : el.offsetTop + e.offsetY - el.lastEvOffsetY + 'px',
+				 left : el.offsetLeft + e.offsetX - el.lastEvOffsetX + 'px',
+				 'z-index' : 99999
+				 });
+				 }
+				 });
+				 $kit.event.ev({
+				 el : '#J_1',
+				 ev : 'dragend',
+				 fn : function(e) {
+				 var el = e.currentTarget;
+				 console.log(el.offsetTop + e.offsetY - el.lastEvOffsetY);
+				 $kit.css(el, {
+				 position : 'absolute',
+				 top : el.offsetTop + e.offsetY - el.lastEvOffsetY + 'px',
+				 left : el.offsetLeft + e.offsetX - el.lastEvOffsetX + 'px',
+				 'z-index' : 99999
+				 });
+				 }
+				 });
+				 */
 				$kit.event.ev({
 					el : '#J_1',
 					ev : 'dragend',
 					fn : function(e) {
 						console.log('a2');
-					}
-				});
-				$kit.event.ev({
-					el : '#t1',
-					ev : 'drop',
-					fn : function(e) {
-						console.log('zxczxc');
-					}
-				});
-				$kit.event.ev({
-					el : '#t1',
-					ev : 'dragover',
-					fn : function(e) {
-						var el = e.target;
-						el.style.backgroundColor = 'black';
-						//e.dataTransfer.dropEffect = 'move';
-						e.stopNow();
 					}
 				});
 				/*

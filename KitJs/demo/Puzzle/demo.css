@@ -1,0 +1,52 @@
+.puzzle ul li {
+	padding: 0;
+	float: left;
+	display: block;
+	margin: 2px;
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+	background-image: url(game.png);
+	list-style: none;
+}
+li.l1 {
+	background-position: 0 0;
+}
+li.l2 {
+	background-position: -200px 0;
+}
+li.l3 {
+	background-position: -400px 0;
+}
+li.l4 {
+	background-position: 0 -200px;
+}
+li.l5 {
+	background-position: -200px -200px;
+}
+li.l6 {
+	background-position: -400px -200px;
+}
+li.l7 {
+	background-position: 0 -400px;
+}
+li.l8 {
+	background-position: -200px -400px;
+}
+li.l9 {
+	background-position: -400px -400px;
+}
+.puzzle {
+	margin-top: 20px;
+	text-align: center;
+}
+.puzzle ul {
+	width: 612px;
+	height: 612px;
+	display: block;
+	margin: 0;
+	margin: 0 auto;
+	padding: 0;
+	overflow: hidden;
+	*zoom: 1;
+}

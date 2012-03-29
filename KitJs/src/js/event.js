@@ -6,6 +6,7 @@ $Kit.Event = function() {
 	this._ev = function() {
 		$Kit.prototype.ev.apply($kit, arguments);
 	}
+	this.dragElement = undefined;
 	/*$kit.ev = function() {
 	 $kit.event.ev.apply($kit.event, arguments);
 	 }*/
@@ -80,10 +81,10 @@ $Kit.Event.prototype = {
 		}
 		if(me.recurEv(config, me.ev)) {
 			var ev = config.ev.trim(), el = config.el;
-			if(me._isDragEv(ev)) {
-				if('ondrag' in el && el._flag_kitjs_dragDrop_regist != true) {
-					//使用IE自带的drag事件，考虑到HTML5的普及，直接使用现成的
-					el._flag_kitjs_dragDrop_regist = true;
+			if('ondrag' in el) {
+				//使用IE自带的drag事件，考虑到HTML5的普及，直接使用现成的
+				if(me._isDragEv(ev) && el._flag_kitjs_drag_regist != true) {
+					el._flag_kitjs_drag_regist = true;
 					$kit.attr(el, 'draggable', 'true');
 					if($kit.isIE()) {
 						me._ev({
@@ -101,28 +102,27 @@ $Kit.Event.prototype = {
 							ev : 'dragstart',
 							fn : function(e) {
 								var el = e.currentTarget;
+								//e.dataTransfer.effectAllowed = "all";
+								me.dragElement = e.currentTarget;
+								e.dataTransfer.setData("text", e.currentTarget.innerHTML);
+								//e.dataTransfer.setDragImage(e.target, 0, 0);
 								if(el._kitjs_dd_start != true) {
-									e.dataTransfer.effectAllowed = "move";
-									e.dataTransfer.setData("text", e.target.innerHTML);
-									//e.dataTransfer.setDragImage(e.target, 0, 0);
 									//
-									var cloneNode = document.createElement('div');
-									$kit.css(cloneNode, {
-										position : 'absolute',
-										display : 'block',
-										width : $kit.offset(el).width,
-										height : $kit.offset(el).height,
-										backgroundColor : 'green',
-										opacity : 0.5
-									});
-									document.body.appendChild(cloneNode);
+									// var cloneNode = document.createElement('div');
 									// $kit.css(cloneNode, {
-										// top : e.pageY,
-										// left : e.pageX
+									// position : 'absolute',
+									// display : 'block',
+									// width : $kit.offset(el).width,
+									// height : $kit.offset(el).height,
+									// border : '2px dashed #aaa',
+									// backgroundColor : 'transparent',
+									// opacity : 0.5
 									// });
-									el.lastEvOffsetX = e.offsetX;
-									el.lastEvOffsetY = e.offsetY;
-
+									// document.body.appendChild(cloneNode);
+									// $kit.css(cloneNode, {
+									// top : e.pageY - 2,
+									// left : e.pageX - 2
+									// });
 									// $kit.css(el, {
 									// position : 'absolute',
 									// top : el.offsetTop,
@@ -131,7 +131,7 @@ $Kit.Event.prototype = {
 
 									el._kitjs_dd_start = true;
 									el._kitjs_dd_drag = true;
-									el._kitjs_dd_cloneNode = cloneNode;
+									//el._kitjs_dd_cloneNode = cloneNode;
 								}
 							}
 						});
@@ -140,14 +140,14 @@ $Kit.Event.prototype = {
 							ev : 'drag',
 							fn : function(e) {
 								var el = e.currentTarget;
+								//e.dataTransfer.effectAllowed = "all";
 								if(el._kitjs_dd_mousedown == true) {
-									$kit.css(el._kitjs_dd_cloneNode, {
-										position : 'absolute',
-										display : 'block',
-										top : e.pageY,
-										left : e.pageX,
-										'z-index' : -1
-									});
+									// $kit.css(el._kitjs_dd_cloneNode, {
+									// position : 'absolute',
+									// display : 'block',
+									// top : e.pageY - 2,
+									// left : e.pageX - 2
+									// });
 									el._kitjs_dd_drag = true;
 								}
 							}
@@ -156,20 +156,58 @@ $Kit.Event.prototype = {
 							el : el,
 							ev : 'dragend',
 							fn : function(e) {
+								me.dragElement = null;
 								var el = e.currentTarget;
 								el._kitjs_dd_mousedown = false;
 								el._kitjs_dd_drag = false;
 								el._kitjs_dd_start = false;
-								$kit.css(el._kitjs_dd_cloneNode, {
-									display : 'none'
-								});
+
+								// $kit.css(el._kitjs_dd_cloneNode, {
+								// display : 'none',
+								// 'z-index' : -1
+								// });
+
 							}
 						});
 						el._kitjs_dd_init = true;
 						el._kitjs_dd_start = false;
 						el._kitjs_dd_drag = false;
 						el._kitjs_dd_mousedown = true;
+					} else {
+						me._ev({
+							el : el,
+							ev : 'dragstart',
+							fn : function(e) {
+								var el = e.currentTarget;
+								//e.dataTransfer.effectAllowed = "all";
+								me.dragElement = e.currentTarget;
+								e.dataTransfer.setData("text", e.currentTarget.innerHTML);
+							}
+						});
+						me._ev({
+							el : el,
+							ev : 'drag',
+							fn : function(e) {
+								//e.dataTransfer.effectAllowed = "all";
+							}
+						});
+						me._ev({
+							el : el,
+							ev : 'dragend',
+							fn : function(e) {
+								me.dragElement = null;
+							}
+						});
 					}
+				} else if(me._isDropEv(ev) && el._flag_kitjs_drop_regist != true) {
+					el._flag_kitjs_drop_regist = true;
+					me._ev({
+						el : el,
+						ev : 'dragover',
+						fn : function(e) {
+							e.stopDefault();
+						}
+					});
 				} else {
 					//mousemove代替drag事件，暂时hold
 					/*
@@ -235,11 +273,19 @@ $Kit.Event.prototype = {
 	_isDragEv : function(ev) {
 		var ev = ev.toLowerCase().trim();
 		if(ev == 'dragstart'//
-		|| ev == 'dragenter'//
-		|| ev == 'dragover'//
 		|| ev == 'drag'//
-		|| ev == 'drop'//
 		|| ev == 'dragend'//
+		) {
+			return true;
+		}
+		return false;
+	},
+	_isDropEv : function(ev) {
+		var ev = ev.toLowerCase().trim();
+		if(ev == 'dragenter'//
+		|| ev == 'dragleave'//
+		|| ev == 'dragover'//
+		|| ev == 'drop'//
 		) {
 			return true;
 		}

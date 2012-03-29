@@ -81,7 +81,11 @@ $kit.merge($Kit.prototype, {
 					} catch(e) {
 					}
 				}
-				return parseFloat(re);
+				try {
+					re = isNaN(parseFloat(re)) ? re : parseFloat(re);
+				} catch(e) {
+				}
+				return re;
 			}
 		} else {
 			attr = me._camelCssName(attr);

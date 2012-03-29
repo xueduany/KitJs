@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Edit - My ASP.NET MVC Application</title>
+		<!-- js -->
+		<script charset="utf-8" src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script charset="utf-8" src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script charset="utf-8" src="../../src/js/selector.js"></script>
+		<script charset="utf-8" src="../../src/js/math.js"></script>
+		<script charset="utf-8" src="../../src/js/array.js"></script>
+		<script charset="utf-8" src="../../src/js/string.js"></script>
+		<script charset="utf-8" src="../../src/js/date.js"></script>
+		<script charset="utf-8" src="../../src/js/dom.js"></script>
+		<script charset="utf-8" src="../../src/js/selection.js"></script>
+		<script charset="utf-8" src="../../src/js/event.js"></script>
+		<script charset="utf-8" src="../../src/js/io.js"></script>
+		<script charset="utf-8" src="../../src/js/anim.js"></script>
+		<script charset="utf-8" src="../../src/js/cookie.js"></script>
+		<script charset="utf-8" src="../../src/js/LinkedHashMap.js"></script>
+		<script charset="utf-8" src="../../src/js/widget/Form/form.js"></script>
+		<script charset="utf-8" src="../../src/js/widget/Form/textarea.js"></script>
+		<script charset="utf-8" src="../../src/js/widget/Form/timeinput.js"></script>
+		<script charset="utf-8" src="../../src/js/widget/SlideBar/slidebar.js"></script>
+		<script charset="utf-8" src="../../src/js/widget/TagInput/tagInput.js"></script>
+		<script charset="utf-8" src="../../src/js/widget/Audio/audio.js"></script>
+		<script charset="utf-8" src="../../src/js/widget/Validator/validator.js"></script>
+		<!-- user defined widget -->
+		<script charset="utf-8" src="http://xueduany.github.com/Ciku/js/a.js"></script>
+		<script charset="utf-8" src="http://xueduany.github.com/Ciku/js/fileuploader.js"></script>
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/fileuploader.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/audiojs.css" />
+		<!-- css -->
+		<link rel="stylesheet" href="../../src/css/form.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/a.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/login.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/media/a.lrc-common.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/media/z.lrc-add.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/media/z.lrc-edit.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/media/z.lrc-play.css" />
+		<link rel="stylesheet" href="http://xueduany.github.com/Ciku/css/media/z.lrc-list.css" />
+		<meta name="viewport" content="width=device-width" />
+	</head>
+	<body>
+		<header>
+			<div id="header">
+				<div class="header-content">
+					<div id="login">
+						<p>
+							您好, <a class="username" href="/Account/ChangePassword" title="修改密码">xueduanyang</a>! <a href="/Account/LogOff" title="退出登录">点此退出登陆</a>
+						</p>
+					</div>
+					<nav>
+						<ul class="nav media">
+							<li>
+								<a class="home" href="/">词库</a>
+							</li>
+							<li>
+								<a class="media" href="/media/">资源</a>
+							</li>
+							<li>
+								<a class="dict" href="#">在线词典</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
+		<div id="body">
+			<div class="mainboard-ceiling"></div>
+			<div class="mainboard">
+				<div class="media-edit-page">
+					<h3>编辑资源</h3>
+					<div class="lrc-create">
+						<div class="audio">
+							<audio id="J_media" src="http://xueduany.github.com/Ciku/dat/Telephone.mp3" preload="auto"></audio>
+							<!--
+							<audio id="J_media" src="http://static.cikuapp.com/media/dat/6c787889-1d9e-4148-940b-2bca642b1d3c/0fb64b1e-95d1-4503-aeed-fbb2c184428b.mp3" controls title="tips:拖动时间轴到特定时间，双击时间轴可以创建该时间点得字幕。"  preload="auto"></audio>
+
+							<div class="tips">
+							双击时间轴创建字幕
+							</div>
+							<div class="tips-1">
+							请先点播放
+							</div>-->
+						</div>
+						<div class="resource">
+							<div class="lrc-area" id="J_lrcArea">
+								<ol id="lrc-list"></ol>
+								<div class="cue" id="J_lrcArea_cue"></div>
+							</div>
+							<div class="creater" id="J_createrArea">
+								<div class="control-params">
+									<label for="time-error">误差时间</label>
+									<input size="1" type="text" id="J_timeError" value="0" title="tips:控制点击创建字幕的由于听到单击创建字幕时的延时误差时间">
+									<span>秒</span>
+									<button id="zzzz">
+										revert
+									</button>
+								</div>
+								<div class="lrcTextEditArea">
+									<div class="buttonArea">
+										<button id="J_createrHelp_btn" title="在[字幕制作]模式下，移动鼠标到需要分割字幕的位置，单击鼠标左键，可以将文本内容从开头到点击处的文字分割出来，创建一条字幕，如果需要编辑原文，请点击[编辑原文]模式。">
+											帮助
+										</button>
+										<button id="J_editLrc_btn" title="切换到[编辑原文]模式或[字幕制作]模式">
+											切换到[编辑原文]模式
+										</button>
+										<button id="J_formatLrc_btn" title="整理字幕源分行">
+											格式
+										</button>
+									</div>
+									<textarea name="subtitleDraft" id="J_lrcTextResourceInput" readonly="readonly" class="textarea_lrcTextResource"></textarea>
+									<div class="cue" id="J_createrArea_cue">
+										<div class="complete">
+											<a id="J_previewLrc">点我去预览一下吧~</a>
+											<div>
+												或者
+											</div>
+											<a id="J_submitLrc">完成上传</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="submit-area">
+						<textarea id="J_LrcOrigin">[00:00.00]Lady GaGa - Telephone (Feat. Beyonc)
+
+[00:02.20]Album：The Fame Monster
+
+[00:04.20]www.51lrc.com ★ 赖润诚制作
+
+[00:06.20]
+
+[00:08.20]Hello, hello, baby; You called, I can't hear a thing.
+
+[00:11.92]I have got no service in the club, you see, see…
+
+[00:15.94]Wha-Wha-What did you say?
+
+[00:17.51]Oh, you're breaking up on me…
+
+[00:19.73]Sorry, I cannot hear you, I'm kinda busy.
+
+[00:23.62]K-kinda busy K-kinda busy
+
+[00:27.59]Sorry, I cannot hear you, I'm kinda busy.
+
+[00:31.51]Just a second, it's my favorite song they're gonna play
+
+[00:35.61]And I cannot text you with a drink in my hand, eh…
+
+[00:39.41]You shoulda made some plans with me,
+
+[00:41.42]you knew that I was free.
+
+[00:43.17]And now you won't stop calling me;
+
+[00:45.35]I'm kinda busy.
+
+[00:46.75]
+
+[00:47.67]Stop callin', stop callin',
+
+[00:49.40]I don't wanna think anymore!
+
+[00:51.91]I left my hand and my heart on the dance floor.
+
+[00:55.24]Stop callin', stop callin',
+
+[00:57.17]I don't wanna talk anymore!
+
+[00:59.52]I left my hand and my heart on the dance floor.
+
+[01:03.21]Eh, eh, eh, eh, eh, eh, eh, eh, eh…
+
+[01:06.24]Stop telephonin' me!
+
+[01:07.50]Eh, eh, eh, eh, eh, eh, eh, eh, eh…
+
+[01:09.79]I'm busy!
+
+[01:11.23]Eh, eh, eh, eh, eh, eh, eh, eh, eh…
+
+[01:14.02]Stop telephonin' me!
+
+[01:15.33]Eh, eh, eh, eh, eh, eh, eh, eh, eh…
+
+[01:18.24]
+
+[01:18.95]Can call all you want, but there's no one home,
+
+[01:20.67]and you're not gonna reach my telephone!
+
+[01:22.79]Out in the club, and I'm sippin' that bub,
+
+[01:24.64]and you're not gonna reach my telephone!
+
+[01:26.70]Call when you want, but there's no one home,
+
+[01:28.51]and you're not gonna reach my telephone!
+
+[01:30.69]Out in the club, and I'm sippin' that bub,
+
+[01:32.45]and you're not gonna reach my telephone!
+
+[01:33.89]
+
+[01:34.66]Boy, the way you blowin' up my phone
+
+[01:36.43]won't make me leave no faster.
+
+[01:38.62]Put my coat on faster, leave my girls no faster.
+
+[01:42.46]I shoulda left my phone at home,
+
+[01:44.43]'cause this is a disaster!
+
+[01:46.47]Callin' like a collector -sorry, I cannot answer!
+
+[01:50.51]Not that I don't like you, I'm just at a party.
+
+[01:54.24]And I am sick and tired of my phone r-ringing.
+
+[01:58.00]Sometimes I feel like I live in Grand Central Station.
+
+[02:01.87]Tonight I'm not takin' no calls, 'cause I'll be dancin'.
+
+[02:06.05]'Cause I'll be dancin'
+
+[02:08.00]'Cause I'll be dancin'
+
+[02:09.83]Tonight I'm not takin' no calls, 'cause I'll be dancin'!
+
+[02:12.97]
+
+[02:14.03]Stop callin', stop callin',
+
+[02:15.92]I don't wanna think anymore!
+
+[02:18.17]I left my hand and my heart on the dance floor.
+
+[02:21.66]Stop callin', stop callin',
+
+[02:23.71]I don't wanna talk anymore!
+
+[02:26.04]I left my hand and my heart on the dance floor.
+
+[02:29.76]Stop callin', stop callin',
+
+[02:31.62]I don't wanna think anymore!
+
+[02:33.94]I left my hand and my heart on the dance floor.
+
+[02:37.45]Stop callin', stop callin',</textarea>
+						<textarea id="J_LrcDraft"></textarea>
+						<textarea id="J_LrcFinish"></textarea>
+						<form id="J_media_edit_form" method="post">
+							<input type="text" name="guid" value="6c787889-1d9e-4148-940b-2bca642b1d3c">
+							<textarea id="J_SubtitleText" name="subtitleFinish"></textarea>
+							<textarea id="J_SubtitleLeft" name="subtitleDraft"></textarea>
+							<input type="submit" class="submit" value="保存">
+						</form>
+					</div>
+				</div>
+			</div>
+			<script charset="utf-8" src="http://xueduany.github.com/Ciku/js/media/z.lrc-add.js"></script>
+			<script charset="utf-8" src="http://xueduany.github.com/Ciku/js/media/z.lrc-edit.js"></script>
+			<script charset="utf-8" src="http://xueduany.github.com/Ciku/js/media/z.lrc-play.js"></script>
+		</div>
+		<footer>
+			<div id="footer"></div>
+		</footer>
+	</body>
+</html>
