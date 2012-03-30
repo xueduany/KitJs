@@ -829,7 +829,7 @@ $Kit.prototype = {
 						relatedTarget : EV.relatedTarget ? EV.relatedTarget : EV.toElement || EV.fromElement
 					});
 					//add dragElement temp reg
-					if($kit.isEmpty(EV.relatedTarget) && !$kit.isEmpty($kit.event.dragElement) && (EV.type.indexOf('drag') == 0 || EV.type.indexOf('drop') == 0)) {
+					if(!$kit.isEmpty($kit.event) && $kit.isEmpty(EV.relatedTarget) && !$kit.isEmpty($kit.event.dragElement) && (EV.type.indexOf('drag') == 0 || EV.type.indexOf('drop') == 0)) {
 						EV.dragElement = $kit.event.dragElement;
 					}
 					me.mergeIf(EV, {

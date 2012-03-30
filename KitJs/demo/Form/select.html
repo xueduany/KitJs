@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="../../src/css/form.css" />
+		<script src="../../src/js/kit.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/select.js"></script>
+		<!--autowired-->
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>表单Demo</h1>
+		<h2 id="form">Select</h2>
+		<ul>
+			<li>
+				<select id="a1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+			</li>
+		</ul>
+		<script>
+			$kit.$(function() {
+				window.s = $kit.ui.Form.Select({
+					el : $kit.el('#a1')
+				});
+			})
+		</script>
+	</body>
+</html>
