@@ -656,6 +656,7 @@ $Kit.prototype = {
 	},
 	/**
 	 * parentNode search
+	 * 注意，不包含自己
 	 */
 	parentEl : function(el, condition, scope) {
 		var me = this;
@@ -1257,7 +1258,7 @@ $Kit.prototype = {
 			return o.join(connectStr);
 		}
 		var reStr = [];
-		$kit.each(o, function(v, k) {
+		this.each(o, function(v, k) {
 			reStr.push(k + connectOper + v);
 		});
 		return reStr.join(connectStr);

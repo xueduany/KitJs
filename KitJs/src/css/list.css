@@ -1,0 +1,29 @@
+.kitjs-form-list {
+	list-style: none;
+	display: block;
+	position: absolute;
+	top: 100%;
+	width: 100%;
+	left: 0px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+	font-size: 14px; 
+	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	padding: 2px;
+	max-height: 200px;
+	overflow: auto;
+}
+.kitjs-form-list .kitjs-form-listItem {
+	padding: 0 5px;
+}
+.kitjs-form-list .kitjs-form-listItem-odd {
+	background-color: #f8f8f8;
+}
+.kitjs-form-list .kitjs-form-listItem-even {
+	background-color: #fff;
+}
+.kitjs-form-list .selected {
+	background-color: #576b9c;
+	color: #fff;
+	font-weight: bold;
+}

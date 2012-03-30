@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" href="../../css.css" />
-		<link rel="stylesheet" href="../../src/css/widget/TagInput/tagInput.css" />
+		<link rel="stylesheet" href="../../src/css/form.css" />
 		<script src="../../src/js/kit.js"></script>
 		<!--[if IE]>
 		<script src="../../src/js/ieFix.js"></script>
@@ -22,44 +22,32 @@
 			})();
 
 		</script>
-		<script src="../../src/js/array.js"></script>
-		<script src="../../src/js/widget/TagInput/tagInput.js"></script>
-		<style></style>
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/event.js"></script>
+		<script src="../../src/js/TreeDict.js"></script>
+		<script src="../../src/js/Math.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/combobox.js"></script>
+		<script src="../../src/js/widget/Form/list.js"></script>
 	</head>
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
-		<h1>tag输入框</h1>
-		<h3><a href="http://stackoverflow.com/questions/ask">仿http://stackoverflow.com/questions/ask</a></h3>
-		<br/>
-		<br/>
-		输入框：默认输入逗号分隔<input type="text" id="asd">
+		<h1>ComboxBox Demo</h1>
+		<h2 id="form">表单样式</h2>
+		<ul>
+			<li>
+				<input type="text" name="asd" class="kitjs-form-combobox">
+			</li>
+		</ul>
 		<script>
-			$kit.$(function() {
-				window.a = new $kit.ui.TagInput({
-					el : $kit.el('#asd'),
-					splitChar : ','
-				});
-				window.a.ev({
-					ev : 'input',
-					fn : function(e) {
-						console.log(this.tagInput.value);
-					}
-				})
+			var a = new TreeDict();
+			for(var i = 0; i < 10000; i++) {
+				a.ad($kit.math.randUnit(8), $kit.math.randUnit(8));
+			}
+			window.a = new $kit.ui.Form.ComboBox({
+				el : $kit.el8cls('kitjs-form-combobox'),
+				data : a
 			})
 		</script>
-		<div>
-			示范代码如下：<br/>
-			<textarea cols="60" rows="10">
-window.a = new $kit.ui.TagInput({
-	el : $kit.el('#asd'),
-	splitChar : ','
-});
-window.a.ev({
-	ev : 'input',
-	fn : function(e) {
-		console.log(this.tagInput.value);
-	}
-})
-		</textarea>
-</div>	</body>
+	</body>
 </html>

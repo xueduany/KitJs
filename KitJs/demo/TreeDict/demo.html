@@ -21,34 +21,30 @@
 
 		</script>
 		<link rel="stylesheet" href="../../css.css" />
-		<link rel="stylesheet" href="../../src/css/form.css" />
-		<script src="../../src/js/kit.js"></script>
-		<script src="../../src/js/widget/Form/form.js"></script>
-		<script src="../../src/js/widget/Form/select.js"></script>
-		<!--autowired-->
+		<script src="../../src/js/TreeDict.js"></script>
+		<script src="../../src/js/Math.js"></script>
 	</head>
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
-		<h1>表单Demo</h1>
-		<h2 id="form">Select</h2>
-		<ul>
-			<li>
-				<select id="a1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
-			</li>
-		</ul>
-		<script>
-			$kit.$(function() {
-				window.s = new $kit.ui.Form.Select({
-					el : $kit.el('#a1')
-				});
-				window.s.ev({
-					ev : 'a',
-					fn : function() {
-						alert(222);
+		<h1>树状词典</h1>
+		<div>
+			<h3>Demo</h3>
+			<script>
+				var a = new TreeDict();
+				for(var i = 0; i < 10000; i++) {
+					a.ad($kit.math.randUnit(8), $kit.math.randUnit(8));
+				}
+				var b = a.search('0');
+				if(window.console != null) {
+					console.log(a.data);
+					console.log(a.get('a'));
+					console.log(b);
+				} else {
+					for(var i = 0; i < b.length; i++) {
+						document.writeln(b[i].key + ',' + b[i].value + '</br>');
 					}
-				})
-				window.s.a();
-			})
-		</script>
+				}
+			</script>
+		</div>
 	</body>
 </html>

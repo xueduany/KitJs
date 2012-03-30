@@ -98,6 +98,16 @@ $Kit.Dom.prototype = {
 				});
 			}
 		}
+	},
+	/**
+	 * 删除样式
+	 */
+	rmClsAll : function(cls, top) {
+		var a = $kit.el8cls(cls, top);
+		while(a) {
+			$kit.rmCls(a, cls);
+			a = $kit.el8cls(cls, top);
+		}
 	}
 };
 $kit.d = $kit.dom = new $Kit.Dom();

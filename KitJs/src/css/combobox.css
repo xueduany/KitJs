@@ -1,0 +1,6 @@
+.kitjs-form-combox-wrapper {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+}

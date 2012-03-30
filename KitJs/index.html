@@ -4,8 +4,9 @@
 		<meta name='keywords' content='html5,css3,javascript' />
 		<meta name='description' content='KitJs--支持移动平台，基于HTML5,Css3的中文javascript UI库' />
 		<script src="src/js/kit.js"></script>
-		<link rel="stylesheet" href="css.css" />
-		<link rel="shortcut icon" href="panda.gif" />
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
@@ -20,6 +21,8 @@
 			})();
 
 		</script>
+		<link rel="stylesheet" href="css.css" />
+		<link rel="shortcut icon" href="panda.gif" />
 		<style>
 			a.widget-name {
 				display: block;
@@ -115,6 +118,14 @@
 						<ul class="indent">
 							<li>
 								<a href="demo/LinkedHashMap/demo.html">sample!</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<h4><a target="_blank" href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/TreeDict.js">字典树，对于海量数量智能建议算法优化</a></h3>
+						<ul class="indent">
+							<li>
+								<a href="demo/TreeDict/demo.html">sample!</a>
 							</li>
 						</ul>
 					</li>
