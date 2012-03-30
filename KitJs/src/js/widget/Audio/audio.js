@@ -216,8 +216,6 @@ $kit.merge($kit.ui.Audio.prototype, {
 		if(!config.useFlash || (config.useFlash && config.hasFlash)) {
 			this.attachEvents(this.wrapper, this);
 		}
-		// add Event ArrayList
-		this.event = {};
 	},
 	/**
 	 * 生成自定义的播放器模板HTML
@@ -738,13 +736,14 @@ $kit.merge($kit.ui.Audio.prototype, {
 					fn : evCfg.fn,
 					scope : this
 				};
+				this.event = this.event || {};
 				this.event[evCfg.ev] = this.event[evCfg.ev] || [];
 				this.event[evCfg.ev].push(evCfg);
 			}
 		}
 	},
 	newEv : function() {
-		if(arguments.length == 1) {
+		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
 			var evAry, evCfg, _evCfg = {};
 			if($kit.isStr(arguments[0])) {
 				var ev = arguments[0];

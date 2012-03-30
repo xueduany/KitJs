@@ -8,7 +8,7 @@
 	position: relative;
 	vertical-align: middle;
 	border-radius: .3em;
-	-webkit-transition: all 300ms ease-in 0;
+	-webkit-transition: box-shadow 300ms ease-in 0;/*渐变动画 */
 	background-image: -webkit-gradient(linear, left top, left 25, from(#fff), color-stop(10%, #eee), to(#fff));/*渐变背景*/
 }
 .kitjs-form-select select {

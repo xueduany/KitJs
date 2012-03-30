@@ -16,7 +16,7 @@ $kit.merge($kit.ui.Form.TextArea, {
 		textNotEmptyFn : undefined,
 		blurFn : undefined,
 		focusFn : undefined,
-		kitWidgetName : "kitTextArea",
+		kitWidgetName : "kitFormTextArea",
 		textAreaCls : 'kitjs-form-textarea'
 	}
 });

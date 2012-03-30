@@ -11,7 +11,7 @@
 	margin: 0;
 	border: 1px solid #ccc;
 	background: none;
-	-webkit-transition: all 300ms ease-in 0;
+	-webkit-transition: box-shadow 300ms ease-in 0;
 }
 .kitjs-form-checkbox:hover, .kitjs-form-checkbox:active {
 	border-color: #aaa;

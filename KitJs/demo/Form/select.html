@@ -21,9 +21,16 @@
 		</ul>
 		<script>
 			$kit.$(function() {
-				window.s = $kit.ui.Form.Select({
+				window.s = new $kit.ui.Form.Select({
 					el : $kit.el('#a1')
 				});
+				window.s.ev({
+					ev : 'a',
+					fn : function() {
+						alert(222);
+					}
+				})
+				window.s.a();
 			})
 		</script>
 	</body>

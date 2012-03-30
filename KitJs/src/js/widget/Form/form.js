@@ -21,6 +21,7 @@ $kit.merge($kit.ui.Form.prototype, {
 					fn : evCfg.fn,
 					scope : this
 				};
+				this.event = this.event || {};
 				this.event[evCfg.ev] = this.event[evCfg.ev] || [];
 				this.event[evCfg.ev].push(evCfg);
 			}
