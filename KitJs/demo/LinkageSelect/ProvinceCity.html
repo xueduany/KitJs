@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="../../src/css/form.css" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+
+		</script>
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/event.js"></script>
+		<script src="../../src/js/TreeDict.js"></script>
+		<script src="../../src/js/Math.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/combobox.js"></script>
+		<script src="../../src/js/widget/Form/suggestselect.js"></script>
+		<script src="../../src/js/widget/Form/list.js"></script>
+		<!--json data-->
+		<script src="json-province.js"></script>
+		<script src="json-city.js"></script>
+		<script src="json-district.js"></script>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>国家省份城市联动</h1>
+		<ul>
+			<li>
+				<div>
+					省份
+				</div>
+				<select class="kitjs-form-suggestselect"></select>
+			</li>
+			<li>
+				<div>
+					城市
+				</div>
+				<select class="kitjs-form-suggestselect"></select>
+			</li>
+			<li>
+				<div>
+					区县
+				</div>
+				<select class="kitjs-form-suggestselect"></select>
+			</li>
+		</ul>
+		<script>
+			var a = $kit.els8cls($kit.ui.Form.ComboBox.Select.defaultConfig.transformCls);
+			var b1 = new $kit.ui.Form.ComboBox.Select({
+				el : a[0]
+			});
+
+		</script>
+	</body>
+</html>

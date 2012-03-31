@@ -9,7 +9,7 @@ var TreeDict = function(config) {
 	me.data = {};
 }
 TreeDict.defaultConfig = {
-	deep : 10,
+	deep : 10, //嵌套深度，此参数影响词典内存对象大小，也影响search索引性能
 	data : undefined
 }
 TreeDict.prototype = {
@@ -111,7 +111,7 @@ TreeDict.prototype = {
 		}
 	},
 	/**
-	 * 长度
+	 * 存放数据总数
 	 */
 	size : function() {
 		this.size = this.count(0, this.data);
@@ -129,7 +129,7 @@ TreeDict.prototype = {
 		return size;
 	},
 	/**
-	 * get
+	 * 从字典中取出符合key的value值
 	 */
 	get : function(key) {
 		var value = value || null;
@@ -162,7 +162,8 @@ TreeDict.prototype = {
 		return null;
 	},
 	/**
-	 * get
+	 * 按首字符匹配原则查询，返回
+	 * [{key: 'key', value: 'value'}, {key: 'key', value: 'value'}]格式数组
 	 */
 	search : function(key) {
 		var value = value || null;
@@ -197,11 +198,12 @@ TreeDict.prototype = {
 			recurDeep++;
 		}
 		var re = [];
-		var pKey = keyArray.join('');
-		if($kit.isStr(me.data[pKey])) {
-			return [me.data[pKey]];
+		var beginData;
+		beginData = me.data[keyArray[0]];
+		for(var i = 1; i < keyArray.length; i++) {
+			beginData = beginData[keyArray[i]];
 		}
-		me.travel(me.data[pKey], re, pKey);
+		me.travel(beginData, re, keyArray.join(''));
 		return re;
 	},
 	travel : function(tree, array, key) {

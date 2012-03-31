@@ -1,4 +1,6 @@
 .kitjs-form-list {
+	z-index: 99999;
+	background-color: #fff;
 	list-style: none;
 	display: block;
 	position: absolute;
@@ -26,4 +28,22 @@
 	background-color: #576b9c;
 	color: #fff;
 	font-weight: bold;
+}
+.kitjs-form-list-loading {
+	height: 30px;
+	line-height: 30px;
+	color: #000;
+	text-align: center; 
+}
+.kitjs-form-list-loading i {
+	display: inline-block;
+	background: url("/Kitjs/Kitjs/src/img/loading.gif");
+	width: 15px;
+	height: 15px;
+}
+.kitjs-form-list-error {
+	color: red;
+	text-align: center;
+	height: 30px;
+	line-height: 30px;
 }

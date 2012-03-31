@@ -1,5 +1,5 @@
 /**
- * 数组扩展
+ * 事件扩展
  */
 $Kit.Event = function() {
 	//
@@ -19,11 +19,27 @@ $Kit.Event.prototype = {
 	KEYCODE_DOWN : 40,
 	KEYCODE_LEFT : 37,
 	KEYCODE_RIGHT : 39,
+	//
 	KEYCODE_ADD : 107,
 	KEYCODE_SUB : 109,
 	KEYCODE_MULTIPLY : 106,
 	KEYCODE_DIVIDE : 111,
+	//
 	KEYCODE_ENTER : 13,
+	KEYCODE_ESC : 27,
+	KEYCODE_BACKSPACE : 8,
+	KEYCODE_TAB : 9,
+	//
+	KEYCODE_SHIFT : 16,
+	KEYCODE_CTRL : 17,
+	KEYCODE_ALT : 18,
+	//
+	KEYCODE_INSERT : 45,
+	KEYCODE_DELETE : 46,
+	//
+	KEYCODE_PAGEUP : 33,
+	KEYCODE_PAGEDOWN : 34,
+	//
 	/**
 	 * event增强start
 	 */

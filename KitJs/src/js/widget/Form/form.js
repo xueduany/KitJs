@@ -28,7 +28,7 @@ $kit.merge($kit.ui.Form.prototype, {
 		}
 	},
 	newEv : function() {
-		if(arguments.length == 1) {
+		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
 			var evAry, evCfg, _evCfg = {};
 			if($kit.isStr(arguments[0])) {
 				var ev = arguments[0];

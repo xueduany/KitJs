@@ -848,11 +848,11 @@ $Kit.prototype = {
 							EV.returnValue = false;
 						},
 						stopGoOn : function() {
-							EV.preventDefault && EV.preventDefault();
+							//EV.preventDefault && EV.preventDefault();
 							EV.stopPropagation && EV.stopPropagation();
 							//
 							EV.cancelBubble = true;
-							EV.returnValue = false;
+							//EV.returnValue = false;
 						}
 					}, me.evExtra(EV));
 					var target = config.el;

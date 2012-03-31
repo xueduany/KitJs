@@ -11,8 +11,7 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']);
-			(function() {
+			_gaq.push(['_trackPageview']); (function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -33,20 +32,54 @@
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>ComboxBox Demo</h1>
-		<h2 id="form">表单样式</h2>
 		<ul>
 			<li>
-				<input type="text" name="asd" class="kitjs-form-combobox">
+				<div>
+					<a href="combobox.html">初始化方式1：使用TreeDict数据+标准input初始化（初始化随机生成1000条数据测试，需要一定初始化时间）</a>
+				</div>
+			</li>
+			<li>
+				<div>
+					<a href="combobox-select.html">初始化方式2：使用标准select初始化（1000条数据测试）</a>
+				</div>
+			</li>
+			<li>
+				<div>
+					<a href="combobox-huge.html">使用TreeDict优化性能之后，1w数据下拉不卡演示（初始化随机生成1W条数据测试，需要一定初始化时间）</a>
+				</div>
+			</li>
+			<li>
+				<div>
+					事件，自定义change事件
+				</div>
+				<select class="kitjs-form-combobox" name="test">
+					<option value="00017854">
+						16094524
+					</option>
+					<option value="00052901">
+						47261814
+					</option>
+					<option value="00056678">
+						98560170
+					</option>
+				</select>
 			</li>
 		</ul>
 		<script>
-			var a = new TreeDict();
-			for(var i = 0; i < 10000; i++) {
-				a.ad($kit.math.randUnit(8), $kit.math.randUnit(8));
-			}
-			window.a = new $kit.ui.Form.ComboBox({
-				el : $kit.el8cls('kitjs-form-combobox'),
-				data : a
+			var a = new $kit.ui.Form.ComboBox({
+				el : $kit.el8cls('kitjs-form-combobox')
+			});
+			a.transform();
+			a.ev({
+				ev : 'change',
+				fn : function(e, cfg) {
+					$kit.log('fire change event!')
+					console.log('触发事件对象为');
+					console.log(e);
+					console.log('触发事件初始化配置参数为');
+					console.log(cfg);
+				},
+				scope : a
 			})
 		</script>
 	</body>

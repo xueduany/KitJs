@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="../../src/css/form.css" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+
+		</script>
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/event.js"></script>
+		<script src="../../src/js/TreeDict.js"></script>
+		<script src="../../src/js/Math.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<script src="../../src/js/widget/Form/combobox.js"></script>
+		<script src="../../src/js/widget/Form/list.js"></script>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>ComboxBox Demo</h1>
+		<ul>
+			<li>
+				<div>
+					初始化方式1：使用TreeDict数据+标准input初始化（初始化随机生成1000条数据测试，需要一定初始化时间）
+				</div>
+				<input type="text" name="asd" class="kitjs-form-combobox">
+			</li>
+			<li>
+				<div>
+					<a href="combobox-select.html">初始化方式2：使用标准select初始化（1000条数据测试）</a>
+				</div>
+			</li>
+			<li>
+				<div>
+					<a href="combobox-huge.html">使用TreeDict优化性能之后，1w数据下拉不卡演示（初始化随机生成1W条数据测试，需要一定初始化时间）</a>
+				</div>
+			</li>
+			<li>
+				<div>
+					<a href="combobox-event.html">事件，自定义change事件</a>
+				</div>
+			</li>
+		</ul>
+		<script>
+			var a = new TreeDict();
+			for(var i = 0; i < 1000; i++) {
+				a.ad($kit.math.randUnit(8), $kit.math.randUnit(8));
+			}
+			new $kit.ui.Form.ComboBox({
+				el : $kit.el8cls('kitjs-form-combobox'),
+				data : a
+			}).transform();
+
+		</script>
+	</body>
+</html>
