@@ -2,8 +2,8 @@
 
 ## What is this?
 
-Kit is a javascript library that use for easy creating HTML5 pages.
+Kit is a javascript library that use for easy creating a HTML UI widget.
 
 ## How do I use it?
 
-Visit the example site http://kitjs.co.cc for help.
+Visit the example site http://xueduany.github.com/KitJs for example.
