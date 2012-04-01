@@ -4,6 +4,9 @@ body {
 	font-family: "微软雅黑";
 	color: #7d7d7d;
 }
+img {
+	border: 0;
+}
 h1, h2 {
 	text-align: center;
 	position: relative;
