@@ -140,7 +140,8 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 		$kit.adCls(me.wrapper, 'suggesting');
 		setTimeout(function() {
 			me.list.buildList(me.config.data.search(me.inputEl.value));
-			if(me.hasFocus && me.list._flag_listEl_mouseclick_select_ev != true) {
+			console.log(me.list._flag_listEl_mousedown_ev);
+			if(me.hasFocus && me.list._flag_listEl_mousedown_ev != true) {
 				if(me.list.listItemCount == 1) {
 					var li = $kit.el8cls(me.list.config.listItemCls, me.list.listEl);
 					if(me.inputEl.value == li.innerHTML) {
@@ -149,6 +150,9 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 					}
 				}
 				me.list.show();
+			}
+			if(me.list._flag_listEl_mousedown_ev == true) {
+				me.list._flag_listEl_mousedown_ev = false;
 			}
 			setTimeout(function() {
 				$kit.rmCls(me.wrapper, 'suggesting')

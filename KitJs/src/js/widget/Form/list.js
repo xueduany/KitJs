@@ -87,7 +87,7 @@ $kit.merge($kit.ui.Form.List.prototype, {
 			fn : function(e) {
 				var me = this;
 				if(me._flag_listEl_mousedown_ev == true) {
-					me._flag_listEl_mousedown_ev = false;
+
 				} else {
 					me.hide();
 				}
@@ -102,10 +102,9 @@ $kit.merge($kit.ui.Form.List.prototype, {
 			ev : 'focus',
 			fn : function() {
 				var me = this;
-				if(me.listItemCount > 0 && me._flag_listEl_mouseclick_setvalue_ev != true) {
+				if(me.listItemCount > 0 && me._flag_listEl_mousedown_ev != true) {
 					me.show();
 				}
-				me._flag_listEl_mouseclick_setvalue_ev = false;
 			},
 			scope : me
 		});
@@ -151,16 +150,8 @@ $kit.merge($kit.ui.Form.List.prototype, {
 			el : me.listEl,
 			ev : 'mousedown',
 			fn : function(e) {
-				me._flag_listEl_mousedown_ev = true;
-			},
-			scope : me
-		});
-		$kit.ev({
-			el : me.listEl,
-			ev : 'click',
-			fn : function(e) {
 				var me = this;
-				me._flag_listEl_mouseclick_select_ev = true;
+				me._flag_listEl_mousedown_ev = true;
 				if(e.button < 2) {
 					var li;
 					if($kit.hsCls(e.target, me.config.listItemCls)) {
@@ -170,7 +161,6 @@ $kit.merge($kit.ui.Form.List.prototype, {
 					}
 					if(li) {
 						me.hide();
-						me._flag_listEl_mouseclick_setvalue_ev = true;
 						me.selectedLi = li;
 						me.config.setValue && me.config.setValue(li.innerHTML, $kit.attr(li, 'value'), li);
 					}
@@ -310,6 +300,7 @@ $kit.merge($kit.ui.Form.List.prototype, {
 						 */
 						me.hide();
 						me.config.setValue && me.config.setValue(me.selectedLi.innerHTML, $kit.attr(me.selectedLi, 'value'), me.selectedLi);
+						me._flag_listEl_mousedown_ev = true;
 						//回车要取消默认事件，防止form提交
 						e.stopDefault();
 					} else if($kit.event.KEYCODE_ESC == e.keyCode) {
@@ -346,7 +337,7 @@ $kit.merge($kit.ui.Form.List.prototype, {
 	},
 	show : function() {
 		var me = this;
-		me._flag_listEl_mouseclick_select_ev = false;
+		me._flag_listEl_mousedown_ev = false;
 		me.listEl.style.display = 'block';
 	},
 	hide : function() {
