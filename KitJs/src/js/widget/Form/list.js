@@ -63,17 +63,15 @@ $kit.merge($kit.ui.Form.List.prototype, {
 		this.selectedLi = null;
 		if(list && list.length) {
 			this.listEl.innerHTML = this.config.template.initHTML;
-			setTimeout(function() {
-				var fragment = document.createDocumentFragment();
-				$kit.each(list, function(o, idx) {
-					fragment.appendChild($kit.newHTML($kit.tpl(me.config.listItemHTML, $kit.join(me.config, o, {
-						oddOrEven : idx % 2 == 0 ? me.config.evenListItemCls : me.config.oddListItemCls
-					}))));
-					me.listItemCount++;
-				});
-				me.listEl.innerHTML = '';
-				me.listEl.appendChild(fragment);
-			}, 0);
+			var fragment = document.createDocumentFragment();
+			$kit.each(list, function(o, idx) {
+				fragment.appendChild($kit.newHTML($kit.tpl(me.config.listItemHTML, $kit.join(me.config, o, {
+					oddOrEven : idx % 2 == 0 ? me.config.evenListItemCls : me.config.oddListItemCls
+				}))));
+				me.listItemCount++;
+			});
+			me.listEl.innerHTML = '';
+			me.listEl.appendChild(fragment);
 		} else {
 			this.listEl.innerHTML = this.config.template.errorHTML;
 		}

@@ -24,7 +24,16 @@ $kit.merge($kit.ui.Form.ComboBox.Select.prototype, {
 	_setFormValue : function() {
 		var me = this;
 		if(me.list.listItemCount == 1 && me.inputEl.value == $kit.el8cls(me.list.config.listItemCls, me.list.listEl).innerHTML) {
-			me.formEl.value = $kit.attr($kit.el8cls(me.list.config.listItemCls, me.list.listEl), 'value');
+			var li = $kit.el8cls(me.list.config.listItemCls, me.list.listEl);
+			me.formEl.value = $kit.attr(li, 'value');
+		}
+	},
+	_blur : function() {
+		var me = this;
+		if($kit.isEmpty(me.list.selectedLi)) {
+			me.inputEl.value = '';
+		} else {
+			me.inputEl.value = me.list.selectedLi.innerHTML;
 		}
 	}
 });

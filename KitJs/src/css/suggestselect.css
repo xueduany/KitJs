@@ -1,0 +1,9 @@
+.kitjs-form-suggestselect-wrapper {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+}
+.kitjs-form-suggestselect-wrapper.suggesting .kitjs-form-suggestselect-input {
+	background: url("/Kitjs/Kitjs/src/img/loading.gif") right no-repeat;
+}

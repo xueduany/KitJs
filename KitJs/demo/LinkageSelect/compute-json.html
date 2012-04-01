@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/json.js"></script>
+	</head>
+	<body>
+		<script>
+			var out = {};
+			var d1 = {};
+			var d2 = {};
+			var d3 = {};
+			for(var i = 0; i < province.length; i++) {
+				var p = province[i];
+				out[p.name] = {};
+				d1[p.code.substring(0, 2)] = p.name;
+			}
+			for(var i = 0; i < city.length; i++) {
+				d2[city[i].code.substring(0, 4)] = city[i].name;
+				for(var p in d1) {
+					if(city[i].code.indexOf(p) == 0) {
+						out[d1[p]][city[i].name] = {};
+					}
+				}
+			}
+			for(var i = 0; i < district.length; i++) {
+				d3[district[i].code] = district[i].name;
+			}
+			for(var i = 0; i < district.length; i++) {
+				for(var p in d2) {
+					if(district[i].code.indexOf(p) == 0) {
+						var provCode = district[i].code.substring(0, 2);
+						var cityCode = district[i].code.substring(0, 4);
+						out[d1[provCode]][d2[cityCode]][d3[district[i].code]] = district[i].code;
+					}
+				}
+			}
+			document.write($kit.json.stringify(out));
+			//console.log(d1);
+		</script>
+	</body>
+</html>

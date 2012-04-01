@@ -88,6 +88,7 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 			fn : function(e) {
 				var me = this;
 				me.hasFocus = false;
+				me._blur && me._blur();
 				me._inputChange();
 			},
 			scope : me
@@ -140,6 +141,13 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 		setTimeout(function() {
 			me.list.buildList(me.config.data.search(me.inputEl.value));
 			if(me.hasFocus && me.list._flag_listEl_mouseclick_select_ev != true) {
+				if(me.list.listItemCount == 1) {
+					var li = $kit.el8cls(me.list.config.listItemCls, me.list.listEl);
+					if(me.inputEl.value == li.innerHTML) {
+						me.list.selectedLi = li;
+						$kit.adCls(me.list.selectedLi, me.list.config.selectedCls);
+					}
+				}
 				me.list.show();
 			}
 			setTimeout(function() {
@@ -178,5 +186,8 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 			}
 		}
 		me.list.selectedLi = selectedLi;
+	},
+	_blur : function() {
+		//
 	}
 });

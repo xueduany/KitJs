@@ -31,38 +31,82 @@
 		<script src="../../src/js/widget/Form/suggestselect.js"></script>
 		<script src="../../src/js/widget/Form/list.js"></script>
 		<!--json data-->
-		<script src="json-province.js"></script>
-		<script src="json-city.js"></script>
-		<script src="json-district.js"></script>
+		<script src="json-data.js" charset="utf-8"></script>
 	</head>
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>国家省份城市联动</h1>
 		<ul>
 			<li>
-				<div>
-					省份
-				</div>
+				<span> 省份 </span>
 				<select class="kitjs-form-suggestselect"></select>
-			</li>
-			<li>
-				<div>
-					城市
-				</div>
+				<span> 市/县 </span>
 				<select class="kitjs-form-suggestselect"></select>
-			</li>
-			<li>
-				<div>
-					区县
-				</div>
+				<span> 区 </span>
 				<select class="kitjs-form-suggestselect"></select>
 			</li>
 		</ul>
 		<script>
-			var a = $kit.els8cls($kit.ui.Form.ComboBox.Select.defaultConfig.transformCls);
+			var a = $kit.els8cls($kit.ui.Form.ComboBox.Select.defaultConfig.transformCls), a1 = [];
+			for(var i = 0; i < a.length; i++) {
+				a1.push(a[i])
+			}
+			a = a1;
 			var b1 = new $kit.ui.Form.ComboBox.Select({
-				el : a[0]
+				el : a[0],
+				data : (function() {
+					var provTreeDict = new TreeDict();
+					for(var prov in chinaJSON) {
+						provTreeDict.ad(prov, prov);
+					}
+					return provTreeDict;
+				})()
 			});
+			b1.transform();
+			b1.ev({
+				ev : 'change',
+				fn : function() {
+					var prov = chinaJSON[b1.inputEl.value];
+					if(prov == null) {
+						return;
+					}
+					var cityTree = new TreeDict();
+					for(var city in prov) {
+						cityTree.ad(city, city);
+					}
+					b2.inputEl.value = '';
+					b2.formEl.value = '';
+					b2.config.data = cityTree;
+					b2.list.buildList(cityTree.search(''));
+				}
+			});
+			var b2 = new $kit.ui.Form.ComboBox.Select({
+				el : a[1],
+				data : undefined
+			});
+			b2.transform();
+			b2.ev({
+				ev : 'change',
+				fn : function() {
+					var city = chinaJSON[b1.inputEl.value][b2.inputEl.value];
+					if(city == null) {
+						return;
+					}
+					var districtTree = new TreeDict();
+					for(var district in city) {
+						districtTree.ad(district, city[district]);
+					}
+					b3.inputEl.value = '';
+					b3.formEl.value = '';
+					b3.config.data = districtTree;
+					b3.list.buildList(districtTree.search(''));
+				}
+			});
+			var b3 = new $kit.ui.Form.ComboBox.Select({
+				el : a[2],
+				data : undefined
+			});
+			b3.transform();
 
 		</script>
 	</body>
