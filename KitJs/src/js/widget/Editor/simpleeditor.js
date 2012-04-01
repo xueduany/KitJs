@@ -55,6 +55,7 @@ $kit.merge($kit.ui.Editor.SimpleEditor.prototype, {
 				me.doc = editorIframe.contentWindow.document;
 				me.doc.designMode = 'on';
 				me.doc.contentEditable = true;
+				me.doc.compatMode = 'CSS1Compat';
 				$kit.css(me.doc.body, {
 					margin : 0,
 					padding : 0,
