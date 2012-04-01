@@ -108,6 +108,22 @@ $Kit.Dom.prototype = {
 			$kit.rmCls(a, cls);
 			a = $kit.el8cls(cls, top);
 		}
+	},
+	/**
+	 * 通过className前缀取className
+	 */
+	getClassNameByPrefix : function(el, prefixCls) {
+		var clsAry = el.className.split(/\s+/);
+		var re = null;
+		if(clsAry && clsAry.length) {
+			$kit.each(clsAry, function(o) {
+				if(o.indexOf(prefixCls) == 0) {
+					re = o;
+					return false;
+				}
+			});
+		}
+		return re;
 	}
 };
 $kit.d = $kit.dom = new $Kit.Dom();

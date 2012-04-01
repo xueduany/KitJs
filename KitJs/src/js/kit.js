@@ -13,11 +13,11 @@ $Kit = function(config) {
 	// -----------------------------init------------------------------------
 	window[me.CONSTANTS.KIT_EVENT_STOPALLEVENT] = false;
 	window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
-	me.SYSINFO = {}
-	var inf = me.iOSInfo();
-	if(inf != null) {
-		me.merge(me.SYSINFO, inf);
-	}
+	// me.SYSINFO = {}
+	// var inf = me.iOSInfo();
+	// if(inf != null) {
+	// me.merge(me.SYSINFO, inf);
+	// }
 	/**
 	 * register widget
 	 */
@@ -1211,6 +1211,7 @@ $Kit.prototype = {
 	/**
 	 * config include array, exclude, fn, scope iterator each element in array
 	 * not include exclude
+	 * return false退出循环
 	 */
 	// each : function(config) {
 	// var me = this;
