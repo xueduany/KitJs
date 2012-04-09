@@ -7,7 +7,7 @@ $Kit.LocalStorage = function() {
 		document.documentElement.style.behavior = 'url(#default#userData)';
 	}
 }
-$Kit.LocalStorage.prototyp = {
+$Kit.LocalStorage.prototype = {
 	setItem : function(key, val, context) {
 		if (window.localStorage) {
 			return window.localStorage.setItem(key, val, context);
