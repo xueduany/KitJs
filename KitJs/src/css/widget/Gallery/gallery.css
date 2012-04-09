@@ -1,0 +1,92 @@
+.kitjs-gallery-wrapper ul,
+.kitjs-gallery-wrapper li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.kitjs-gallery-wrapper {
+
+}
+.kitjs-gallery-item-list {
+	width: 9999px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 173px;
+
+}
+.kitjs-gallery {
+	position: relative;
+	width: 930px;
+	height: 174px;
+	overflow: hidden;
+}
+.kitjs-gallery-wrapper li {
+	float: left;
+	font-size: 0;
+	padding: 4px;
+	border: 1px solid transparent;
+	opacity: 1;
+	-webkit-transition: all 500ms ease-out 0ms;
+	-moz-transition: all 500ms ease-out 0ms;
+	transition: all 500ms ease-out 0ms;
+	
+}
+.kitjs-gallery-wrapper li img {
+	border: 0;
+	width: 300px;
+	margin: 0;
+}
+li.kitjs-gallery-item-selected {
+	border-color: #ccc;
+}
+li.kitjs-gallery-item-previous {
+	
+}
+li.kitjs-gallery-item-next {
+
+}
+.kitjs-gallery-control-panel {
+	text-align: center;
+}
+.kitjs-gallery-btn-prev,
+.kitjs-gallery-btn-next {
+	width: auto;
+	height: auto;
+	-webkit-appearance: none;
+	border: 1px solid #ddd;
+	outline: none;
+	color: #111;
+	text-shadow: 0 1px 1px #fff;
+	cursor: pointer;
+	border: 1px solid #ccc;
+	padding: 0.5em 1em;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);/*去除android高亮框*/
+	background-color: #eee;
+	border-radius: 1em;/*圆角*/
+	-webkit-transition: all 300ms ease-in 0;/*渐变动画 */
+	background-image: -webkit-gradient(linear, left top, left 25, from(#fdfdfd), to(#eee));
+	box-shadow: 0 1px 4px rgba(0,0,0,.3)
+	text-shadow: 0 1px 0 white;
+}
+.kitjs-gallery-btn-prev:hover,
+.kitjs-gallery-btn-next:hover {
+	border: 1px solid #808080;
+}
+.kitjs-gallery-btn-prev:active,
+.kitjs-gallery-btn-next:active {
+	border: 1px solid #808080;
+	background-color: #fdfdfd;
+	background-image: -webkit-gradient(linear, left top, left 25, from(#eee), to(#fdfdfd));
+}
+.kitjs-gallery-btn-disabled {
+	color: #ccc;
+	cursor: pointer;
+	-webkit-transition: none;
+}
+.kitjs-gallery-btn-disabled:hover,
+.kitjs-gallery-btn-disabled:active {
+	border: 1px solid #ddd;
+	background-color: #eee;
+	background-image: -webkit-gradient(linear, left top, left 25, from(#fdfdfd), to(#eee));
+}
