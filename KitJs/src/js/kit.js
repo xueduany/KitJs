@@ -118,7 +118,7 @@ $Kit.prototype = {
 	},
 	isEmpty : function(o) {
 		var me = this;
-		return typeof (o) == "undefined" || o == null || (me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
+		return typeof (o) == "undefined" || o == null || (!me.isNode(o)&&me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
 	},
 	// -----------------------------------string-----------------------------------
 	trimAll : function(str) {

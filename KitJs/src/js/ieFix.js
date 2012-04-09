@@ -21,7 +21,7 @@ $kit.merge($Kit.prototype, {
 	 * 是否html元素
 	 */
 	isNodeList : function(o) {
-		return !!(o && $kit.isObj(o) && 'length' in o && o.item)
+		return !!(o && $kit.isObj(o) && 'length' in o && o.item && this.isNode(o[0]))
 	},
 	/**
 	 * by cls
