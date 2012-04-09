@@ -31,7 +31,7 @@ $kit.merge($kit.ui.Form.ComboBox.Select.prototype, {
 	_blur : function() {
 		var me = this;
 		if($kit.isEmpty(me.list.selectedLi)) {
-			me.inputEl.value = '';
+			//me.inputEl.value = '';
 		} else {
 			me.inputEl.value = me.list.selectedLi.innerHTML;
 		}
