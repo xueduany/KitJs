@@ -9,8 +9,7 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']);
-			(function() {
+			_gaq.push(['_trackPageview']); (function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -44,6 +43,13 @@
 						document.writeln(b[i].key + ',' + b[i].value + '</br>');
 					}
 				}
+				/**
+				 * bug fix 区别 北京和 北京市
+				 */
+				var cc = new TreeDict();
+				cc.ad('北京','0');
+				cc.ad('北京市','0')
+				console.log(cc.search('北京'))
 			</script>
 		</div>
 	</body>
