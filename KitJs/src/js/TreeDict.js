@@ -1,5 +1,9 @@
 /**
  * 树状字典
+ *
+ * 2012/04/09
+ * 清明休假想到的，如果遇到“北京”和“北京市”，这两个作为key存入字典，时，按照现在的逻辑，北京市会把北京盖掉，
+ * 现在改为对于同前缀的key，加入结束标记作为区分，这样时间存在字典里面的是"北京endSing"和北京市endSign，这样就可以区分开了
  */
 var TreeDict = function(config) {
 	var me = this;
@@ -10,7 +14,8 @@ var TreeDict = function(config) {
 }
 TreeDict.defaultConfig = {
 	deep : 10, //嵌套深度，此参数影响词典内存对象大小，也影响search索引性能
-	data : undefined
+	data : undefined,
+	endSign : '$end$'//避免"北京"作为key被"北京市"覆盖掉，现引用结束标记概念，以区别ab和abc这样的字符
 }
 TreeDict.prototype = {
 	/**
@@ -65,13 +70,15 @@ TreeDict.prototype = {
 			}
 			if($kit.isEmpty(find)) {//如果找不到key了
 				if(beginIndex == key.length - 1 || recurDeep == me.deep - 1) {
-					find = lookfor[index] = value;
+					lookfor[index] = {};
+					lookfor[index][me.config.endSign] = value;
+					find = lookfor[index];
 				} else {
 					find = lookfor[index] = {};
 				}
 			} else {
 				if(beginIndex == key.length - 1 || recurDeep == me.deep - 1) {
-					find = value;
+					find[me.config.endSign] = value;
 				}
 			}
 			lookfor = find;
@@ -102,7 +109,16 @@ TreeDict.prototype = {
 				return false;
 			} else {
 				if(beginIndex == key.length - 1 || recurDeep == me.deep - 1) {
-					delete lookfor[index];
+					delete lookfor[index][me.config.endSign];
+					//有没别的索引，没有就斩草除根!!!
+					var deleteIndex = false;
+					for(var p in lookfor[index]) {
+						deleteIndex = true;
+						break;
+					}
+					if(deleteIndex) {
+						delete lookfor[index];
+					}
 				}
 			}
 			lookfor = find;
@@ -118,9 +134,10 @@ TreeDict.prototype = {
 		return this.size;
 	},
 	count : function(size, o) {
+		var me = this;
 		size = size || 0;
 		for(var p in o) {
-			if($kit.isStr(o[p])) {
+			if(o[p][me.config.endSign]) {
 				size++;
 			} else {
 				size += this.count(size, o[p]);
@@ -152,7 +169,7 @@ TreeDict.prototype = {
 				return null;
 			} else {
 				if(beginIndex == key.length - 1 || recurDeep == me.deep - 1) {
-					return find;
+					return find[me.config.endSign];
 				}
 			}
 			lookfor = find;
@@ -206,20 +223,22 @@ TreeDict.prototype = {
 		me.travel(beginData, re, keyArray.join(''));
 		return re;
 	},
-	travel : function(tree, array, key) {
+	travel : function(tree, array, key, currentKey) {
+		var me = this;
 		if(tree == null) {
 			return;
 		}
 		key = key || '';
 		array = array || [];
-		if($kit.isStr(tree)) {
+		if(tree[me.config.endSign]) {
 			array.push({
 				key : key,
-				value : tree
+				value : tree[me.config.endSign]
 			});
-		} else {
-			for(var k in tree) {
-				this.travel(tree[k], array, key + k);
+		}
+		for(var k in tree) {
+			if(k != me.config.endSign) {
+				me.travel(tree[k], array, key + k, k);
 			}
 		}
 	}
