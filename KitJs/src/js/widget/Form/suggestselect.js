@@ -23,7 +23,7 @@ $kit.merge($kit.ui.Form.ComboBox.Select.prototype, {
 	 */
 	_setFormValue : function() {
 		var me = this;
-		if(me.list.listItemCount == 1 && me.inputEl.value == $kit.el8cls(me.list.config.listItemCls, me.list.listEl).innerHTML) {
+		if(me.list.listItemCount == 1 && me.inputEl.value == $kit.attr($kit.el8cls(me.list.config.listItemCls, me.list.listEl), 'key')) {
 			var li = $kit.el8cls(me.list.config.listItemCls, me.list.listEl);
 			me.formEl.value = $kit.attr(li, 'value');
 		}
@@ -33,7 +33,7 @@ $kit.merge($kit.ui.Form.ComboBox.Select.prototype, {
 		if($kit.isEmpty(me.list.selectedLi)) {
 			//me.inputEl.value = '';
 		} else {
-			me.inputEl.value = me.list.selectedLi.innerHTML;
+			me.inputEl.value = $kit.attr(me.list.selectedLi, 'key');
 		}
 	}
 });
