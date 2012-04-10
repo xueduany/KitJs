@@ -2,12 +2,12 @@
 	margin: 0 auto;
 	width: 310px;
 	*width: 9999px;
-	width: 9999px\9;
+	width: 9999px\0;
 	height: 173px;
 	display: block;
 	position: static;
 	*position: absolute;
-	position: absolute\9;
+	position: absolute\0;
 	-webkit-transform-style: preserve-3d;
 	-moz-transform-style: preserve-3d;
 	-o-transform-style: preserve-3d;
@@ -21,15 +21,18 @@
 }
 .kitjs-gallery {
 	text-align: center;
+	overflow: visible;
+	*overflow: hidden;
+	overflow: hidden\0;
 }
 .kitjs-gallery-wrapper li {
 	float: none;
 	display: block;
 	position: absolute;
 	*position: static;
-	position: static\9;
+	position: static\0;
 	*float: left;
-	float: left\9;
+	float: left\0;
 	top: 0;
 	left: 0; 
 	-webkit-transition: all 500ms ease-out 0ms;
@@ -55,4 +58,6 @@ li.kitjs-gallery-item-next {
 	transform: translateX(350px) translateZ(-200px) rotateY(-45deg);
 	opacity: 0.75;
 }
-
+.kitjs-gallery-control-panel {
+	margin-top: 20px;
+} 
