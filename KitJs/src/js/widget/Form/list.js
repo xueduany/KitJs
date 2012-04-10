@@ -24,8 +24,8 @@ $kit.merge($kit.ui.Form.List, {
 		oddListItemCls : 'kitjs-form-listItem-odd',
 		evenListItemCls : 'kitjs-form-listItem-even',
 		listItemHTML : [//
-		'<li class="${listItemCls} ${oddOrEven}" value="${value}">', //
-		'${key}', //
+		'<li class="${listItemCls} ${oddOrEven}" value="${value}" key="${key}">', //
+		'${text}', //
 		'</li>'//
 		].join(''),
 		list : undefined,
@@ -67,6 +67,8 @@ $kit.merge($kit.ui.Form.List.prototype, {
 			$kit.each(list, function(o, idx) {
 				fragment.appendChild($kit.newHTML($kit.tpl(me.config.listItemHTML, $kit.join(me.config, o, {
 					oddOrEven : idx % 2 == 0 ? me.config.evenListItemCls : me.config.oddListItemCls
+				}, {
+					text : '<b>' + me.config.triggleEl.value + '</b>' + o.key.substring(me.config.triggleEl.value.length)
 				}))));
 				me.listItemCount++;
 			});
@@ -162,7 +164,7 @@ $kit.merge($kit.ui.Form.List.prototype, {
 					if(li) {
 						me.hide();
 						me.selectedLi = li;
-						me.config.setValue && me.config.setValue(li.innerHTML, $kit.attr(li, 'value'), li);
+						me.config.setValue && me.config.setValue($kit.attr(li, 'key'), $kit.attr(li, 'value'), li);
 					}
 				}
 			},
@@ -299,7 +301,7 @@ $kit.merge($kit.ui.Form.List.prototype, {
 						 * 回车
 						 */
 						me.hide();
-						me.config.setValue && me.config.setValue(me.selectedLi.innerHTML, $kit.attr(me.selectedLi, 'value'), me.selectedLi);
+						me.config.setValue && me.config.setValue($kit.attr(me.selectedLi, 'key'), $kit.attr(me.selectedLi, 'value'), me.selectedLi);
 						me._flag_listEl_mousedown_ev = true;
 						//回车要取消默认事件，防止form提交
 						e.stopDefault();

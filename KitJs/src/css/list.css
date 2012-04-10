@@ -30,6 +30,9 @@
 	color: #fff;
 	font-weight: bold;
 }
+.kitjs-form-list .selected b {
+	color: orange;
+}
 .kitjs-form-list-loading {
 	height: 30px;
 	line-height: 30px;
@@ -47,4 +50,11 @@
 	text-align: center;
 	height: 30px;
 	line-height: 30px;
+}
+.kitjs-form-listItem {
+	vertical-align: baseline;
+}
+.kitjs-form-listItem b {
+	vertical-align: baseline;
+	color: red;
 }

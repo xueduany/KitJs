@@ -111,7 +111,7 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 	 */
 	_setFormValue : function() {
 		var me = this;
-		if(me.list.listItemCount == 1 && me.inputEl.value == $kit.el8cls(me.list.config.listItemCls, me.list.listEl).innerHTML) {
+		if(me.list.listItemCount == 1 && me.inputEl.value == $kit.attr($kit.el8cls(me.list.config.listItemCls, me.list.listEl), 'key')) {
 			me.formEl.value = $kit.attr($kit.el8cls(me.list.config.listItemCls, me.list.listEl), 'value');
 		} else {
 			me.formEl.value = me.inputEl.value;
@@ -140,11 +140,10 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 		$kit.adCls(me.wrapper, 'suggesting');
 		setTimeout(function() {
 			me.list.buildList(me.config.data.search(me.inputEl.value));
-			console.log(me.list._flag_listEl_mousedown_ev);
 			if(me.hasFocus && me.list._flag_listEl_mousedown_ev != true) {
 				if(me.list.listItemCount == 1) {
 					var li = $kit.el8cls(me.list.config.listItemCls, me.list.listEl);
-					if(me.inputEl.value == li.innerHTML) {
+					if(me.inputEl.value == $kit.attr(li, 'key')) {
 						me.list.selectedLi = li;
 						$kit.adCls(me.list.selectedLi, me.list.config.selectedCls);
 					}
@@ -183,7 +182,7 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 			}
 			for(var i = 0; i < a.length; i++) {
 				if($kit.hsCls(a[i], me.list.listItemCls)) {
-					if(a[i].innerHTML == key) {
+					if($kit.attr(a[i], 'key') == key) {
 						selectedLi = a[i];
 					}
 				}
