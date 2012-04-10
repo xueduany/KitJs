@@ -30,6 +30,7 @@
 	-webkit-transition: all 500ms ease-out 0ms;
 	-moz-transition: all 500ms ease-out 0ms;
 	transition: all 500ms ease-out 0ms;
+	box-shadow: 0px 10px 20px rgba(0,0,0,0.3)
 	
 }
 .kitjs-gallery-wrapper li img {
