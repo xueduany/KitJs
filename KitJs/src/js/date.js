@@ -43,6 +43,194 @@ $Kit.Date.prototype = {
 		minutes = minutes % 60;
 		var seconds = (time % 60).toFixed(0);
 		return $kit.math.padZero(hours, 2) + ":" + $kit.math.padZero(minutes, 2) + ":" + $kit.math.padZero(seconds, 2);
+	},
+	/**
+	 * 是否闰年
+	 */
+	isLeapYear : function(year) {
+		return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0))
+	},
+	/**
+	 * 一个月有多少天
+	 */
+	getDaysInMonth : function(year, month) {
+		return [31, (this.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month]
+	},
+	//格式
+	validParts : /dd?|mm?|MM?|yy(?:yy)?/g,
+	nonpunctuation : /[^ -\/:-@\[-`{-~\t\n\r]+/g,
+	/**
+	 *
+	 */
+	parseFormat : function(format) {
+		var separators = format.split(this.validParts), parts = format.match(this.validParts);
+		if(!separators || !separators.length || !parts || parts.length == 0) {
+			throw new Error("Invalid date format.");
+		}
+		return {
+			separators : separators,
+			parts : parts
+		};
+	},
+	/**
+	 * 按照按照format解析返回日期对象
+	 */
+	languagePack : {
+		en : {
+			days : ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+			daysShort : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+			daysMin : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+			months : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+			monthsShort : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+		}
+	},
+	parseDate : function(date, format, language) {
+		if( date instanceof Date) {
+			return date;
+		}
+		language = language || 'en';
+		if(/^[-+]\d+[dmwy]([\s,]+[-+]\d+[dmwy])*$/.test(date)) {
+			var part_re = /([-+]\d+)([dmwy])/, parts = date.match(/([-+]\d+)([dmwy])/g), part, dir;
+			date = new Date();
+			for(var i = 0; i < parts.length; i++) {
+				part = part_re.exec(parts[i]);
+				dir = parseInt(part[1]);
+				switch(part[2]) {
+					case 'd':
+						date.setDate(date.getDate() + dir);
+						break;
+					case 'm':
+						this.moveMonth.call(date, dir);
+						break;
+					case 'w':
+						date.setDate(date.getDate() + dir * 7);
+						break;
+					case 'y':
+						this.moveYear(date, dir);
+						break;
+				}
+			}
+			return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+		}
+		var parts = date ? date.match(this.nonpunctuation) : [], date = new Date(), val, filtered;
+		date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+		if(parts.length == format.parts.length) {
+			for(var i = 0, cnt = format.parts.length; i < cnt; i++) {
+				val = parseInt(parts[i], 10) || 1;
+				switch(format.parts[i]) {
+					case 'MM':
+						filtered = $kit.array.filter(this.languagePack[language].months, function() {
+							var m = this.slice(0, parts[i].length), p = parts[i].slice(0, m.length);
+							return m == p;
+						});
+						val = $kit.array.indexOf(this.languagePack[language].months, filtered[0]) + 1;
+						break;
+					case 'M':
+						filtered = $kit.array.filter(this.languagePack[language].monthsShort, function() {
+							var m = this.slice(0, parts[i].length), p = parts[i].slice(0, m.length);
+							return m == p;
+						});
+						val = $kit.array.indexOf(this.languagePack[language].monthsShort, filtered[0]) + 1;
+						break;
+				}
+				switch(format.parts[i]) {
+					case 'dd':
+					case 'd':
+						date.setDate(val);
+						break;
+					case 'mm':
+					case 'm':
+					case 'MM':
+					case 'M':
+						date.setMonth(val - 1);
+						break;
+					case 'yy':
+						date.setFullYear(2000 + val);
+						break;
+					case 'yyyy':
+						date.setFullYear(val);
+						break;
+				}
+			}
+		}
+		return date;
+	},
+	moveMonth : function(date, dir) {
+		if(!dir)
+			return date;
+		var new_date = new Date(date.valueOf()), day = new_date.getDate(), month = new_date.getMonth(), mag = Math.abs(dir), new_month, test;
+		dir = dir > 0 ? 1 : -1;
+		if(mag == 1) {
+			test = dir == -1
+			// If going back one month, make sure month is not current month
+			// (eg, Mar 31 -> Feb 31 == Feb 28, not Mar 02)
+			? function() {
+				return new_date.getMonth() == month;
+			}
+			// If going forward one month, make sure month is as expected
+			// (eg, Jan 31 -> Feb 31 == Feb 28, not Mar 02)
+			: function() {
+				return new_date.getMonth() != new_month;
+			};
+			new_month = month + dir;
+			new_date.setMonth(new_month);
+			// Dec -> Jan (12) or Jan -> Dec (-1) -- limit expected date to 0-11
+			if(new_month < 0 || new_month > 11)
+				new_month = (new_month + 12) % 12;
+		} else {
+			// For magnitudes >1, move one month at a time...
+			for(var i = 0; i < mag; i++)
+			// ...which might decrease the day (eg, Jan 31 to Feb 28, etc)...
+			new_date = this.moveMonth(new_date, dir);
+			// ...then reset the day, keeping it in the new month
+			new_month = new_date.getMonth();
+			new_date.setDate(day);
+			test = function() {
+				return new_month != new_date.getMonth();
+			};
+		}
+		// Common date-resetting loop -- if date is beyond end of month, make it
+		// end of month
+		while(test()) {
+			new_date.setDate(--day);
+			new_date.setMonth(new_month);
+		}
+		return new_date;
+	},
+	moveYear : function(date, dir) {
+		return this.moveMonth(date, dir * 12);
+	},
+	formatDate : function(date, format, language) {
+		var me = this;
+		var val = {
+			d : date.getDate(),
+			m : date.getMonth() + 1,
+			M : me.languagePack[language].monthsShort[date.getMonth()],
+			MM : me.languagePack[language].months[date.getMonth()],
+			yy : date.getFullYear().toString().substring(2),
+			yyyy : date.getFullYear()
+		};
+		val.dd = (val.d < 10 ? '0' : '') + val.d;
+		val.mm = (val.m < 10 ? '0' : '') + val.m;
+		var date = [], seps = $kit.array.clone(format.separators);
+		for(var i = 0, cnt = format.parts.length; i < cnt; i++) {
+			if(seps.length) {
+				date.push(seps.shift())
+			}
+			date.push(val[format.parts[i]]);
+		}
+		return date.join('');
+	},
+	/**
+	 * datetool end
+	 */
+	dateNow : function() {
+		var d = new Date();
+		d.setMinutes(0);
+		d.setSeconds(0);
+		d.setHours(0);
+		d.setMilliseconds(0);
+		return d;
 	}
 };
 $kit.date = new $Kit.Date();

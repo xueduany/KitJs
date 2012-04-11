@@ -141,6 +141,43 @@ $Kit.Array.prototype = {
 	parse : function(str, separate) {
 		var separate = ',' || separate;
 		return (str && str.split(separate)) || [str]
+	},
+	/**
+	 * 过滤满足条件的数组元素
+	 */
+	filter : function(ary, compare) {
+		var re = [];
+		$kit.each(ary, function(o) {
+			if(compare(o, ary)) {
+				re.push(o);
+			}
+		});
+		return re;
+	},
+	/**
+	 * 返回指定元素在数组的第几个，从0开始
+	 */
+	indexOf : function(ary, obj) {
+		var index = -1;
+		if(obj != null) {
+			$kit.each(ary, function(o, idx) {
+				if(obj == o) {
+					index = idx;
+					return false;
+				}
+			});
+		}
+		return index;
+	},
+	/**
+	 * 克隆一个新的数组
+	 */
+	clone : function(ary) {
+		var re = [];
+		$kit.each(ary, function(o) {
+			re.push(o);
+		});
+		return re;
 	}
 };
 $kit.ary = $kit.array = new $Kit.Array();
