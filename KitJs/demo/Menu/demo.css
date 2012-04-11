@@ -1,0 +1,26 @@
+ul.kitjs-menu {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+ul.kitjs-menu ul {
+	position: absolute;
+	display: none;
+}
+ul.kitjs-menu ul li {
+	display: none;
+}
+ul.kitjs-menu :hover li~ul  {
+	display: block;
+}
+ul.kitjs-menu :hover li~ul li {
+	display: block;
+}
+ul.kitjs-menu li {
+	display: block;
+	list-style: none;
+	padding: 0 1em;
+	border: 1px solid #ccc;
+	overflow: visible;
+	width: auto;
+}

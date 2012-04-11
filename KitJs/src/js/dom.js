@@ -124,6 +124,36 @@ $Kit.Dom.prototype = {
 			});
 		}
 		return re;
+	},
+	/**
+	 * innerText
+	 */
+	text : function(el, text) {
+		if(el != null && 'innerText' in el) {
+			if(text) {
+				el.innerText = text;
+			} else {
+				return el.innerText;
+			}
+		} else {
+			if(text) {
+				el.textContent = text;
+			} else {
+				return el.textContent;
+			}
+		}
+	},
+	/**
+	 * innerHTML
+	 */
+	html : function(el, html) {
+		if(html) {
+			if(el != null && 'innerHTML' in el) {
+				el.innerHTML = html;
+			}
+		} else {
+			return el.innerHTML;
+		}
 	}
 };
 $kit.d = $kit.dom = new $Kit.Dom();
