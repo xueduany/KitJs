@@ -147,8 +147,8 @@ $Kit.Array.prototype = {
 	 */
 	filter : function(ary, compare) {
 		var re = [];
-		$kit.each(ary, function(o) {
-			if(compare(o, ary)) {
+		$kit.each(ary, function(o, i, ary) {
+			if(compare(o, i, ary)) {
 				re.push(o);
 			}
 		});

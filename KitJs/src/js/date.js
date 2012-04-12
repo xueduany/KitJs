@@ -97,6 +97,7 @@ $Kit.Date.prototype = {
 		}
 	},
 	parseDate : function(date, format, language) {
+		var me = this;
 		if( date instanceof Date) {
 			return date;
 		}
@@ -131,18 +132,22 @@ $Kit.Date.prototype = {
 				val = parseInt(parts[i], 10) || 1;
 				switch(format.parts[i]) {
 					case 'MM':
-						filtered = $kit.array.filter(this.languagePack[language].months, function() {
-							var m = this.slice(0, parts[i].length), p = parts[i].slice(0, m.length);
+						filtered = $kit.array.filter(this.languagePack[language].months, function(o, index, ary) {
+							var m = ary.slice(0, parts[i].length), p = parts[i].slice(0, m.length);
 							return m == p;
 						});
-						val = $kit.array.indexOf(this.languagePack[language].months, filtered[0]) + 1;
+						if(filtered && filtered.length) {
+							val = $kit.array.indexOf(this.languagePack[language].months, filtered[0]) + 1;
+						}
 						break;
 					case 'M':
-						filtered = $kit.array.filter(this.languagePack[language].monthsShort, function() {
-							var m = this.slice(0, parts[i].length), p = parts[i].slice(0, m.length);
+						filtered = $kit.array.filter(this.languagePack[language].monthsShort, function(o, index, ary) {
+							var m = ary.slice(0, parts[i].length), p = parts[i].slice(0, m.length);
 							return m == p;
 						});
-						val = $kit.array.indexOf(this.languagePack[language].monthsShort, filtered[0]) + 1;
+						if(filtered && filtered.length) {
+							val = $kit.array.indexOf(this.languagePack[language].monthsShort, filtered[0]) + 1;
+						}
 						break;
 				}
 				switch(format.parts[i]) {

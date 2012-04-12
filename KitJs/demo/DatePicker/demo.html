@@ -9,7 +9,8 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']); (function() {
+			_gaq.push(['_trackPageview']);
+			(function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -57,7 +58,7 @@
 				<br/>
 			</li>
 			<li>
-				<h4>日期连续选择（连续选择日简略输出）</h4>
+				<h4>日期连续选择（连续选择日简略输出，请按住Shift键，选择日期试试）</h4>
 				<input type="text" id="J_input_3" size="80">
 				<br/>
 				<br/>
@@ -87,7 +88,7 @@ var picker = new $kit.ui.DatePicker({
 	shiftSelectOutTypeShortSeparator : '~'//当输出类型为short时，比如选中了3月1日到3月10日，则输出"3月1日~3月10日",简短输出，只有开头+分隔符+结尾
 });
 picker.init();//执行初始化
-更多参数请参考源码
+更多参数请参考源码<a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/DatePicker/datepicker.js">https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/DatePicker/datepicker.js</a>
 </pre>
 				<h4>api</h4>
 				<table border="1">
@@ -223,7 +224,7 @@ picker.init();//执行初始化
 						}
 					}
 				});
-				//日期连续选择（连续选择日简略输出）
+				//日期连续选择（多选简单输出）
 				$kit.ev({
 					el : '#J_input_3',
 					ev : 'focus',
@@ -233,7 +234,13 @@ picker.init();//执行初始化
 						if(d) {
 							d.show();
 						} else {
-							d = new $kit.ui.DatePicker().init();
+							d = new $kit.ui.DatePicker({
+								shiftSelectOutType : 'short',
+								date : [//
+								$kit.date.parseDate('2012年4月5日', $kit.date.parseFormat('yyyy年MM月dd日'), 'cn'), //
+								$kit.date.parseDate('2012年4月6日', $kit.date.parseFormat('yyyy年MM月dd日'), 'cn') //
+								]
+							}).init();
 							d.adhere($kit.el('#J_input_3'));
 							d.show();
 						}

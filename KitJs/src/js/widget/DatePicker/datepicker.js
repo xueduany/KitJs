@@ -88,14 +88,21 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		$kit.ev({
 			el : me.picker,
 			ev : 'selectstart',
-			fn : function() {
-				return false;
+			fn : function(e) {
+				e.stopNow();
 			},
 			scope : me
 		});
-		me.date = config.date || $kit.date.dateNow();
 		if(config.date) {
-			me.selectedDateAry = [new Date(config.date)];
+			if($kit.isDate(config.date)) {
+				me.date = config.date;
+				me.selectedDateAry = [new Date(config.date)];
+			} else if($kit.isAry(config.date)) {
+				me.date = config.date[0];
+				me.selectedDateAry = config.date;
+			}
+		} else {
+			me.date = $kit.date.dateNow();
 		}
 		document.body.appendChild(me.picker);
 		//
@@ -242,7 +249,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		var me = this;
 		if(me.selectedDateAry.length) {
 			var dateStrAry = [];
-			if(me.config.shiftSelectOutType.toLowerCase() == 'full') {
+			if(me.config.shiftSelectOutType.toLowerCase() != 'short') {
 				$kit.each(me.selectedDateAry, function(o) {
 					dateStrAry.push($kit.date.formatDate(o, me.format, me.language))
 				});
