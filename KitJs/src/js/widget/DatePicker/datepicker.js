@@ -225,13 +225,11 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 						me.selectedDateAry.splice(i, 1);
 						canAdd = false;
 						break;
-					} else if(me.date.valueOf() > me.selectedDateAry[i].valueOf()) {
-						if(i == me.selectedDateAry.length - 1) {
-							me.selectedDateAry.push(new Date(me.date));
-						} else {
-							me.selectedDateAry.splice(i + 1, 0, new Date(me.date));
-						}
+					} else if(me.date.valueOf() > me.selectedDateAry[i].valueOf() && i < me.selectedDateAry.length - 1 && me.date.valueOf() < me.selectedDateAry[i + 1].valueOf()) {
+						me.selectedDateAry.splice(i + 1, 0, new Date(me.date));
 						break;
+					} else if(i == me.selectedDateAry.length - 1) {
+						me.selectedDateAry.splice(i, 0, new Date(me.date));
 					}
 					i++;
 				}
