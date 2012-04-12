@@ -31,16 +31,285 @@
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>日历</h1>
-		<div id="J_datePicker"></div>
+		<ul>
+			<li>
+				<h4>默认日历</h4>
+				<div id="J_datePicker"></div>
+				<br/>
+				<br/>
+			</li>
+			<li>
+				<h4>输入框下拉日历</h4>
+				<input type="text" id="J_input">
+				<br/>
+				<br/>
+			</li>
+			<li>
+				<h4>开始和结束日期限制（2012年4月1日到2012年5月10日）</h4>
+				<input type="text" id="J_input_1">
+				<br/>
+				<br/>
+			</li>
+			<li>
+				<h4>日期连续选择（按住Shift键不放，点选日期）</h4>
+				<input type="text" id="J_input_2" size="80">
+				<br/>
+				<br/>
+			</li>
+			<li>
+				<h4>日期连续选择（连续选择日简略输出）</h4>
+				<input type="text" id="J_input_3" size="80">
+				<br/>
+				<br/>
+			</li>
+			<li>
+				<h4>日期连续选择（禁止多选）</h4>
+				<input type="text" id="J_input_4" size="80">
+				<br/>
+				<br/>
+			</li>
+			<li>
+				<h4>日期连续选择（本地化，支持多种语言）</h4>
+				<input type="text" id="J_input_5" size="80">
+				<br/>
+				<br/>
+			</li>
+			<li>
+				<h4>使用方法</h4>
+				<pre>
+var picker = new $kit.ui.DatePicker({
+	dateFormat : 'yyyy年mm月dd日', //接受和输出的日期格式
+	language : 'cn',//本地化语言
+	show : false, //默认是否显示
+	canMultipleChoose : true, //能否多选
+	dateStringSeparator : ',', //多选时候输出分隔符
+	shiftSelectOutType : 'full', //多选时候输出类型，full为将选中的日期全部输出，short为输出选中日期的开头和结尾
+	shiftSelectOutTypeShortSeparator : '~'//当输出类型为short时，比如选中了3月1日到3月10日，则输出"3月1日~3月10日",简短输出，只有开头+分隔符+结尾
+});
+picker.init();//执行初始化
+更多参数请参考源码
+</pre>
+				<h4>api</h4>
+				<table border="1">
+					<tr>
+						<td> 方法 </td>
+						<td> 说明 </td>
+					</tr>
+					<tr>
+						<td> init </td>
+						<td> 初始化日历 </td>
+					</tr>
+					<tr>
+						<td> show </td>
+						<td> 显示日历 </td>
+					</tr>
+					<tr>
+						<td> hide </td>
+						<td> 隐藏日历 </td>
+					</tr>
+					<tr>
+						<td> getValue </td>
+						<td> 或者日历的选中日期 </td>
+					</tr>
+					<tr>
+						<td colspan="2" height="10"></td>
+					</tr>
+					<tr>
+						<td> 事件 </td>
+						<td> 说明 </td>
+					</tr>
+					<tr>
+						<td> change </td>
+						<td> 日历选择日期发生改变时触发 </td>
+					</tr>
+				</table>
+			</li>
+		</ul>
 		<script>
 			$kit.$(function() {
-				var picker = new $kit.ui.DatePicker({
-					el : $kit.el('#J_datePicker')
-				});
+				//默认日历
+				var picker = new $kit.ui.DatePicker();
 				picker.init();
+				$kit.el('#J_datePicker').appendChild(picker.picker);
 				picker.show();
+				picker.ev({
+					ev : 'change',
+					fn : function(e) {
+						alert(picker.getValue());
+					}
+				})
+				//输入框下拉
+				$kit.ev({
+					el : '#J_input',
+					ev : 'focus',
+					fn : function(e) {
+						var d
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker().init();
+							d.adhere($kit.el('#J_input'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
+				//开始和结束日期限制
+				$kit.ev({
+					el : '#J_input_1',
+					ev : 'focus',
+					fn : function(e) {
+						var d
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker({
+								startDate : '2012年4月1日',
+								endDate : '2012年5月20日',
+								dateFormat : 'yyyy年mm月dd日'
+							}).init();
+							d.adhere($kit.el('#J_input_1'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input_1');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
+				//日期连续选择
+				$kit.ev({
+					el : '#J_input_2',
+					ev : 'focus',
+					fn : function(e) {
+						var d
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker().init();
+							d.adhere($kit.el('#J_input_2'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input_2');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
+				//日期连续选择（连续选择日简略输出）
+				$kit.ev({
+					el : '#J_input_3',
+					ev : 'focus',
+					fn : function(e) {
+						var d
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker().init();
+							d.adhere($kit.el('#J_input_3'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input_3');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
+				//日期连续选择（禁止多选）
+				$kit.ev({
+					el : '#J_input_4',
+					ev : 'focus',
+					fn : function(e) {
+						var d
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker({
+								canMultipleChoose : false
+							}).init();
+							d.adhere($kit.el('#J_input_4'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input_4');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
+				//日期连续选择（本地化）
+				$kit.ev({
+					el : '#J_input_5',
+					ev : 'focus',
+					fn : function(e) {
+						var d
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker({
+								language : 'en',
+								dateFormat : 'mm/dd/yyyy'
+							}).init();
+							d.adhere($kit.el('#J_input_5'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input_5');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
 			})
-			
 		</script>
 	</body>
 </html>

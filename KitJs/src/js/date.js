@@ -57,19 +57,22 @@ $Kit.Date.prototype = {
 		return [31, (this.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month]
 	},
 	//格式
-	validParts : /dd?|mm?|MM?|yy(?:yy)?/g,
-	nonpunctuation : /[^ -\/:-@\[-`{-~\t\n\r]+/g,
+	validParts : /E{1}|D{1}|F{1}|a{1}|hh{1}|HH{1}|SS{1}|ss{1}|dd{1}|mm{1}|MM{1}|yy(?:yy){1}/g,
+	dateSplitRegExp : /(E{1}|D{1}|F{1}|a{1}|hh{1}|HH{1}|SS{1}|ss{1}|dd{1}|mm{1}|MM{1}|yy(?:yy){1})/g,
+	nonpunctuation : /[^ -\/:-@\[-`{-~\t\n\r\D]+/g,
 	/**
 	 *
 	 */
 	parseFormat : function(format) {
-		var separators = format.split(this.validParts), parts = format.match(this.validParts);
+		var separators = $kit.array.delEmpty(format.split(this.validParts)), parts = $kit.array.delEmpty((format.match(this.validParts))), //
+		date = $kit.array.delEmpty(format.split(this.dateSplitRegExp));
 		if(!separators || !separators.length || !parts || parts.length == 0) {
 			throw new Error("Invalid date format.");
 		}
 		return {
 			separators : separators,
-			parts : parts
+			parts : parts,
+			date : date
 		};
 	},
 	/**
@@ -81,7 +84,16 @@ $Kit.Date.prototype = {
 			daysShort : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
 			daysMin : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
 			months : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-			monthsShort : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+			monthsShort : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+			weekStart : 0
+		},
+		cn : {
+			days : ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+			daysShort : ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+			daysMin : ["七", "一", "二", "三", "四", "五", "六", "七"],
+			months : ["一月份", "二月份", "三月份", "四月份", "五月份", "六月份", "七月份", "八月份", "九月份", "十月份", "十一月", "十二月"],
+			monthsShort : ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+			weekStart : 1
 		}
 	},
 	parseDate : function(date, format, language) {
@@ -212,13 +224,14 @@ $Kit.Date.prototype = {
 		};
 		val.dd = (val.d < 10 ? '0' : '') + val.d;
 		val.mm = (val.m < 10 ? '0' : '') + val.m;
-		var date = [], seps = $kit.array.clone(format.separators);
-		for(var i = 0, cnt = format.parts.length; i < cnt; i++) {
-			if(seps.length) {
-				date.push(seps.shift())
+		var date = [];
+		$kit.each(format.date, function(o) {
+			if(val[o]) {
+				date.push(val[o]);
+			} else {
+				date.push(o);
 			}
-			date.push(val[format.parts[i]]);
-		}
+		});
 		return date.join('');
 	},
 	/**
@@ -231,6 +244,12 @@ $Kit.Date.prototype = {
 		d.setHours(0);
 		d.setMilliseconds(0);
 		return d;
+	},
+	/**
+	 * 增加天数
+	 */
+	addDays : function(d, days) {
+		d.setDate(d.getDate() + days);
 	}
 };
 $kit.date = new $Kit.Date();

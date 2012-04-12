@@ -81,6 +81,9 @@ $Kit.prototype = {
 	isNum : function(o) {
 		return isFinite(o)
 	},
+	isDate : function(o) {
+		return (null != o) && !isNaN(o) && ("undefined" !== typeof o.getDate);
+	},
 	/**
 	 * boolean isObject
 	 */
@@ -118,7 +121,7 @@ $Kit.prototype = {
 	},
 	isEmpty : function(o) {
 		var me = this;
-		return typeof (o) == "undefined" || o == null || (!me.isNode(o)&&me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
+		return typeof (o) == "undefined" || o == null || (!me.isNode(o) && me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
 	},
 	// -----------------------------------string-----------------------------------
 	trimAll : function(str) {
@@ -871,7 +874,9 @@ $Kit.prototype = {
 					 alert(e);
 					 throw e;
 					 };*/
-					return returnValue;
+					if(returnValue != null) {
+						return returnValue;
+					}
 				});
 				if(document.attachEvent) {
 					config.el.attachEvent('on' + config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
