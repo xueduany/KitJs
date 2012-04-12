@@ -72,7 +72,7 @@
 .datepicker td.disabled,
 .datepicker td.disabled:hover {
 	background: none;
-	color: #999999;
+	color: #ddd;
 	cursor: default;
 }
 .datepicker td.active,
