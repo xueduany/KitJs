@@ -178,6 +178,19 @@ $Kit.Array.prototype = {
 			re.push(o);
 		});
 		return re;
+	},
+	/**
+	 * 删除数组中空的元素
+	 */
+	delEmpty : function(ary) {
+		for(var i = 0; i < ary.length; ) {
+			if(ary[i] == '' || ary[i] == null) {
+				ary.splice(i, 1);
+			} else {
+				i++;
+			}
+		}
+		return ary;
 	}
 };
 $kit.ary = $kit.array = new $Kit.Array();

@@ -7,10 +7,11 @@ $kit.ui.DatePicker = function(config) {
 }
 $kit.merge($kit.ui.DatePicker, {
 	defaultConfig : {
-		dateFormat : 'mm/dd/yyyy',
+		kitWidgetName : 'kitjs-datepicker',
+		dateFormat : 'yyyy年mm月dd日', //接受和输出的日期格式
 		template : {
 			pickerHTML : [//
-			'<div class="datepicker dropdown-menu">', //
+			'<div class="datepicker">', //
 			'<div class="datepicker-days">', //
 			'<table class=" table-condensed">', //
 			'${headHTML}', //
@@ -34,18 +35,18 @@ $kit.merge($kit.ui.DatePicker, {
 			headHTML : [//
 			'<thead>', //
 			'<tr>', //
-			'<th class="prev"><i class="icon-arrow-left"/></th>', //
+			'<th class="prev" onselectstart="return false"><i class="icon-arrow-left">&lt;</i></th>', //
 			'<th colspan="5" class="switch"></th>', //
-			'<th class="next"><i class="icon-arrow-right"/></th>', //
+			'<th class="next" onselectstart="return false"><i class="icon-arrow-right">&gt;</i></th>', //
 			'</tr>', //
 			'</thead>'//
 			].join(''),
-			contHTML : '<tbody><tr><td colspan="7"></td></tr></tbody>'
+			contHTML : '<tbody><tr><td colspan="7"></td></tr></tbody>',
+			dropDownCls : 'dropdown-menu'
 		},
-		language : 'en',
-		el : undefined,
+		language : 'cn',
 		startView : 0,
-		date : $kit.date.dateNow(),
+		date : undefined, //$kit.date.dateNow(),
 		modes : [{
 			clsName : 'days',
 			navFnc : 'Month',
@@ -59,14 +60,22 @@ $kit.merge($kit.ui.DatePicker, {
 			navFnc : 'FullYear',
 			navStep : 10
 		}],
+		weekStart : undefined, //默认从date对象里面的本地化数据取得一周的开始时间
+		weekViewFormat : 'daysMin',
+		monthViewFormat : 'monthsShort',
+		show : false, //默认是否显示
+		canMultipleChoose : true, //能否多选
+		dateStringSeparator : ',', //多选时候输出分隔符
+		shiftSelectOutType : 'full', //多选时候输出类型，full为将选中的日期全部输出，short为输出选中日期的开头和结尾
+		shiftSelectOutTypeShortSeparator : '~'//当输出类型为short时，比如选中了3月1日到3月10日，则输出"3月1日~3月10日",简短输出，只有开头+分隔符+结尾
 	}
 });
 $kit.merge($kit.ui.DatePicker.prototype, {
+	/**
+	 * main()入口
+	 */
 	init : function() {
 		var me = this, config = me.config;
-		if(!config.el) {
-			return;
-		}
 		me.language = config.language;
 		me.format = $kit.date.parseFormat(config.dateFormat);
 		me.picker = $kit.newHTML($kit.tpl(config.template.pickerHTML, config.template)).childNodes[0];
@@ -76,7 +85,18 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			fn : me.click,
 			scope : me
 		});
-		me.date = config.date;
+		$kit.ev({
+			el : me.picker,
+			ev : 'selectstart',
+			fn : function() {
+				return false;
+			},
+			scope : me
+		});
+		me.date = config.date || $kit.date.dateNow();
+		if(config.date) {
+			me.selectedDateAry = [new Date(config.date)];
+		}
 		document.body.appendChild(me.picker);
 		//
 		switch(config.startView) {
@@ -104,46 +124,170 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		me.fillMonths();
 		me.update();
 		me.showMode();
+		if(config.show) {
+			//
+		} else {
+			me.hide();
+		}
+		return me;
 	},
+	/**
+	 * 显示日历
+	 */
 	show : function(e) {
 		var me = this;
-		//me.height = me.component ? me.component.offsetHeight : me.config.el.offsetHeight;
-		//me.place();
+		if(me.picker.style.display == 'none') {
+			me.picker.style.display = '';
+		}
+		if(me.adhereEl) {
+			me.adhere(me.adhereConfig);
+		}
 	},
+	adhere : function(config) {
+		var me = this;
+		if($kit.isNode(config)) {
+			config = {
+				el : config
+			}
+		}
+		if(config) {
+			config.el[me.config.kitWidgetName] = me;
+			$kit.adCls(me.picker, me.config.template.dropDownCls);
+			me.adhereEl = config.el;
+			me.adhereConfig = config;
+			var offset = $kit.offset(config.el);
+			$kit.css(me.picker, {
+				position : 'absolute',
+				top : offset.bottom + (config.offsetTop || 0) + 'px',
+				left : offset.left + (config.left || 0) + 'px'
+			});
+		}
+	},
+	/**
+	 * 隐藏
+	 */
 	hide : function(e) {
 		var me = this;
 		me.picker.style.display = 'none';
-		me.viewMode = me.startViewMode;
-		me.showMode();
 	},
+	/**
+	 * 设值
+	 */
 	setValue : function() {
 		var me = this;
 		var formated = $kit.date.formatDate(me.date, me.format, me.language);
-	},
-	setStartDate : function(startDate) {
-		var me = this;
-		me.startDate = startDate || -Infinity;
-		if(me.startDate !== -Infinity) {
-			me.startDate = $kit.date.parseDate(me.startDate, me.format, me.language);
+		if(me.adhereEl) {
+			me.adhereEl.value = formated;
 		}
-		me.updateNavArrows();
-	},
-	setEndDate : function(endDate) {
-		var me = this;
-		me.endDate = endDate || Infinity;
-		if(me.endDate !== Infinity) {
-			me.endDate = $kit.date.parseDate(me.endDate, me.format, me.language);
-		}
-		me.updateNavArrows();
-	},
-	place : function() {
-		var me = this;
-		var offset = me.component ? $kit.offset(me.component) : $kit.offset(me.config.el);
-		$kit.css(me.picker, {
-			top : offset.top + me.height,
-			left : offset.left
+		me.selectedDateAry = [new Date(me.date)];
+		me.update();
+		me.newEv({
+			ev : 'change'
 		});
 	},
+	/**
+	 * 按住shift或者ctrl添加
+	 */
+	addValue : function(continuous) {
+		var me = this;
+		continuous = continuous || false;
+		me.selectedDateAry = me.selectedDateAry || [];
+		var beginDate = me.selectedDateAry[0];
+		var endDate = me.selectedDateAry[me.selectedDateAry.length - 1];
+		if(continuous == true) {
+			if(me.date.valueOf() < beginDate.valueOf()) {
+				beginDate = new Date(me.date);
+			} else {
+				endDate = new Date(me.date);
+			}
+			var newSelectedDateAry = [];
+			while(endDate.valueOf() >= beginDate.valueOf()) {
+				newSelectedDateAry.push(new Date(beginDate));
+				$kit.date.addDays(beginDate, 1);
+			}
+			me.selectedDateAry = newSelectedDateAry;
+		} else {
+			if(me.date.valueOf() < beginDate.valueOf()) {
+				me.selectedDateAry.splice(0, 0, new Date(me.date));
+			} else if(me.date.valueOf() > endDate.valueOf()) {
+				me.selectedDateAry.push(new Date(me.date));
+			} else if(me.date.valueOf() >= beginDate.valueOf() || me.date.valueOf() <= endDate.valueOf()) {
+				var canAdd = true;
+				for(var i = 0; i < me.selectedDateAry.length; ) {
+					if(me.date.valueOf() == me.selectedDateAry[i].valueOf()) {
+						me.selectedDateAry.splice(i, 1);
+						canAdd = false;
+						break;
+					} else if(me.date.valueOf() > me.selectedDateAry[i].valueOf()) {
+						if(i == me.selectedDateAry.length - 1) {
+							me.selectedDateAry.push(new Date(me.date));
+						} else {
+							me.selectedDateAry.splice(i + 1, 0, new Date(me.date));
+						}
+						break;
+					}
+					i++;
+				}
+			}
+		}
+		if(me.adhereEl) {
+			me.adhereEl.value = me.getValue();
+		}
+		me.update();
+		me.newEv({
+			ev : 'change'
+		});
+	},
+	getValue : function() {
+		var me = this;
+		if(me.selectedDateAry.length) {
+			var dateStrAry = [];
+			if(me.config.shiftSelectOutType.toLowerCase() == 'full') {
+				$kit.each(me.selectedDateAry, function(o) {
+					dateStrAry.push($kit.date.formatDate(o, me.format, me.language))
+				});
+				return dateStrAry.join(me.config.dateStringSeparator);
+			} else {
+				dateStrAry.push($kit.date.formatDate(me.selectedDateAry[0], me.format, me.language));
+				dateStrAry.push($kit.date.formatDate(me.selectedDateAry[me.selectedDateAry.length - 1], me.format, me.language));
+				return dateStrAry.join(me.config.shiftSelectOutTypeShortSeparator);
+			}
+		}
+		return $kit.date.formatDate(me.date, me.format, me.language)
+	},
+	/**
+	 * 设置能选择的最早日期
+	 */
+	setStartDate : function(startDate) {
+		var me = this;
+		if($kit.isDate(startDate)) {
+			me.startDate = startDate;
+		} else {
+			me.startDate = startDate || -Infinity;
+			if(me.startDate !== -Infinity) {
+				me.startDate = $kit.date.parseDate(me.startDate, me.format, me.language);
+			}
+		}
+		me.updateNavArrows();
+	},
+	/**
+	 * 设置能选择的最迟日期
+	 */
+	setEndDate : function(endDate) {
+		var me = this;
+		if($kit.isDate(endDate)) {
+			me.endDate = endDate;
+		} else {
+			me.endDate = endDate || Infinity;
+			if(me.endDate !== Infinity) {
+				me.endDate = $kit.date.parseDate(me.endDate, me.format, me.language);
+			}
+		}
+		me.updateNavArrows();
+	},
+	/**
+	 * 刷新日期天数显示
+	 */
 	update : function() {
 		var me = this;
 		if(me.date < me.startDate) {
@@ -155,15 +299,18 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		}
 		me.fill();
 	},
+	/**
+	 * 星期几
+	 */
 	fillDow : function() {
 		var me = this;
 		var dowCnt = me.weekStart;
 		var html = '<tr>';
 		while(dowCnt < me.weekStart + 7) {
-			html += '<th class="dow">' + $kit.date.languagePack[me.language].daysMin[(dowCnt++) % 7] + '</th>';
+			html += '<th class="dow">' + $kit.date.languagePack[me.language][me.config.weekViewFormat][(dowCnt++) % 7] + '</th>';
 		}
 		html += '</tr>';
-		var thead = $kit.el('.datepicker-days thead',me.picker)[0];
+		var thead = $kit.$el('.datepicker-days thead',me.picker)[0];
 		if($kit.isIE()) {
 			var tr = thead.insertRow(1);
 			thead.replaceChild($kit.newHTML('<table><tbody>' + html + '</tbody></table>').firstChild.firstChild.firstChild, tr)
@@ -175,17 +322,23 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			});
 		}
 	},
+	/**
+	 * 月份选择
+	 */
 	fillMonths : function() {
 		var me = this;
 		var html = '';
 		var i = 0
 		while(i < 12) {
-			html += '<span class="month">' + $kit.date.languagePack[me.language].monthsShort[i++] + '</span>';
+			html += '<span class="month">' + $kit.date.languagePack[me.language][me.config.monthViewFormat][i++] + '</span>';
 		}
-		$kit.each($kit.el('.datepicker-months td', me.picker), function(o) {
+		$kit.each($kit.$el('.datepicker-months td', me.picker), function(o) {
 			o.innerHTML = html;
 		});
 	},
+	/**
+	 * 天数面板
+	 */
 	fill : function() {
 		var me = this;
 		var d = new Date(me.viewDate), year = d.getFullYear(), month = d.getMonth(), //
@@ -195,7 +348,11 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		endMonth = me.endDate !== Infinity ? me.endDate.getMonth() : Infinity, //
 		currentDate = me.date.valueOf();
 		//
-		$kit.el('.datepicker-days th:eq(1)',me.picker)[0].innerHTML = $kit.date.languagePack[me.language].months[month] + ' ' + year;
+		if(me.config.language != 'cn') {
+			$kit.$el('.datepicker-days th:eq(1)',me.picker)[0].innerHTML = $kit.date.languagePack[me.language].months[month] + ' ' + year;
+		} else {
+			$kit.$el('.datepicker-days th:eq(1)',me.picker)[0].innerHTML = year + '年' + $kit.date.languagePack[me.language].months[month];
+		}
 		//
 		me.updateNavArrows();
 		me.fillMonths();
@@ -217,9 +374,12 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			} else if(prevMonth.getFullYear() > year || (prevMonth.getFullYear() == year && prevMonth.getMonth() > month)) {
 				clsName += ' new';
 			}
-			if(prevMonth.valueOf() == currentDate) {
-				clsName += ' active';
-			}
+			$kit.each(me.selectedDateAry, function(o) {
+				if(o.valueOf() == prevMonth.valueOf()) {
+					clsName += ' active';
+					return false;
+				}
+			});
 			if(prevMonth.valueOf() < me.startDate || prevMonth.valueOf() > me.endDate) {
 				clsName += ' disabled';
 			}
@@ -229,7 +389,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			}
 			prevMonth.setDate(prevMonth.getDate() + 1);
 		}
-		var tbody = $kit.el('.datepicker-days tbody', me.picker)[0];
+		var tbody = $kit.$el('.datepicker-days tbody', me.picker)[0];
 		var _htm = html.join('');
 		if($kit.isIE()) {
 			while(tbody.rows.length) {
@@ -246,13 +406,13 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		}
 		var currentYear = me.date.getFullYear();
 		//
-		var monthsEl = $kit.el('.datepicker-months', me.picker)[0];
-		$kit.dom.text($kit.el('th:eq(1)', monthsEl)[0], year);
-		$kit.each($kit.el('span', monthsEl), function(o) {
+		var monthsEl = $kit.$el('.datepicker-months', me.picker)[0];
+		$kit.dom.text($kit.$el('th:eq(1)', monthsEl)[0], year);
+		$kit.each($kit.$el('span', monthsEl), function(o) {
 			$kit.rmCls(o, 'active');
 		});
 		if(currentYear == year) {
-			$kit.each($kit.el('span', monthsEl), function(o, i) {
+			$kit.each($kit.$el('span', monthsEl), function(o, i) {
 				if(i == me.date.getMonth()) {
 					$kit.adCls(o, 'active');
 					return false;
@@ -263,21 +423,21 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			$kit.adCls(monthsEl, 'disabled');
 		}
 		if(year == startYear) {
-			$kit.each($kit.el('span', monthsEl).slice(0, startMonth), function(o) {
+			$kit.each($kit.$el('span', monthsEl).slice(0, startMonth), function(o) {
 				$kit.adCls(o, 'disabled');
 			});
 		}
 		if(year == endYear) {
-			$kit.each($kit.el('span', monthsEl).slice(endMonth + 1), function(o) {
+			$kit.each($kit.$el('span', monthsEl).slice(endMonth + 1), function(o) {
 				$kit.adCls(o, 'disabled');
 			});
 		}
 		html = '';
 		year = parseInt(year / 10, 10) * 10;
 		//
-		var yearEl = $kit.el('.datepicker-years',me.picker)[0];
-		$kit.dom.text($kit.el('th:eq(1)', yearEl)[0], year + '-' + (year + 9));
-		var yearCont = $kit.el('td', yearEl);
+		var yearEl = $kit.$el('.datepicker-years',me.picker)[0];
+		$kit.dom.text($kit.$el('th:eq(1)', yearEl)[0], year + '-' + (year + 9));
+		var yearCont = $kit.$el('td', yearEl);
 		year -= 1;
 		for(var i = -1; i < 11; i++) {
 			html += '<span class="year' + (i == -1 || i == 10 ? ' old' : '') + (currentYear == year ? ' active' : '') + (year < startYear || year > endYear ? ' disabled' : '') + '">' + year + '</span>';
@@ -287,32 +447,35 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			$kit.dom.html(o, html);
 		});
 	},
+	/**
+	 * 导航左右翻页
+	 */
 	updateNavArrows : function() {
 		var me = this;
 		var d = new Date(me.viewDate), year = d.getFullYear(), month = d.getMonth();
 		switch (me.viewMode) {
 			case 0:
 				if(me.startDate !== -Infinity && year <= me.startDate.getFullYear() && month <= me.startDate.getMonth()) {
-					$kit.each($kit.el('.prev', me.picker), function(o) {
+					$kit.each($kit.$el('.prev', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'hidden'
 						});
 					});
 				} else {
-					$kit.each($kit.el('.prev', me.picker), function(o) {
+					$kit.each($kit.$el('.prev', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'visible'
 						});
 					});
 				}
 				if(me.endDate !== Infinity && year >= me.endDate.getFullYear() && month >= me.endDate.getMonth()) {
-					$kit.each($kit.el('.next', me.picker), function(o) {
+					$kit.each($kit.$el('.next', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'hidden'
 						});
 					});
 				} else {
-					$kit.each($kit.el('.next', me.picker), function(o) {
+					$kit.each($kit.$el('.next', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'visible'
 						});
@@ -322,26 +485,26 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			case 1:
 			case 2:
 				if(me.startDate !== -Infinity && year <= me.startDate.getFullYear()) {
-					$kit.each($kit.el('.prev', me.picker), function(o) {
+					$kit.each($kit.$el('.prev', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'hidden'
 						});
 					});
 				} else {
-					$kit.each($kit.el('.prev', me.picker), function(o) {
+					$kit.each($kit.$el('.prev', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'visible'
 						});
 					});
 				}
 				if(me.endDate !== Infinity && year >= me.endDate.getFullYear()) {
-					$kit.each($kit.el('.next', me.picker), function(o) {
+					$kit.each($kit.$el('.next', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'hidden'
 						});
 					});
 				} else {
-					$kit.each($kit.el('.next', me.picker), function(o) {
+					$kit.each($kit.$el('.next', me.picker), function(o) {
 						$kit.css(o, {
 							visibility : 'visible'
 						});
@@ -350,6 +513,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 				break;
 		}
 	},
+	/**
+	 * 面板click事件
+	 */
 	click : function(e) {
 		var me = this;
 		e.stopNow();
@@ -392,7 +558,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 				case 'span':
 					if(!$kit.hsCls(target, 'disabled')) {
 						if($kit.hsCls(target, 'month')) {
-							var month = $kit.array.indexOf($kit.el('span', target.parentNode), target);
+							var month = $kit.array.indexOf($kit.$el('span', target.parentNode), target);
 							me.viewDate.setMonth(month);
 						} else {
 							var year = parseInt($kit.dom.text(target), 10) || 0;
@@ -424,81 +590,87 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 						me.date = new Date(year, month, day, 0, 0, 0, 0);
 						me.viewDate = new Date(year, month, day, 0, 0, 0, 0);
 						me.fill();
-						me.setValue();
+						if(e.shiftKey && me.config.canMultipleChoose) {
+							me.addValue(true);
+						} else if(e.ctrlKey && me.config.canMultipleChoose) {
+							me.addValue();
+						} else {
+							me.setValue();
+						}
 					}
 					break;
 			}
 		}
 	},
-	mousedown : function(e) {
-		var me = this;
-		e.stopPropagation();
-		e.preventDefault();
-	},
+	/*
 	keydown : function(e) {
-		if(me.picker.is(':not(:visible)')) {
-			if(e.keyCode == 27)// allow escape to hide and re-show picker
-				me.show();
-			return;
-		}
-		var dir, day, month;
-		switch(e.keyCode) {
-			case 27:
-				// escape
-				me.hide();
-				e.preventDefault();
-				break;
-			case 37:
-			// left
-			case 39:
-				// right
-				dir = e.keyCode == 37 ? -1 : 1;
-				if(e.ctrlKey) {
-					me.date = me.moveYear(me.date, dir);
-					me.viewDate = me.moveYear(me.viewDate, dir);
-				} else if(e.shiftKey) {
-					me.date = me.moveMonth(me.date, dir);
-					me.viewDate = me.moveMonth(me.viewDate, dir);
-				} else {
-					me.date.setDate(me.date.getDate() + dir);
-					me.viewDate.setDate(me.viewDate.getDate() + dir);
-				}
-				me.setValue();
-				me.update();
-				e.preventDefault();
-				break;
-			case 38:
-			// up
-			case 40:
-				// down
-				dir = e.keyCode == 38 ? -1 : 1;
-				if(e.ctrlKey) {
-					me.date = me.moveYear(me.date, dir);
-					me.viewDate = me.moveYear(me.viewDate, dir);
-				} else if(e.shiftKey) {
-					me.date = me.moveMonth(me.date, dir);
-					me.viewDate = me.moveMonth(me.viewDate, dir);
-				} else {
-					me.date.setDate(me.date.getDate() + dir * 7);
-					me.viewDate.setDate(me.viewDate.getDate() + dir * 7);
-				}
-				me.setValue();
-				me.update();
-				e.preventDefault();
-				break;
-			case 13:
-				// enter
-				me.hide();
-				e.preventDefault();
-				break;
-		}
+	if(me.picker.is(':not(:visible)')) {
+	if(e.keyCode == 27)// allow escape to hide and re-show picker
+	me.show();
+	return;
+	}
+	var dir, day, month;
+	switch(e.keyCode) {
+	case 27:
+	// escape
+	me.hide();
+	e.preventDefault();
+	break;
+	case 37:
+	// left
+	case 39:
+	// right
+	dir = e.keyCode == 37 ? -1 : 1;
+	if(e.ctrlKey) {
+	me.date = me.moveYear(me.date, dir);
+	me.viewDate = me.moveYear(me.viewDate, dir);
+	} else if(e.shiftKey) {
+	me.date = me.moveMonth(me.date, dir);
+	me.viewDate = me.moveMonth(me.viewDate, dir);
+	} else {
+	me.date.setDate(me.date.getDate() + dir);
+	me.viewDate.setDate(me.viewDate.getDate() + dir);
+	}
+	me.setValue();
+	me.update();
+	e.preventDefault();
+	break;
+	case 38:
+	// up
+	case 40:
+	// down
+	dir = e.keyCode == 38 ? -1 : 1;
+	if(e.ctrlKey) {
+	me.date = me.moveYear(me.date, dir);
+	me.viewDate = me.moveYear(me.viewDate, dir);
+	} else if(e.shiftKey) {
+	me.date = me.moveMonth(me.date, dir);
+	me.viewDate = me.moveMonth(me.viewDate, dir);
+	} else {
+	me.date.setDate(me.date.getDate() + dir * 7);
+	me.viewDate.setDate(me.viewDate.getDate() + dir * 7);
+	}
+	me.setValue();
+	me.update();
+	e.preventDefault();
+	break;
+	case 13:
+	// enter
+	me.hide();
+	e.preventDefault();
+	break;
+	}
 	},
+	*/
+	/**
+	 * 显示天数还是月份还是年
+	 */
 	showMode : function(dir) {
 		var me = this;
 		if(dir) {
 			me.viewMode = Math.max(0, Math.min(2, me.viewMode + dir));
 		}
-		var a = $kit.el('>div', me.picker);
+		var a = $kit.$el('>div', me.picker);
 		$kit.each(a, function(o) {
 			o.style.display = 'none';
 		});
@@ -508,5 +680,46 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			}
 		})
 		me.updateNavArrows();
+	},
+	/**
+	 * add event triggle
+	 */
+	ev : function() {
+		if(arguments.length == 1) {
+			var evCfg = arguments[0];
+			var scope = evCfg.scope || this;
+			if($kit.isFn(evCfg.fn) && $kit.isStr(evCfg.ev)) {
+				var evCfg = {
+					ev : evCfg.ev,
+					fn : evCfg.fn,
+					scope : this
+				};
+				this.event = this.event || {};
+				this.event[evCfg.ev] = this.event[evCfg.ev] || [];
+				this.event[evCfg.ev].push(evCfg);
+			}
+		}
+	},
+	newEv : function() {
+		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
+			var evAry, evCfg, _evCfg = {};
+			if($kit.isStr(arguments[0])) {
+				var ev = arguments[0];
+				evAry = this.event[ev];
+			} else if($kit.isObj(arguments[0])) {
+				_evCfg = arguments[0];
+				evAry = this.event[_evCfg.ev];
+			}
+			if(!$kit.isEmpty(evAry)) {
+				for(var i = 0; evAry != null && i < evAry.length; i++) {
+					evCfg = $kit.merge(evAry[i], _evCfg);
+					var e = {
+						target : this,
+						type : evCfg.ev
+					}
+					evCfg.fn.call(evCfg.scope, e, evCfg);
+				}
+			}
+		}
 	}
 });

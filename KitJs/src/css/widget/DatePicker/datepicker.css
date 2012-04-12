@@ -1,10 +1,9 @@
 .datepicker {
-	top: 0;
-	left: 0;
 	padding: 4px;
 	display: inline-block;
 	*display: inline;
 	*zoom: 1;
+	padding: 1px;
 	margin-top: 1px;
 	color: #333;
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -51,7 +50,6 @@
 	display: block;
 }
 .datepicker table {
-	width: 100%;
 	margin: 0;
 }
 .datepicker td,
@@ -130,11 +128,10 @@
 }
 .datepicker td span {
 	display: block;
-	width: 47px;
+	width: 25%;
 	height: 54px;
 	line-height: 54px;
 	float: left;
-	margin: 2px;
 	cursor: pointer;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
@@ -212,6 +209,9 @@
 .datepicker thead tr:first-child th:hover {
 	background: #eeeeee;
 }
+.datepicker thead tr:first-child th:active {
+	background: #e3e3e3;
+}
 .input-append.date .add-on i,
 .input-prepend.date .add-on i {
 	display: block;
@@ -219,3 +219,58 @@
 	width: 16px;
 	height: 16px;
 }
+
+.dropdown-menu {
+	position: relative;
+	z-index: 1000;
+	padding: 4px 0;
+	margin: 0;
+	list-style: none;
+	background-color: white;
+	border-color: #CCC;
+	border-color: rgba(0, 0, 0, 0.2);
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding;
+	background-clip: padding-box;
+}
+
+.datepicker-months tbody td {
+	position: relative;
+	*zoom: 1;
+}
+
+.dropdown-menu::before {
+	content: '';
+	display: inline-block;
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid #CCC;
+	border-bottom-color: rgba(0, 0, 0, 0.2);
+	position: absolute;
+	top: -7px;
+	left: 6px;
+}
+.dropdown-menu::after {
+	content: '';
+	display: inline-block;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 6px solid white;
+	position: absolute;
+	top: -6px;
+	left: 7px;
+}
+
+i.icon-arrow-left,
+i.icon-arrow-right {
+	font-weight: bold;
+	font-family: Black;
+	font-style: normal;
+}
+
