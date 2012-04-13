@@ -118,6 +118,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			} else if($kit.isAry(config.date)) {
 				me.date = config.date[0];
 				me.selectedDateAry = config.date;
+			} else if($kit.isStr(config.date)) {
+				me.date = $kit.date.parseDate(config.date, me.format, me.language);
+				me.selectedDateAry = [me.date];
 			}
 		} else {
 			me.date = $kit.date.dateNow();
@@ -560,6 +563,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 	 */
 	mousedown : function(e) {
 		var me = this, target = e.target;
+		if(!me.config.canMultipleChoose) {
+			return;
+		}
 		me.mouseSlideSelect = false;
 		if(target.tagName && $kit.array.hs(['td'], target.tagName.toLowerCase())) {
 			//
@@ -580,6 +586,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 	},
 	mousemove : function(e) {
 		var me = this, target = e.target;
+		if(!me.config.canMultipleChoose) {
+			return;
+		}
 		if(me.slideSelectFlag != true) {
 			return;
 		}
@@ -662,6 +671,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 	},
 	mouseup : function(e) {
 		var me = this, target = e.target;
+		if(!me.config.canMultipleChoose) {
+			return;
+		}
 		if(me.slideSelectFlag == true) {
 			if(me.mouseSlideSelectBeginDate && me.mouseSlideSelectEndDate) {
 				me.mouseSlideSelect = true;
