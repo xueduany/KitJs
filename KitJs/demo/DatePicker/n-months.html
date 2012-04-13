@@ -39,6 +39,36 @@
 				<br/>
 				<br/>
 			</li>
+			<li>
+				<h4>输入框</h4>
+				<input type="text" id="J_input" value="">
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+			</li>
 		</ul>
 		<script>
 			$kit.$(function() {
@@ -50,9 +80,37 @@
 				picker.ev({
 					ev : 'change',
 					fn : function(e) {
-						//console.log(picker.getValue());
+						alert(picker.getValue());
 					}
 				})
+				//输入框下拉
+				$kit.ev({
+					el : '#J_input',
+					ev : 'focus',
+					fn : function(e) {
+						var d, ipt = e.target;
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker.NMonths();
+							d.init();
+							d.adhere($kit.el('#J_input'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
 			})
 		</script>
 	</body>

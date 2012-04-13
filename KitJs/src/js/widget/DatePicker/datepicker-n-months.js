@@ -56,11 +56,13 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 	buildHTML : function() {
 		var me = this;
 		var str = $kit.tpl(me.config.template.pickerDaysHTML, me.config.template);
-		me.config.template.pickerDaysHTML = str;
+		var pickerDaysHTML = str;
 		for(var i = 1; i < me.config.nMonths; i++) {
-			me.config.template.pickerDaysHTML += str;
+			pickerDaysHTML += str;
 		}
-		me.picker = $kit.newHTML($kit.tpl(me.config.template.pickerHTML, me.config.template)).childNodes[0];
+		me.picker = $kit.newHTML($kit.tpl(me.config.template.pickerHTML, $kit.join(me.config.template, {
+		pickerDaysHTML : pickerDaysHTML
+		}))).childNodes[0];
 		document.body.appendChild(me.picker);
 	},
 	/**
@@ -78,20 +80,25 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 		me.updateNavArrows();
 		me.fillMonths();
 		//
+		var _year = year;
 		for(var i = 0; i < me.config.nMonths; i++) {
 			if(i == 0) {
-				$kit.$el('.datepicker-days table:eq('+i+') th.next')[0].style.visibility = 'hidden';
+				$kit.$el('.datepicker-days table:eq('+i+') th.next', me.picker)[0].style.visibility = 'hidden';
 			} else if(i == me.config.nMonths - 1) {
-				$kit.$el('.datepicker-days table:eq('+i+') th.prev')[0].style.visibility = 'hidden';
+				$kit.$el('.datepicker-days table:eq('+i+') th.prev', me.picker)[0].style.visibility = 'hidden';
 			} else {
-				$kit.$el('.datepicker-days table:eq('+i+') th.next')[0].style.visibility = 'hidden';
-				$kit.$el('.datepicker-days table:eq('+i+') th.prev')[0].style.visibility = 'hidden';
+				$kit.$el('.datepicker-days table:eq('+i+') th.next', me.picker)[0].style.visibility = 'hidden';
+				$kit.$el('.datepicker-days table:eq('+i+') th.prev', me.picker)[0].style.visibility = 'hidden';
 			}
 			if(i > 0) {
 				month++;
 				month = month % 12;
 			}
-			var prevMonth = new Date(year, month - 1, 28, 0, 0, 0, 0);
+			//
+			if(_year == year && me.viewDate.getMonth() + i >= 12) {
+				_year += 1;
+			}
+			var prevMonth = new Date(_year, month - 1, 28, 0, 0, 0, 0);
 			var day = $kit.date.getDaysInMonth(prevMonth.getFullYear(), prevMonth.getMonth());
 			prevMonth.setDate(day);
 			prevMonth.setDate(day - (prevMonth.getDay() - me.weekStart + 7) % 7);
@@ -101,16 +108,15 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 			nextMonth.setDate(nextMonth.getDate() + 42);
 			//
 			if(me.config.language != 'cn') {
-				$kit.$el('.datepicker-days table:eq('+i+') th:eq(1)',me.picker)[0].innerHTML = $kit.date.languagePack[me.language].months[month] + ' ' + year;
+				$kit.$el('.datepicker-days table:eq('+i+') th:eq(1)',me.picker)[0].innerHTML = $kit.date.languagePack[me.language].months[month] + ' ' + _year;
 			} else {
-				$kit.$el('.datepicker-days table:eq('+i+') th:eq(1)',me.picker)[0].innerHTML = year + '年' + $kit.date.languagePack[me.language].months[month];
+				$kit.$el('.datepicker-days table:eq('+i+') th:eq(1)',me.picker)[0].innerHTML = _year + '年' + $kit.date.languagePack[me.language].months[month];
 			}
 			/**
 			 * start
 			 */
 			html = [];
 			var clsName;
-			var _year = year;
 			while(prevMonth.valueOf() < nextMonth.valueOf()) {
 				var notShow = false;
 				if(prevMonth.getDay() == me.weekStart) {
@@ -158,7 +164,6 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 					pos : 'last'
 				});
 			}
-			_year = prevMonth.getFullYear();
 		}
 		/**
 		 * end
@@ -170,14 +175,16 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 		$kit.each($kit.$el('span', monthsEl), function(o) {
 			$kit.rmCls(o, 'active');
 		});
-		if(currentYear == year) {
-			$kit.each($kit.$el('span', monthsEl), function(o, i) {
-				if(i == me.viewDate.getMonth()) {
-					$kit.adCls(o, 'active');
-					return false;
-				}
-			});
-		}
+		//if(currentYear == year) {
+		$kit.each($kit.$el('span.month', monthsEl), function(o, i) {
+			var _m = me.viewDate.getMonth() + me.currentMonthCol;
+			_m = _m % 12;
+			if(i == _m) {
+				$kit.adCls(o, 'active');
+				return false;
+			}
+		});
+		//}
 		if(year < startYear || year > endYear) {
 			$kit.adCls(monthsEl, 'disabled');
 		}
@@ -234,26 +241,35 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 				case 'th':
 					switch(target.className) {
 						case 'switch':
-							var n = $kit.array.indexOf($kit.$el('.datepicker-days table'), $kit.dom.parentEl8tag(target, 'table', me.picker));
-							me.currentMonthCol = n;
+							var n = $kit.array.indexOf($kit.$el('.datepicker-days table', me.picker), $kit.dom.parentEl8tag(target, 'table', me.picker));
+							if(n >= 0) {
+								me.currentMonthCol = n;
+							}
 							//
 							var monthsEl = $kit.$el('.datepicker-months', me.picker)[0];
 							$kit.each($kit.$el('span', monthsEl), function(o) {
 								$kit.rmCls(o, 'active');
 							});
-							$kit.each($kit.$el('span', monthsEl), function(o, i) {
+							$kit.each($kit.$el('span.month', monthsEl), function(o, i) {
 								if(i == (me.viewDate.getMonth() + me.currentMonthCol) % 12) {
 									$kit.adCls(o, 'active');
 									return false;
 								}
 							});
 							//
-							if(me.viewDate.getMonth() + me.currentMonthCol < 12 && me.viewDate.getMonth() + 3 >= 12) {
-								$kit.dom.text($kit.$el('th:eq(1)', monthsEl)[0], me.viewDate.getFullYear());
+							if(me.viewDate.getMonth() + me.currentMonthCol >= 12) {
+								$kit.dom.text($kit.$el('th:eq(1)', monthsEl)[0], me.viewDate.getFullYear() + 1);
+								var yearEl = $kit.$el('.datepicker-years',me.picker)[0];
+								$kit.each($kit.$el('span.year', me.picker), function(o) {
+									if($kit.hsCls(o, 'active') && $kit.dom.text(o) != me.viewDate.getFullYear() + 1) {
+										$kit.rmCls(o, 'active');
+									}
+									if($kit.dom.text(o) == me.viewDate.getFullYear() + 1) {
+										$kit.adCls(o, 'active');
+										return false;
+									}
+								});
 							}
-							//
-							var yearEl = $kit.$el('.datepicker-years',me.picker)[0];
-							//$kit.dom.text($kit.$el('th:eq(1)', yearEl)[0], year + '-' + (year + 9));
 							//
 							me.showMode(1);
 							break;
@@ -296,27 +312,9 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 				case 'td':
 					if($kit.hsCls(target, 'day') && !$kit.hsCls(target, 'disabled')) {
 						var day = parseInt($kit.dom.text(target), 10) || 1;
-						var n = $kit.array.indexOf($kit.$el('.datepicker-days table'), $kit.dom.parentEl8tag(target, 'table', me.picker));
+						var n = $kit.array.indexOf($kit.$el('.datepicker-days table', me.picker), $kit.dom.parentEl8tag(target, 'table', me.picker));
 						me.currentMonthCol = n;
 						var year = me.viewDate.getFullYear(), month = me.viewDate.getMonth() + n;
-						if(month + n > 12) {
-							year += 1;
-						}
-						if($kit.hsCls(target, 'old')) {
-							if(month == 0) {
-								month = 11;
-								year -= 1;
-							} else {
-								month -= 1;
-							}
-						} else if($kit.hsCls(target, 'new')) {
-							if(month == 11) {
-								month = 0;
-								year += 1;
-							} else {
-								month += 1;
-							}
-						}
 						newDate = new Date(year, month, day, 0, 0, 0, 0);
 						if(me.date && me.date.valueOf() == newDate.valueOf()) {
 							$kit.rmCls(target, 'active');
@@ -395,7 +393,7 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 		}
 		if($kit.hsCls(target, 'day')) {
 			var day = parseInt($kit.dom.text(target), 10) || 1;
-			var n = $kit.array.indexOf($kit.$el('.datepicker-days table'), $kit.dom.parentEl8tag(target, 'table', me.picker));
+			var n = $kit.array.indexOf($kit.$el('.datepicker-days table', me.picker), $kit.dom.parentEl8tag(target, 'table', me.picker));
 			var year = me.viewDate.getFullYear(), month = me.viewDate.getMonth() + n;
 			if($kit.hsCls(target, 'old') && !$kit.hsCls(target, 'disabled')) {
 				if(month == 0) {
@@ -471,11 +469,62 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 			if(me.viewDate == null) {
 				me.viewDate = new Date(me.date);
 			} else {
-				if(me.date && me.viewDate && Math.abs(me.date.getMonth() - me.viewDate.getMonth()) > 3) {
+				if(me.date && me.viewDate && Math.abs((me.date.getFullYear() - me.viewDate.getFullYear()) * 12 + me.date.getMonth() - me.viewDate.getMonth()) > 3) {
 					me.viewDate = new Date(me.date);
 				}
 			}
 		}
 		me.fill();
+	},
+	/**
+	 * 按住shift或者ctrl添加
+	 */
+	addValue : function(continuous) {
+		var me = this;
+		continuous = continuous || false;
+		me.selectedDateAry = me.selectedDateAry || [];
+		var beginDate = me.selectedDateAry[0];
+		var endDate = me.selectedDateAry[me.selectedDateAry.length - 1];
+		if(continuous == true) {
+			if(me.date.valueOf() < beginDate.valueOf()) {
+				beginDate = new Date(me.date);
+			} else {
+				endDate = new Date(me.date);
+			}
+			var newSelectedDateAry = [];
+			while(endDate.valueOf() >= beginDate.valueOf()) {
+				newSelectedDateAry.push(new Date(beginDate));
+				$kit.date.addDays(beginDate, 1);
+			}
+			me.selectedDateAry = newSelectedDateAry;
+		} else {
+			if(me.date.valueOf() < beginDate.valueOf()) {
+				me.selectedDateAry.splice(0, 0, new Date(me.date));
+			} else if(me.date.valueOf() > endDate.valueOf()) {
+				me.selectedDateAry.push(new Date(me.date));
+			} else if(me.date.valueOf() >= beginDate.valueOf() || me.date.valueOf() <= endDate.valueOf()) {
+				var canAdd = true;
+				for(var i = 0; i < me.selectedDateAry.length; ) {
+					if(me.date.valueOf() == me.selectedDateAry[i].valueOf()) {
+						me.selectedDateAry.splice(i, 1);
+						canAdd = false;
+						break;
+					} else if(me.date.valueOf() > me.selectedDateAry[i].valueOf() && i < me.selectedDateAry.length - 1 && me.date.valueOf() < me.selectedDateAry[i + 1].valueOf()) {
+						me.selectedDateAry.splice(i + 1, 0, new Date(me.date));
+						break;
+					} else if(i == me.selectedDateAry.length - 1) {
+						me.selectedDateAry.splice(i, 0, new Date(me.date));
+					}
+					i++;
+				}
+			}
+		}
+		if(me.adhereEl) {
+			me.adhereEl.value = me.getValue();
+		}
+		me.update();
+		me.newEv({
+			ev : 'change'
+		});
 	}
 });
