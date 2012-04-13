@@ -183,13 +183,14 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			$kit.adCls(me.picker, me.config.template.dropDownCls);
 			me.adhereEl = config.el;
 			me.adhereConfig = config;
-			me.fixPosition(adhereConfig);
+			me.fixPosition(me.adhereConfig);
 		}
 	},
 	/**
 	 * 修正日历位置，随着吸附元素调整位置
 	 */
 	fixPosition : function(adhereConfig) {
+		var me = this;
 		var offset = $kit.offset(adhereConfig.el);
 		$kit.css(me.picker, {
 			position : 'absolute',
