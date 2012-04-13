@@ -78,7 +78,62 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		var me = this, config = me.config;
 		me.language = config.language;
 		me.format = $kit.date.parseFormat(config.dateFormat);
-		me.picker = $kit.newHTML($kit.tpl(config.template.pickerHTML, config.template)).childNodes[0];
+		me.buildHTML();
+		//
+		me.initEv();
+		if(config.date) {
+			if($kit.isDate(config.date)) {
+				me.date = config.date;
+				me.selectedDateAry = [new Date(config.date)];
+			} else if($kit.isAry(config.date)) {
+				me.date = config.date[0];
+				me.selectedDateAry = config.date;
+			} else if($kit.isStr(config.date)) {
+				me.date = $kit.date.parseDate(config.date, me.format, me.language);
+				me.selectedDateAry = [me.date];
+			}
+		} else {
+			me.date = $kit.date.dateNow();
+		}
+		//
+		switch(config.startView) {
+			case 2:
+			case 'decade':
+				me.viewMode = me.startViewMode = 2;
+				break;
+			case 1:
+			case 'year':
+				me.viewMode = me.startViewMode = 1;
+				break;
+			case 0:
+			case 'month':
+			default:
+				me.viewMode = me.startViewMode = 0;
+				break;
+		}
+		me.weekStart = config.weekStart || $kit.date.languagePack[me.language].weekStart || 0;
+		me.weekEnd = me.weekStart == 0 ? 6 : me.weekStart - 1;
+		me.startDate = -Infinity;
+		me.endDate = Infinity;
+		me.setStartDate(config.startDate);
+		me.setEndDate(config.endDate);
+		me.fillDow();
+		me.update();
+		me.showMode();
+		if(config.show) {
+			//
+		} else {
+			me.hide();
+		}
+		return me;
+	},
+	buildHTML : function() {
+		var me = this;
+		me.picker = $kit.newHTML($kit.tpl(me.config.template.pickerHTML, me.config.template)).childNodes[0];
+		document.body.appendChild(me.picker);
+	},
+	initEv : function() {
+		var me = this;
 		$kit.ev({
 			el : me.picker,
 			ev : 'mousedown',
@@ -111,53 +166,6 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			},
 			scope : me
 		});
-		if(config.date) {
-			if($kit.isDate(config.date)) {
-				me.date = config.date;
-				me.selectedDateAry = [new Date(config.date)];
-			} else if($kit.isAry(config.date)) {
-				me.date = config.date[0];
-				me.selectedDateAry = config.date;
-			} else if($kit.isStr(config.date)) {
-				me.date = $kit.date.parseDate(config.date, me.format, me.language);
-				me.selectedDateAry = [me.date];
-			}
-		} else {
-			me.date = $kit.date.dateNow();
-		}
-		document.body.appendChild(me.picker);
-		//
-		switch(config.startView) {
-			case 2:
-			case 'decade':
-				me.viewMode = me.startViewMode = 2;
-				break;
-			case 1:
-			case 'year':
-				me.viewMode = me.startViewMode = 1;
-				break;
-			case 0:
-			case 'month':
-			default:
-				me.viewMode = me.startViewMode = 0;
-				break;
-		}
-		me.weekStart = config.weekStart || $kit.date.languagePack[me.language].weekStart || 0;
-		me.weekEnd = me.weekStart == 0 ? 6 : me.weekStart - 1;
-		me.startDate = -Infinity;
-		me.endDate = Infinity;
-		me.setStartDate(config.startDate);
-		me.setEndDate(config.endDate);
-		me.fillDow();
-		me.fillMonths();
-		me.update();
-		me.showMode();
-		if(config.show) {
-			//
-		} else {
-			me.hide();
-		}
-		return me;
 	},
 	/**
 	 * 显示日历
@@ -390,8 +398,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		startYear = me.startDate !== -Infinity ? me.startDate.getFullYear() : -Infinity, //
 		startMonth = me.startDate !== -Infinity ? me.startDate.getMonth() : -Infinity, //
 		endYear = me.endDate !== Infinity ? me.endDate.getFullYear() : Infinity, //
-		endMonth = me.endDate !== Infinity ? me.endDate.getMonth() : Infinity, //
-		currentDate = me.date.valueOf();
+		endMonth = me.endDate !== Infinity ? me.endDate.getMonth() : Infinity;
 		//
 		if(me.config.language != 'cn') {
 			$kit.$el('.datepicker-days th:eq(1)',me.picker)[0].innerHTML = $kit.date.languagePack[me.language].months[month] + ' ' + year;
@@ -449,7 +456,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 				pos : 'last'
 			});
 		}
-		var currentYear = me.date.getFullYear();
+		var currentYear = me.viewDate.getFullYear();
 		//
 		var monthsEl = $kit.$el('.datepicker-months', me.picker)[0];
 		$kit.dom.text($kit.$el('th:eq(1)', monthsEl)[0], year);
@@ -458,7 +465,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		});
 		if(currentYear == year) {
 			$kit.each($kit.$el('span', monthsEl), function(o, i) {
-				if(i == me.date.getMonth()) {
+				if(i == me.viewDate.getMonth()) {
 					$kit.adCls(o, 'active');
 					return false;
 				}
@@ -501,58 +508,42 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		switch (me.viewMode) {
 			case 0:
 				if(me.startDate !== -Infinity && year <= me.startDate.getFullYear() && month <= me.startDate.getMonth()) {
-					$kit.each($kit.$el('.prev', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'hidden'
-						});
+					$kit.css($kit.$el('th.prev:first', me.picker)[0], {
+						visibility : 'hidden'
 					});
 				} else {
-					$kit.each($kit.$el('.prev', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'visible'
-						});
+					$kit.css($kit.$el('th.prev:first', me.picker)[0], {
+						visibility : 'visible'
 					});
 				}
 				if(me.endDate !== Infinity && year >= me.endDate.getFullYear() && month >= me.endDate.getMonth()) {
-					$kit.each($kit.$el('.next', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'hidden'
-						});
+					$kit.css($kit.$el('th.next:last', me.picker)[0], {
+						visibility : 'hidden'
 					});
 				} else {
-					$kit.each($kit.$el('.next', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'visible'
-						});
+					$kit.css($kit.$el('th.next:last', me.picker)[0], {
+						visibility : 'visible'
 					});
 				}
 				break;
 			case 1:
 			case 2:
 				if(me.startDate !== -Infinity && year <= me.startDate.getFullYear()) {
-					$kit.each($kit.$el('.prev', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'hidden'
-						});
+					$kit.css($kit.$el('th.prev:first', me.picker)[0], {
+						visibility : 'hidden'
 					});
 				} else {
-					$kit.each($kit.$el('.prev', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'visible'
-						});
+					$kit.css($kit.$el('th.prev:first', me.picker)[0], {
+						visibility : 'visible'
 					});
 				}
 				if(me.endDate !== Infinity && year >= me.endDate.getFullYear()) {
-					$kit.each($kit.$el('.next', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'hidden'
-						});
+					$kit.css($kit.$el('th.next:last', me.picker)[0], {
+						visibility : 'hidden'
 					});
 				} else {
-					$kit.each($kit.$el('.next', me.picker), function(o) {
-						$kit.css(o, {
-							visibility : 'visible'
-						});
+					$kit.css($kit.$el('th.next:last', me.picker)[0], {
+						visibility : 'visible'
 					});
 				}
 				break;
