@@ -43,14 +43,14 @@
 		<script>
 			$kit.$(function() {
 				//默认日历
-				var picker = new $kit.ui.DatePicker.NMonths();
+				window.picker = new $kit.ui.DatePicker.NMonths();
 				picker.init();
 				$kit.el('#J_datePicker').appendChild(picker.picker);
 				picker.show();
 				picker.ev({
 					ev : 'change',
 					fn : function(e) {
-						alert(picker.getValue());
+						//console.log(picker.getValue());
 					}
 				})
 			})

@@ -274,3 +274,6 @@ i.icon-arrow-right {
 	font-style: normal;
 }
 
+.datepicker-days table {
+	display: inline-block;
+}
