@@ -81,6 +81,24 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		me.picker = $kit.newHTML($kit.tpl(config.template.pickerHTML, config.template)).childNodes[0];
 		$kit.ev({
 			el : me.picker,
+			ev : 'mousedown',
+			fn : me.mousedown,
+			scope : me
+		});
+		$kit.ev({
+			el : me.picker,
+			ev : 'mousemove',
+			fn : me.mousemove,
+			scope : me
+		});
+		$kit.ev({
+			el : me.picker,
+			ev : 'mouseup',
+			fn : me.mouseup,
+			scope : me
+		});
+		$kit.ev({
+			el : me.picker,
 			ev : 'click',
 			fn : me.click,
 			scope : me
@@ -150,6 +168,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			me.adhere(me.adhereConfig);
 		}
 	},
+	/**
+	 * 吸附
+	 */
 	adhere : function(config) {
 		var me = this;
 		if($kit.isNode(config)) {
@@ -162,13 +183,19 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			$kit.adCls(me.picker, me.config.template.dropDownCls);
 			me.adhereEl = config.el;
 			me.adhereConfig = config;
-			var offset = $kit.offset(config.el);
-			$kit.css(me.picker, {
-				position : 'absolute',
-				top : offset.bottom + (config.offsetTop || 0) + 'px',
-				left : offset.left + (config.left || 0) + 'px'
-			});
+			me.fixPosition(adhereConfig);
 		}
+	},
+	/**
+	 * 修正日历位置，随着吸附元素调整位置
+	 */
+	fixPosition : function(adhereConfig) {
+		var offset = $kit.offset(adhereConfig.el);
+		$kit.css(me.picker, {
+			position : 'absolute',
+			top : offset.bottom + (adhereConfig.offsetTop || 0) + 'px',
+			left : offset.left + (adhereConfig.left || 0) + 'px'
+		});
 	},
 	/**
 	 * 隐藏
@@ -180,14 +207,22 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 	/**
 	 * 设值
 	 */
-	setValue : function() {
+	setValue : function(remove) {
+		remove = remove;
 		var me = this;
-		var formated = $kit.date.formatDate(me.date, me.format, me.language);
-		if(me.adhereEl) {
-			me.adhereEl.value = formated;
+		if(remove == false) {
+			me.selectedDateAry = [];
+			if(me.adhereEl) {
+				me.adhereEl.value = '';
+			}
+		} else {
+			var formated = $kit.date.formatDate(me.date, me.format, me.language);
+			if(me.adhereEl) {
+				me.adhereEl.value = formated;
+			}
+			me.selectedDateAry = [new Date(me.date)];
+			me.update();
 		}
-		me.selectedDateAry = [new Date(me.date)];
-		me.update();
 		me.newEv({
 			ev : 'change'
 		});
@@ -257,8 +292,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 				dateStrAry.push($kit.date.formatDate(me.selectedDateAry[me.selectedDateAry.length - 1], me.format, me.language));
 				return dateStrAry.join(me.config.shiftSelectOutTypeShortSeparator);
 			}
+			return $kit.date.formatDate(me.date, me.format, me.language)
 		}
-		return $kit.date.formatDate(me.date, me.format, me.language)
+		return '';
 	},
 	/**
 	 * 设置能选择的最早日期
@@ -519,10 +555,151 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		}
 	},
 	/**
+	 * 面板mousedown和mousemove事件，主要用于鼠标滑动选择
+	 */
+	mousedown : function(e) {
+		var me = this, target = e.target;
+		me.mouseSlideSelect = false;
+		if(target.tagName && $kit.array.hs(['td'], target.tagName.toLowerCase())) {
+			//
+		} else {
+			target = $kit.parentEl(target, function(p) {
+				if(p.tagName && $kit.array.hs(['td'], p.tagName.toLowerCase())) {
+					return true;
+				}
+				if(p == me.picker) {
+					return false;
+				}
+			});
+		}
+		if($kit.hsCls(target, 'day')) {
+			$kit.adCls(target, 'active');
+			me.slideSelectFlag = true;
+		}
+	},
+	mousemove : function(e) {
+		var me = this, target = e.target;
+		if(me.slideSelectFlag != true) {
+			return;
+		}
+		if(target.tagName && $kit.array.hs(['td'], target.tagName.toLowerCase())) {
+			//
+		} else {
+			target = $kit.parentEl(target, function(p) {
+				if(p.tagName && $kit.array.hs(['td'], p.tagName.toLowerCase())) {
+					return true;
+				}
+				if(p == me.picker) {
+					return false;
+				}
+			});
+		}
+		if($kit.hsCls(target, 'day')) {
+			var day = parseInt($kit.dom.text(target), 10) || 1;
+			var year = me.viewDate.getFullYear(), month = me.viewDate.getMonth();
+			if($kit.hsCls(target, 'old') && !$kit.hsCls(target, 'disabled')) {
+				if(month == 0) {
+					month = 11;
+					year -= 1;
+				} else {
+					month -= 1;
+				}
+			} else if($kit.hsCls(target, 'new') && !$kit.hsCls(target, 'disabled')) {
+				if(month == 11) {
+					month = 0;
+					year += 1;
+				} else {
+					month += 1;
+				}
+			}
+			date = new Date(year, month, day, 0, 0, 0, 0);
+			$kit.adCls(target, 'active');
+			if(me.mouseSlideSelectBeginDate == null) {
+				me.mouseSlideSelectBeginDate = new Date(date);
+				me.mouseSlideSelectBeginEl = target;
+			} else if(me.mouseSlideSelectBeginDate.valueOf() != date.valueOf()//
+			&& (//
+				me.mouseSlideSelectEndDate == null//
+				|| (me.mouseSlideSelectEndDate && me.mouseSlideSelectEndDate.valueOf() != date.valueOf()))//
+			) {
+				me.mouseSlideSelectEndDate = new Date(date);
+				me.mouseSlideSelectEndEl = target;
+				if(me.mouseSlideSelectBeginDate && me.mouseSlideSelectEndDate) {
+					var first = false, last = false, firstDate, lastDate, firstEl, lastEl;
+					if(me.mouseSlideSelectEndDate.valueOf() > me.mouseSlideSelectBeginDate.valueOf()) {
+						//firstDate = me.mouseSlideSelectBeginDate;
+						firstEl = me.mouseSlideSelectBeginEl;
+						//lastDate = me.mouseSlideSelectEndDate;
+						lastEl = me.mouseSlideSelectEndEl;
+					} else {
+						//lastDate = me.mouseSlideSelectBeginDate;
+						lastEl = me.mouseSlideSelectBeginEl;
+						//firstDate = me.mouseSlideSelectEndDate;
+						firstEl = me.mouseSlideSelectEndEl;
+					}
+					$kit.each($kit.$el('.datepicker-days td.day'), function(o) {
+						if(last) {
+							$kit.rmCls(o, 'active');
+						}
+						if(first && o == lastEl) {
+							last = true;
+						}
+						if(!first && o == firstEl) {
+							first = true;
+						}
+						if(!first) {
+							$kit.rmCls(o, 'active');
+						}
+						if(first && !last) {
+							$kit.adCls(o, 'active');
+						}
+
+					});
+				}
+			}
+		}
+	},
+	mouseup : function(e) {
+		var me = this, target = e.target;
+		if(me.slideSelectFlag == true) {
+			if(me.mouseSlideSelectBeginDate && me.mouseSlideSelectEndDate) {
+				me.mouseSlideSelect = true;
+				if(me.mouseSlideSelectEndDate.valueOf() > me.mouseSlideSelectBeginDate.valueOf()) {
+					beginDate = new Date(me.mouseSlideSelectBeginDate);
+					endDate = new Date(me.mouseSlideSelectEndDate);
+				} else {
+					endDate = new Date(me.mouseSlideSelectBeginDate);
+					beginDate = new Date(me.mouseSlideSelectEndDate);
+				}
+				me.selectedDateAry = [];
+				while(endDate.valueOf() >= beginDate.valueOf()) {
+					me.selectedDateAry.push(new Date(beginDate));
+					$kit.date.addDays(beginDate, 1);
+				}
+				if(me.adhereEl) {
+					me.adhereEl.value = me.getValue();
+				}
+				//me.update();
+				me.newEv({
+					ev : 'change'
+				});
+			}
+			me.mouseSlideSelectEndEl = null;
+			me.mouseSlideSelectEndDate = null;
+			me.mouseSlideSelectBeginEl = null;
+			me.mouseSlideSelectBeginDate = null;
+		}
+		me.slideSelectFlag = false;
+	},
+	/**
 	 * 面板click事件
 	 */
 	click : function(e) {
 		var me = this;
+		if(me.mouseSlideSelect == true) {
+			me.mouseSlideSelect = false;
+			return;
+		}
 		e.stopNow();
 		var target = e.target;
 		if(target.tagName && $kit.array.hs(['span', 'td', 'th'], target.tagName.toLowerCase())) {
@@ -592,15 +769,22 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 								month += 1;
 							}
 						}
-						me.date = new Date(year, month, day, 0, 0, 0, 0);
-						me.viewDate = new Date(year, month, day, 0, 0, 0, 0);
-						me.fill();
-						if(e.shiftKey && me.config.canMultipleChoose) {
-							me.addValue(true);
-						} else if(e.ctrlKey && me.config.canMultipleChoose) {
-							me.addValue();
+						newDate = new Date(year, month, day, 0, 0, 0, 0);
+						if(me.date && me.date.valueOf() == newDate.valueOf()) {
+							$kit.rmCls(target, 'active');
+							me.setValue(false);
+							me.date = null;
 						} else {
-							me.setValue();
+							me.date = newDate;
+							me.viewDate = new Date(year, month, day, 0, 0, 0, 0);
+							me.fill();
+							if(e.shiftKey && me.config.canMultipleChoose) {
+								me.addValue(true);
+							} else if(e.ctrlKey && me.config.canMultipleChoose) {
+								me.addValue();
+							} else {
+								me.setValue();
+							}
 						}
 					}
 					break;

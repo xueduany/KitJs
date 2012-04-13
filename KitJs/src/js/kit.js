@@ -1230,6 +1230,9 @@ $Kit.prototype = {
 	// }
 	// },
 	each : function(ary, fn, scope) {
+		if(ary == null) {
+			return;
+		}
 		var me = this;
 		if(me.isFn(fn)) {
 			if(me.isAry(ary)) {
