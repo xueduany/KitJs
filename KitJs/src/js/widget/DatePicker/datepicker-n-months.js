@@ -49,7 +49,7 @@ $kit.merge($kit.ui.DatePicker.NMonths, {
 			'</table>' //
 			].join('')
 		},
-		nMonths : 3
+		nMonths : 3 //配置显示多少个月的日历
 	})
 });
 $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
