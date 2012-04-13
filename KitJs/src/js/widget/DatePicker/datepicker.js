@@ -637,7 +637,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 						//firstDate = me.mouseSlideSelectEndDate;
 						firstEl = me.mouseSlideSelectEndEl;
 					}
-					$kit.each($kit.$el('.datepicker-days td.day'), function(o) {
+					$kit.each($kit.$el('.datepicker-days td.day', me.picker), function(o) {
 						if(last) {
 							$kit.rmCls(o, 'active');
 						}
@@ -778,12 +778,21 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 							me.date = newDate;
 							me.viewDate = new Date(year, month, day, 0, 0, 0, 0);
 							me.fill();
-							if(e.shiftKey && me.config.canMultipleChoose) {
+							if(e.shiftKey && me.config.canMultipleChoose && me.selectedDateAry && me.selectedDateAry.length >= 1) {
 								me.addValue(true);
-							} else if(e.ctrlKey && me.config.canMultipleChoose) {
+							} else if(e.ctrlKey && me.config.canMultipleChoose && me.selectedDateAry && me.selectedDateAry.length >= 1) {
 								me.addValue();
 							} else {
-								me.setValue();
+								if(me.selectedDateAry && me.selectedDateAry.length > 1) {
+									$kit.each($kit.$el('.datepicker-days td.day', me.picker), function(o) {
+										$kit.rmCls(o, 'active');
+									});
+									$kit.rmCls(target, 'active');
+									me.setValue(false);
+									me.date = null;
+								} else {
+									me.setValue();
+								}
 							}
 						}
 					}
