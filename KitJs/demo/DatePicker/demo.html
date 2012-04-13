@@ -40,8 +40,8 @@
 				<br/>
 			</li>
 			<li>
-				<h4>输入框下拉日历</h4>
-				<input type="text" id="J_input">
+				<h4>输入框下拉日历（从input取默认日期）</h4>
+				<input type="text" id="J_input" value="2012年4月1日">
 				<br/>
 				<br/>
 			</li>
@@ -144,12 +144,14 @@ picker.init();//执行初始化
 					el : '#J_input',
 					ev : 'focus',
 					fn : function(e) {
-						var d
+						var d, ipt = e.target;
 						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
 						if(d) {
 							d.show();
 						} else {
-							d = new $kit.ui.DatePicker().init();
+							d = new $kit.ui.DatePicker({
+								date : ipt.value
+							}).init();
 							d.adhere($kit.el('#J_input'));
 							d.show();
 						}
