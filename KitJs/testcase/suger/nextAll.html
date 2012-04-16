@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/anim.js"></script>
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/date.js"></script>
+		<script src="../../src/js/localStorage.js"></script>
+		<script src="../../src/js/event.js"></script>
+		<script src="../../src/js/array.js"></script>
+		<script src="../../src/js/cookie.js"></script>
+		<script src="../../src/js/io.js"></script>
+		<script src="../../src/js/json.js"></script>
+		<script src="../../src/js/selector.js"></script>
+		<!-- -->
+		<script src="../../src/js/suger.js"></script>
+	</head>
+	<body>
+		<nav id="aaa"></nav>
+		<ul class="a">
+			<li>
+				1
+			</li>
+			<li>
+				2
+			</li>
+			<li>
+				3
+			</li>
+			<li>
+				4
+			</li>
+			<li class="c"></li>
+			<li>
+				5
+			</li>
+			<li>
+				6
+			</li>
+			<li>
+				7
+			</li>
+		</ul>
+		<script>
+			console.log($kit.$('.a li.c').nextAll().andSelf())
+		</script>
+	</body>
+</html>
