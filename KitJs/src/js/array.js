@@ -53,7 +53,7 @@ $Kit.Array.prototype = {
 			if(setting.ifExisted) {
 				for(var i = 0; i < ary.length; i++) {
 					var o = ary[i];
-					if(o.toString() == add.toString()//
+					if(o == add//
 					|| (setting.ignoreCase && o.toString().toLowerCase() == add.toString().toLowerCase())) {
 						break;
 					} else if(i == ary.length - 1) {
@@ -85,7 +85,7 @@ $Kit.Array.prototype = {
 		} else {
 			for(var i = 0; i < ary.length; i++) {
 				var o = ary[i];
-				if(o.toString() == del.toString()//
+				if(o == del//
 				|| (setting.ignoreCase && o.toString().toLowerCase() == del.toString().toLowerCase())) {
 					ary.splice(i, 1);
 					if(setting.isGlobal) {

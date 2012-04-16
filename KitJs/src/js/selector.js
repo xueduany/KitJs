@@ -935,7 +935,8 @@
 
 		// release memory in IE
 		root = form = null;
-	})(); (function() {
+	})();
+	(function() {
 		// Check to see if the browser returns only elements
 		// when doing getElementsByTagName("*")
 
@@ -1117,7 +1118,8 @@
 				return Sizzle(expr, null, null, [node]).length > 0;
 			};
 		}
-	})(); (function() {
+	})();
+	(function() {
 		var div = document.createElement("div");
 
 		div.innerHTML = "<div class='test e'></div><div class='test'></div>";
@@ -1255,7 +1257,7 @@
 	};
 	// EXPOSE
 
-	window.Sizzle = Sizzle;
+	$kit.selector = window.Sizzle = Sizzle;
 
 	$kit.$el = function(selector, root) {
 		return Sizzle(selector, root);

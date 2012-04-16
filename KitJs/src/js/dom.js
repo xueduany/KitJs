@@ -154,6 +154,22 @@ $Kit.Dom.prototype = {
 		} else {
 			return el.innerHTML;
 		}
+	},
+	/**
+	 * clone a node
+	 */
+	clone : function(node) {
+		if(document.createElement("nav").cloneNode(true).outerHTML !== "<:nav></:nav>") {
+			return node.cloneNode(true);
+		} else {
+			var fragment = document.createDocumentFragment(), //
+			doc = fragment.createElement ? fragment : document;
+			doc.createElement(node.tagName);
+			var div = doc.createElement('div');
+			fragment.appendChild(div);
+			div.innerHTML = node.outerHTML;
+			return div.firstChild;
+		}
 	}
 };
 $kit.d = $kit.dom = new $Kit.Dom();
