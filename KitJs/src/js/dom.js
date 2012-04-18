@@ -170,6 +170,101 @@ $Kit.Dom.prototype = {
 			div.innerHTML = node.outerHTML;
 			return div.firstChild;
 		}
+	},
+	/**
+	 * height+padding+border
+	 */
+	height : function(node, value) {
+		var me = this;
+		if(node != null) {
+			if(value == null) {
+				return $kit.offset(node).height;
+			}
+			if(document.compatMode == "BackCompat") {
+				node.style.height = value;
+			} else {
+				node.style.height = value//
+				- ($kit.css(node, 'border-top-width') || 0)//
+				- ($kit.css(node, 'border-bottom-width') || 0)//
+				- ($kit.css(node, 'padding-top-width') || 0)//
+				- ($kit.css(node, 'padding-bottom-width') || 0)//
+				;
+			}
+		}
+		return $kit.viewport().clientHeight;
+	},
+	width : function(node, value) {
+		var me = this;
+		if(node != null) {
+			if(value == null) {
+				return $kit.offset(node).width;
+			}
+			if(document.compatMode == "BackCompat") {
+				node.style.width = value;
+			} else {
+				node.style.width = value//
+				- ($kit.css(node, 'border-left-width') || 0)//
+				- ($kit.css(node, 'border-right-width') || 0)//
+				- ($kit.css(node, 'padding-left-width') || 0)//
+				- ($kit.css(node, 'padding-right-width') || 0)//
+				;
+			}
+		}
+		return $kit.viewport().clientHeight;
+	},
+	/**
+	 * height + padding
+	 */
+	innerHeight : function(node) {
+		var me = this;
+		if(document.compatMode == "BackCompat") {
+			return $kit.css(node, 'height') - ($kit.css(node, 'border-top-width') || 0) - ($kit.css(node, 'border-bottom-width') || 0);
+		}
+		return $kit.css(node, 'height') + ($kit.css(node, 'padding-top-width') || 0) - ($kit.css(node, 'padding-bottom-width') || 0);
+	},
+	/**
+	 * width + padding
+	 */
+	innerWidth : function(node) {
+		var me = this;
+		if(document.compatMode == "BackCompat") {
+			return $kit.css(node, 'width') - ($kit.css(node, 'border-left-width') || 0) - ($kit.css(node, 'border-right-width') || 0);
+		}
+		return $kit.css(node, 'width') + ($kit.css(node, 'padding-left-width') || 0) - ($kit.css(node, 'padding-right-width') || 0);
+	},
+	outerHeight : function(node) {
+		var me = this;
+		if(document.compatMode == "BackCompat") {
+			return $kit.css(node, 'height');
+		}
+		return $kit.css(node, 'height') + ($kit.css(node, 'padding-top-width') || 0) - ($kit.css(node, 'padding-bottom-width') || 0)//
+		+ ($kit.css(node, 'border-top-width') || 0) + ($kit.css(node, 'border-bottom-width') || 0);
+	},
+	outerWidth : function(node) {
+		var me = this;
+		if(document.compatMode == "BackCompat") {
+			return $kit.css(node, 'width');
+		}
+		return $kit.css(node, 'width') + ($kit.css(node, 'padding-left-width') || 0) - ($kit.css(node, 'padding-right-width') || 0)//
+		+ ($kit.css(node, 'border-left-width') || 0) + ($kit.css(node, 'border-right-width') || 0);
+	},
+	/**
+	 * 包围一个html
+	 */
+	wrap : function(node, html) {
+		if($kit.isNode(html)) {
+			//
+		} else if($kit.isStr(html)) {
+			html = $kit.newHTML(html).childNodes[0];
+		} else {
+			return;
+		}
+		$kit.insEl({
+			where : node,
+			what : html,
+			pos : 'before'
+		});
+		html.appendChild(node);
 	}
 };
 $kit.d = $kit.dom = new $Kit.Dom();

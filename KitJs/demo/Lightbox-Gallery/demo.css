@@ -1,0 +1,36 @@
+#gallery {
+	position: relative;
+	width: 980px;
+	height: 700px;
+}
+.item {
+	padding: 3px;
+	background-color: #fff;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	border: 0;
+	*border: 1px solid #000;
+	border: 1px solid #000\0/;
+	text-align: center;
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+	position: absolute;
+}
+.item a {
+	display: block;
+}
+.item .desc {
+	line-height: 20px;
+	vertical-align: middle;
+}
+a img {
+	border: none;
+}
+a, a:visited {
+	color: #00BBFF;
+	text-decoration: none;
+	outline: none;
+}
+a:hover {
+	text-decoration: underline;
+}

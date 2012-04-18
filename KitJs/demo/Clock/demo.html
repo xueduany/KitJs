@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>HTML Clock</title>
+</head>
+
+<body>
+
+<canvas id="canvas" width="150" height="150"></canvas>
+
+<script type="text/javascript" src="clock.js"></script>
+<script type="text/javascript">
+function render(canvas) {
+    var ctx = canvas.getContext('2d');
+    renderClock(ctx);
+}
+var canvas = document.getElementById('canvas');
+if(canvas.getContext) {
+    render(canvas);
+    setInterval(function() { render(canvas); }, 1000);
+} else {
+    alert('This browser doesn\'t support the canvas element :(');
+}
+</script>
+</body>
+</html>

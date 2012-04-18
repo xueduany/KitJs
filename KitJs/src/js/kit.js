@@ -722,7 +722,9 @@ $Kit.prototype = {
 			width : width,
 			height : height,
 			bottom : top + height,
-			right : left + width
+			right : left + width,
+			middleTop : top + height / 2,
+			middleLeft : left + width / 2
 		}
 	},
 	/**
@@ -1320,12 +1322,14 @@ $kit = new $Kit();
 /**
  * dom ready
  */
-$kit.$ = function(fn, caller) {
-	var caller = document || caller;
+$kit.$ = function(fn, caller, scope) {
+	caller = document || caller;
+	scope = scope || caller;
+	var a = '1';
 	$kit.ev({
 		el : caller,
 		ev : 'DOMContentLoaded',
 		fn : fn,
-		scope : caller
+		scope : scope
 	});
 }
