@@ -97,6 +97,7 @@ $kit.merge($kit.ui.LightBox.prototype, {
 		me.imageBox = imageBox;
 		me.closeBtn = closeBtn;
 		document.body.appendChild(showImage);
+		showImage.style.display = 'none';
 		var offset = $kit.offset(el);
 		var imgUrl = $kit.attr(el, 'href');
 		var image = new Image();
@@ -114,6 +115,7 @@ $kit.merge($kit.ui.LightBox.prototype, {
 				el : me.showImage,
 				duration : 300,
 				from : {
+					display : 'block',
 					position : 'absolute',
 					top : offset.top + 'px',
 					left : offset.left + 'px',
