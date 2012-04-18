@@ -27,7 +27,11 @@
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>Loading</h1>
 		<script>
-			new $kit.ui.SemitransparentLoading();
+			window.loading = new $kit.ui.SemitransparentLoading();
+
 		</script>
+		<button onclick="window.loading.destory()">
+			销毁loading
+		</button>
 	</body>
 </html>
