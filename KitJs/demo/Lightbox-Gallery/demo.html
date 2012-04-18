@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']); (function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+
+		</script>
+		<script src="../../src/js/anim.js"></script>
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/math.js"></script>
+		<script src="../../src/js/selector.js"></script>
+		<script src="../../src/js/array.js"></script>
+		<script src="../../src/js/event.js"></script>
+		<!--suger-->
+		<script src="../../src/js/suger.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="demo.css" />
+		<!--widget-->
+		<script src="../../src/js/widget/SemitransparentLoading/semitransparentloading.js"></script>
+		<script src="../../src/js/widget/LightBox/lightbox.js"></script>
+		<link rel="stylesheet" href="../../src/css/widget/LightBox/lightbox.css" />
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>散落在桌上的相片效果</h1>
+		<div id="gallery">
+			<div class="item">
+				<a class="kitLightBox" href="img/original/blue-green-nature.jpg" target="_blank"><img src="img/thumbs/blue-green-nature.jpg"></a>
+				<div class="desc">
+					blue-green-nature
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/2-breast-stroke.jpg" target="_blank"><img src="img/thumbs/2-breast-stroke.jpg"></a>
+				<div class="desc">
+					2-breast-stroke
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/farm.jpg" target="_blank"><img src="img/thumbs/farm.jpg"></a>
+				<div class="desc">
+					farm
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/bahnhoff.jpg" target="_blank"><img src="img/thumbs/bahnhoff.jpg"></a>
+				<div class="desc">
+					bahnhoff
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/sands-of-life.jpg" target="_blank"><img src="img/thumbs/sands-of-life.jpg"></a>
+				<div class="desc">
+					sands-of-life
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/sahale-wa.jpg" target="_blank"><img src="img/thumbs/sahale-wa.jpg"></a>
+				<div class="desc">
+					sahale-wa
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/endurance.jpg" target="_blank"><img src="img/thumbs/endurance.jpg"></a>
+				<div class="desc">
+					endurance
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/tonemapped.jpg" target="_blank"><img src="img/thumbs/tonemapped.jpg"></a>
+				<div class="desc">
+					tonemapped
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/1-california-surfing.jpg" target="_blank"><img src="img/thumbs/1-california-surfing.jpg"></a>
+				<div class="desc">
+					1-california-surfing
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/4-green-beach.jpg" target="_blank"><img src="img/thumbs/4-green-beach.jpg"></a>
+				<div class="desc">
+					4-green-beach
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/colosseum.jpg" target="_blank"><img src="img/thumbs/colosseum.jpg"></a>
+				<div class="desc">
+					colosseum
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/whoooosh.jpg" target="_blank"><img src="img/thumbs/whoooosh.jpg"></a>
+				<div class="desc">
+					whoooosh
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/bamboo.jpg" target="_blank"><img src="img/thumbs/bamboo.jpg"></a>
+				<div class="desc">
+					bamboo
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/spice.jpg" target="_blank"><img src="img/thumbs/spice.jpg"></a>
+				<div class="desc">
+					spice
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/industrial-mech.jpg" target="_blank"><img src="img/thumbs/industrial-mech.jpg"></a>
+				<div class="desc">
+					industrial-mech
+				</div>
+			</div>
+			<div class="item">
+				<a class="kitLightBox" href="img/original/sports-car.jpg" target="_blank"><img src="img/thumbs/sports-car.jpg"></a>
+				<div class="desc">
+					sports-car
+				</div>
+			</div>
+			<div class="drop-box"></div>
+			<script>
+				$k(function() {
+					$k('.item', $k('#gallery')).each(function() {
+						$k(this).css({
+							top : $kit.math.rand($k('#gallery').innerHeight()) + 'px',
+							left : $kit.math.rand($k('#gallery').innerWidth()) + 'px',
+							'-webkit-transform' : 'rotate(' + $kit.math.rand(-40, 40) + 'deg)'
+						});
+					}).pushStack('a.kitLightBox').each(function() {
+						new $kit.ui.LightBox({
+							el : this
+						}).init();
+					});
+				});
+
+			</script>
+	</body>
+</html>

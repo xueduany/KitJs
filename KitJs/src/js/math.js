@@ -21,9 +21,38 @@ $Kit.Math.prototype = {
 	/**
 	 * 随机数
 	 */
-	rand : function(max) {
-		max = max || 100;
-		return Math.round(Math.random() * max);
+	rand : function(min, max) {
+		max = max || min || 100;
+		min = min || 0;
+		var rnd = Math.round(Math.random() * max);
+		if(min != 0 && max != min) {
+			if(min > max) {
+				max = min;
+			}
+			if(min < 0) {
+				rnd = this.positiveOrNegative() * rnd;
+			}
+			while(rnd < min) {
+				rnd = this.positiveOrNegative() * Math.round(Math.random() * max)
+			}
+		}
+		return rnd;
+	},
+	/**
+	 * 0或者1
+	 */
+	oneOrZero : function() {
+		return Math.round(Math.random());
+	},
+	/**
+	 * 正或者负
+	 */
+	positiveOrNegative : function() {
+		var flag = this.oneOrZero();
+		if(flag) {
+			return 1;
+		}
+		return -1;
 	},
 	/**
 	 * 取多少位的随机数，返回string

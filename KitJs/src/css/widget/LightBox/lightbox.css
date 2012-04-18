@@ -1,0 +1,39 @@
+.kitLightBox-showImageContainer {
+	border: 10px solid #fff;
+	border-radius: 5px;
+	background-color: #fff;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	padding: 10px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	border: 0;
+	*border: 1px solid #000;
+	border: 1px solid #000\0/;
+}
+.kitLightBox-showImage-imageBox {
+	margin: 0;
+	padding: 0;
+	position: relative;
+	overflow: hidden;
+}
+.kitLightBox-showImage-imageBox image {
+	border: 0;
+	postion: absolute;
+}
+.kitLightBox-completeShow {
+	
+}
+.kitLightBox-closeButton {
+	display: none;
+	width: 30px;
+	height: 30px;
+	background: url(/KitJs/KitJs/src/img/close.png) no-repeat 0 0;
+	position: absolute;
+	right: -20px;
+	top: -20px;
+	cursor: pointer;
+}
+.kitLightBox-completeShow .kitLightBox-closeButton {
+	display: block;
+}

@@ -63,6 +63,7 @@ $kit.merge($kit.ui.Gallery.prototype, {
 		me.control = $kit.el8cls(me.config.template.galleryControlPanelCls, me.wrapper);
 		//
 		me.initControl();
+		return me;
 	},
 	fillData : function(data) {
 		me.config.data = data;
