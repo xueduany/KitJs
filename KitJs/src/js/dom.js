@@ -69,20 +69,20 @@ $Kit.Dom.prototype = {
 	 */
 	// **Dynamic CSS injection**
 	// Takes a string of css, inserts it into a `<style>`, then injects it in at the very top of the `<head>`. This ensures any user-defined styles will take precedence.
-	injectCss : function(audio, string) {
+	injectCss : function() {
 		if(arguments.length == 1) {
 			var config = arguments[0];
 			if(config.id && $kit.el8id(config.id)) {
 				return;
 			}
-			var where = config.where || document.getElementsByTagName('head')[0];
+			var where = config.where || document.getElementsByTagName('head')[document.getElementsByTagName('head').length - 1];
 			var css;
 			if(!$kit.isEmpty(config.url)) {
 				css = document.createElement('link');
 				config.id && $kit.attr(css, 'id', config.id);
 				$kit.attr(css, {
 					rel : 'stylesheet',
-					url : config.url
+					href : config.url
 				});
 			} else if(!$kit.isEmpty(config.text)) {
 				css = document.createElement('style');

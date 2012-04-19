@@ -1,0 +1,8 @@
+#top {
+	position: relative;
+	z-index: 9999;
+	opacity: 1!important;
+}
+#top a {
+	color: orange;
+}
