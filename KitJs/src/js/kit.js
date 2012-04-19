@@ -770,7 +770,8 @@ $Kit.prototype = {
 		var me = this, defaultConfig = {
 			el : window,
 			ev : null,
-			fn : null
+			fn : null,
+			args : null
 		}
 		config = me.join(defaultConfig, config);
 		if(me.isAry(config.el)) {
@@ -868,7 +869,7 @@ $Kit.prototype = {
 							break;
 						}
 						var _evConfig = evQueue[i];
-						returnValue = _evConfig.fn.call(_evConfig.scope || _evConfig.el, EV, _evConfig);
+						returnValue = _evConfig.fn.apply(_evConfig.scope || _evConfig.el, [EV, _evConfig]);
 					}
 					window[me.CONSTANTS.KIT_EVENT_STOPIMMEDIATEPROPAGATION] = false;
 					/*
@@ -1322,14 +1323,6 @@ $kit = new $Kit();
 /**
  * dom ready
  */
-$kit.$ = function(fn, caller, scope) {
-	caller = document || caller;
-	scope = scope || caller;
-	var a = '1';
-	$kit.ev({
-		el : caller,
-		ev : 'DOMContentLoaded',
-		fn : fn,
-		scope : scope
-	});
+$kit.$ = function(fn) {
+	document.addEventListener('DOMContentLoaded', fn, false);
 }

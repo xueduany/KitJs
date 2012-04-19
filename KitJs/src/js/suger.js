@@ -1183,7 +1183,10 @@ $k = $kit.$ = function() {
 		return;
 	}
 	if($kit.isFn(arguments[0])) {
-		$kit._$(arguments[0], document, $kit);
+		var fn = arguments[0];
+		$kit._$(function() {
+			fn($kit.$);
+		});
 	} else {
 		return new $kit.Suger(arguments[0], arguments[1]);
 	}

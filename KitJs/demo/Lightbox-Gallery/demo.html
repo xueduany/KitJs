@@ -136,11 +136,11 @@
 			</div>
 			<div class="drop-box"></div>
 			<script>
-				$k(function() {
-					$k('.item', $k('#gallery')).each(function() {
-						$k(this).css({
-							top : $kit.math.rand($k('#gallery').innerHeight()) + 'px',
-							left : $kit.math.rand($k('#gallery').innerWidth()) + 'px',
+				$kit.$(function($) {
+					$('.item', $('#gallery')).each(function() {
+						$(this).css({
+							top : $kit.math.rand($('#gallery').innerHeight()) + 'px',
+							left : $kit.math.rand($('#gallery').innerWidth()) + 'px',
 							'-webkit-transform' : 'rotate(' + $kit.math.rand(-40, 40) + 'deg)'
 						});
 					}).pushStack('a.kitLightBox').each(function() {

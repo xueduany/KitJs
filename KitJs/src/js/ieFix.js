@@ -220,9 +220,8 @@ $kit.merge($Kit.prototype, {
 //reinit
 $kit = new $Kit();
 
-$kit.$ = function(fn, caller, scope) {
-	var caller = window || caller;
-	IEContentLoaded(caller, fn, scope);
+$kit.$ = function(fn) {
+	IEContentLoaded(window, fn);
 	/*
 	*
 	* IEContentLoaded.js
@@ -252,14 +251,13 @@ $kit.$ = function(fn, caller, scope) {
 
 	// @w	window reference
 	// @fn	function reference
-	function IEContentLoaded(w, fn, scope) {
+	function IEContentLoaded(w, fn) {
 		var d = w.document, done = false, //
-		scope = scope || w,
 		// only fire once
 		init = function() {
 			if(!done) {
 				done = true;
-				fn.call(scope);
+				fn();
 			}
 		};
 		// polling for no errors
