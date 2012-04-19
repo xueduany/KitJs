@@ -272,8 +272,11 @@ i.icon-arrow-right {
 	font-weight: bold;
 	font-family: Black;
 	font-style: normal;
+	cursor: pointer;
 }
 
 .datepicker-days table {
 	display: inline-block;
+	*display: inline;
+	*zoom: 1;
 }

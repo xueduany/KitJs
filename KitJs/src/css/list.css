@@ -6,6 +6,7 @@
 	position: absolute;
 	top: 100%;
 	width: 100%;
+	_width: 250px;
 	left: 0px;
 	border: 1px solid #ccc;
 	line-height: 30px;
@@ -13,11 +14,16 @@
 	box-shadow: 0 0 10px rgba(0,0,0,0.2);
 	padding: 2px;
 	max-height: 200px;
+	_height: expression(eval(this.offsetHeight>200?200:this.offsetHeight));
+	*display: inline;
+	*zoom: 1;
 	overflow: auto;
 	cursor: pointer;
 }
 .kitjs-form-list .kitjs-form-listItem {
 	padding: 0 5px;
+	*zoom: 1;
+	_width: 222px;
 }
 .kitjs-form-list .kitjs-form-listItem-odd {
 	background-color: #f8f8f8;

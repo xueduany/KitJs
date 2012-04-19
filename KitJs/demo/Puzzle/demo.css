@@ -2,6 +2,8 @@
 	padding: 0;
 	float: left;
 	display: block;
+	*display: inline;
+	*zoom: 1;
 	margin: 2px;
 	width: 200px;
 	height: 200px;
