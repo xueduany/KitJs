@@ -15,7 +15,7 @@ $kit.ui.Mask = function(config) {
 				opacity : 0
 			},
 			to : {
-				opacity : 0.5
+				opacity : me.config.opacity
 			},
 			timeout : me.animTimeout
 		});
@@ -62,8 +62,49 @@ $kit.ui.Mask.defaultConfig = {
 	anim : true//是否使用动画
 }
 $kit.merge($kit.ui.Mask.prototype, {
+	/**
+	 * 销毁
+	 */
 	destory : function() {
 		clearInterval(window[this.animTimeout]);
 		$kit.rmEl(this.what);
+	},
+	hide : function() {
+		var me = this;
+		if(me.config.anim) {
+			$kit.anim.motion({
+				el : me.what,
+				from : {
+					opacity : $kit.css(me.what, 'opacity')
+				},
+				to : {
+					opacity : 0,
+					display : 'none'
+				},
+				timeout : me.animTimeout
+			});
+			me.what = what;
+		} else {
+			me.what.style.display = 'none';
+		}
+	},
+	show : function() {
+		var me = this;
+		if(me.config.anim) {
+			$kit.anim.motion({
+				el : me.what,
+				from : {
+					opacity : $kit.css(me.what, 'opacity'),
+					display : ''
+				},
+				to : {
+					opacity : me.config.opacity
+				},
+				timeout : me.animTimeout
+			});
+			me.what = what;
+		} else {
+			me.what.style.display = '';
+		}
 	}
 });
