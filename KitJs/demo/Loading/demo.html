@@ -9,8 +9,7 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']);
-			(function() {
+			_gaq.push(['_trackPageview']); (function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -21,6 +20,8 @@
 
 		</script>
 		<script src="../../src/js/widget/SemitransparentLoading/semitransparentloading.js"></script>
+		<!--按钮样式-->
+		<link rel="stylesheet" href="../../src/css/button.css" />
 		<link rel="stylesheet" href="../../css.css" />
 	</head>
 	<body>
@@ -30,7 +31,7 @@
 			window.loading = new $kit.ui.SemitransparentLoading();
 
 		</script>
-		<button onclick="window.loading.destory()">
+		<button class="kitjs-form-button" onclick="window.loading.destory()">
 			销毁loading
 		</button>
 	</body>
