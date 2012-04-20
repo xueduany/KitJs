@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/string.js"></script>
+		<script src="../../src/js/math.js"></script>
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+
+		</script>
+		<link rel="stylesheet" href="../../css.css" />
+		<style>
+			#outer {
+				position: absolute;
+				top: 0;
+				left: 0;
+				zoom: 1;
+				width: 100%;
+				height: 100%;
+				background: #ddd;
+				z-index: -1;
+				text-align: center;
+				vertical-align: middle;
+				width:expression(eval(document.compatMode && document.compatMode == 'CSS1Compat'?document.documentElement.scrollLeft + document.documentElement.clientWidth: document.body.scrollTop + document.body.clientWidth));
+				height:expression(eval(document.compatMode &&document.compatMode == 'CSS1Compat'?document.documentElement.scrollTop + document.documentElement.clientHeight: document.body.scrollTop + document.body.clientHeight));
+			}
+			#inner-inner {
+				display: inline;
+				background: red;
+				color: #fff;
+			}
+			#outer td {
+				height: 100%;
+				width: 100%;
+				
+				vertical-align: middle;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>纯Css居中</h1>
+		<div>
+			<a href="demo.html">Chrome,FF,IE7,IE8+</a><br/>
+			<a href="demo1.html">Chrome,FF,IE7,IE8+</a><br/>
+			<a href="demo2.html">IE6only(Css)</a><br/>
+			<a href="demo3.html">IE6only(expression)</a><br/>
+		</div>
+		<table id="outer">
+			<tr>
+				<td>
+					<div id="inner-inner">
+						我在中间，哈哈
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
