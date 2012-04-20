@@ -80,6 +80,7 @@ $kit.merge($kit.ui.LightBox.prototype, {
 				then : function() {
 					$kit.adCls(me.showImage, me.config.template.completeShowCls);
 					me.image.style.visibility = 'visible';
+					me.image.style.display = 'block';
 				}
 			});
 		}
@@ -106,6 +107,9 @@ $kit.merge($kit.ui.LightBox.prototype, {
 			image.onload = null;
 			me.imageWidth = image.width;
 			me.imageHeight = image.height;
+			//
+			me.mask = new $kit.ui.Mask();
+			//
 			imageBox.innerHTML = '';
 			var ofTop = viewport.scrollTop + viewport.clientHeight / 2 - image.height / 2;
 			var ofLeft = viewport.scrollLeft + viewport.clientWidth / 2 - image.width / 2;
@@ -120,7 +124,8 @@ $kit.merge($kit.ui.LightBox.prototype, {
 					top : offset.top + 'px',
 					left : offset.left + 'px',
 					width : 0,
-					height : 0
+					height : 0,
+					zIndex : 99
 				},
 				to : {
 					position : 'absolute',
@@ -162,6 +167,10 @@ $kit.merge($kit.ui.LightBox.prototype, {
 		var originWidth = me.showImage.offsetWidth;
 		var originHeight = me.showImage.offsetHeight;
 		me.image.style.visibility = 'hidden';
+		me.image.style.display = 'none';
+		if(me.mask) {
+			me.mask.destory();
+		}
 		$kit.rmCls(me.showImage, me.config.template.completeShowCls);
 		$kit.anim.motion({
 			el : me.showImage,

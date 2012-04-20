@@ -11,8 +11,10 @@ $kit.ui.Mask = function(config) {
 	if(me.config.anim) {
 		$kit.anim.motion({
 			el : me.what,
+			duration : me.config.duration,
 			from : {
-				opacity : 0
+				opacity : 0,
+				zIndex : me.config.zIndex
 			},
 			to : {
 				opacity : me.config.opacity
@@ -57,6 +59,8 @@ $kit.ui.Mask.defaultConfig = {
 	'"></iframe><![endif]-->', //
 	'</div>'//
 	].join(''),
+	duration : 300, //动画时间
+	zIndex : 9, //层数，避免被遮住
 	color : '#000', //遮罩颜色
 	opacity : 0.75, //透明度
 	anim : true//是否使用动画
@@ -74,6 +78,7 @@ $kit.merge($kit.ui.Mask.prototype, {
 		if(me.config.anim) {
 			$kit.anim.motion({
 				el : me.what,
+				duration : me.config.duration,
 				from : {
 					opacity : $kit.css(me.what, 'opacity')
 				},
@@ -83,7 +88,6 @@ $kit.merge($kit.ui.Mask.prototype, {
 				},
 				timeout : me.animTimeout
 			});
-			me.what = what;
 		} else {
 			me.what.style.display = 'none';
 		}
@@ -93,6 +97,7 @@ $kit.merge($kit.ui.Mask.prototype, {
 		if(me.config.anim) {
 			$kit.anim.motion({
 				el : me.what,
+				duration : me.config.duration,
 				from : {
 					opacity : $kit.css(me.what, 'opacity'),
 					display : ''
@@ -102,7 +107,6 @@ $kit.merge($kit.ui.Mask.prototype, {
 				},
 				timeout : me.animTimeout
 			});
-			me.what = what;
 		} else {
 			me.what.style.display = '';
 		}

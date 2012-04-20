@@ -20,6 +20,8 @@
 .kitLightBox-showImage-imageBox image {
 	border: 0;
 	postion: absolute;
+	top: 0;
+	left: 0;
 }
 .kitLightBox-completeShow {
 	

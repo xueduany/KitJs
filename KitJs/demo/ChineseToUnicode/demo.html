@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!doctype html>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -7,6 +7,7 @@
 		<script src="../../src/js/ieFix.js"></script>
 		<![endif]-->
 		<script src="../../src/js/string.js"></script>
+		<script src="../../src/js/math.js"></script>
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
@@ -32,21 +33,46 @@
 	</head>
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
-		<h1>中文和Unicode编码互转</h1>
+		<h1>中文和Unicode以及HTML实体字符之间的编码互转</h1>
 		<ul>
 			<li>
 				<textarea id="a1"></textarea>
-				<button onclick="$kit.el('#a1').value=$kit.string.chineseToUnicode($kit.el('#a1').value)">
-					chineseToUnicode
+				<button onclick="$kit.el('#a2').value=$kit.string.convert($kit.el('#a1').value,'gb2312','unicode')">
+					中文转Unicode
 				</button>
 			</li>
 			<li>
 				<textarea id="a2"></textarea>
-				<button onclick="$kit.el('#a2').value=$kit.string.unicodeToChinese($kit.el('#a2').value)">
-					unicodeToChinese
+				<button onclick="$kit.el('#a1').value=$kit.string.convert($kit.el('#a2').value,'unicode','gb2312')">
+					Unicode转中文
+				</button>
+			</li>
+			<hr/>
+			<li>
+				<textarea id="a3"></textarea>
+				<button onclick="$kit.el('#a4').value=$kit.string.convert($kit.el('#a3').value,'gb2312','entity')">
+					中文转HTML实体字符
+				</button>
+			</li>
+			<li>
+				<textarea id="a4"></textarea>
+				<button onclick="$kit.el('#a3').value=$kit.string.convert($kit.el('#a4').value,'entity','gb2312')">
+					HTML实体字符转中文
+				</button>
+			</li>
+			<hr/>
+			<li>
+				<textarea id="a5"></textarea>
+				<button onclick="$kit.el('#a6').value=$kit.string.convert($kit.el('#a5').value,'unicode','entity')">
+					Unicode转HTML实体字符
+				</button>
+			</li>
+			<li>
+				<textarea id="a6"></textarea>
+				<button onclick="$kit.el('#a5').value=$kit.string.convert($kit.el('#a6').value,'entity','unicode')">
+					HTML实体字符转Unicode
 				</button>
 			</li>
 		</ul>
-		<script></script>
 	</body>
 </html>

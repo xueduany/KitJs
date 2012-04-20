@@ -265,6 +265,27 @@ $Kit.Dom.prototype = {
 			pos : 'before'
 		});
 		html.appendChild(node);
+	},
+	serialize : function(form) {
+		if($kit.isNode(form)) {
+			if(form.tagName.toLowerCase() == 'form') {
+				var formEls = [];
+				$kit.each($kit.el('input', form), function(o) {
+					formEls.push(o);
+				});
+				$kit.each($kit.el('input', form), function(o) {
+					formEls.push(o);
+				});
+				$kit.each($kit.el('input', form), function(o) {
+					formEls.push(o);
+				});
+				$kit.each(formEls, function(o) {
+
+				})
+			} else {
+				return form.name + '=' + encodeURIComponent($kit.val(form));
+			}
+		}
 	}
 };
 $kit.d = $kit.dom = new $Kit.Dom();

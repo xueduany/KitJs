@@ -71,6 +71,14 @@ $Kit.Math.prototype = {
 			re = Math.round(Math.random() * Math.pow(10, length));
 		}
 		return re;
+	},
+	/**
+	 * 进制转换
+	 */
+	convert : function(str, oldHex, newHex) {
+		var num = new String(str);
+		num = parseInt(num, parseInt(oldHex));
+		return num.toString(parseInt(newHex));
 	}
 };
 $kit.math = new $Kit.Math();
