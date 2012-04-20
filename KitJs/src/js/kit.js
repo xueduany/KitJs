@@ -711,7 +711,7 @@ $Kit.prototype = {
 		left = el.offsetLeft, //
 		width = el.offsetWidth, //
 		height = el.offsetHeight;
-		while(el.offsetParent != null && el.offsetParent != document.body) {
+		while(el.offsetParent != null && el.offsetParent != el) {
 			el = el.offsetParent;
 			top += el.offsetTop;
 			left += el.offsetLeft;
