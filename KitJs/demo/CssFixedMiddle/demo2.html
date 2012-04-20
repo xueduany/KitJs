@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/string.js"></script>
+		<script src="../../src/js/math.js"></script>
+		
+		<link rel="stylesheet" href="../../css.css" />
+		<style>
+			#outer {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width:expression(eval(document.compatMode && document.compatMode == 'CSS1Compat'?document.documentElement.scrollLeft + document.documentElement.clientWidth: document.body.scrollTop + document.body.clientWidth));
+				height:expression(eval(document.compatMode &&document.compatMode == 'CSS1Compat'?document.documentElement.scrollTop + document.documentElement.clientHeight: document.body.scrollTop + document.body.clientHeight));
+				background: green;
+				text-align: center;
+				vertical-align: middle;
+			}
+			#inner-inner {
+				position: absolute;
+				display: inline;
+				background: red;
+				color: #fff;
+				vertical-align: middle;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>纯Css居中</h1>
+		<table id="outer">
+			<tr>
+				<td>
+					<div id="inner-inner">
+						我在中间，哈哈
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
