@@ -29,11 +29,14 @@
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>遮罩</h1>
 		<div style="position:relative;z-index:9999">
-			<button class="kitjs-form-button" onclick="if(window.mask==null){window.mask=new $kit.ui.Mask()}">
+			<button class="kitjs-form-button" onclick="if(window.mask==null){window.mask=new $kit.ui.Mask()}else{window.mask.show()}">
 				显示遮罩
 			</button>
 			<button class="kitjs-form-button" onclick="if(window.mask){window.mask.destory();window.mask=null;}">
 				销毁遮罩
+			</button>
+			<button class="kitjs-form-button" onclick="if(window.mask){window.mask.hide();}">
+				隐藏遮罩
 			</button>
 		</div>
 		<br/>
