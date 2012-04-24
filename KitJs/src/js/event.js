@@ -1,20 +1,37 @@
 /**
- * 事件扩展
+ * 事件扩展，加载该js之后，$kit.ev事件既可以支持全浏览器拖拽
+ * @class $Kit.Event
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/event.js">Source code</a>
  */
 $Kit.Event = function() {
 	//
+	/**
+	 * 原始的ev事件
+	 * @member _ev
+	 * @instance
+	 * @memberof $Kit.Event
+	 */
 	this._ev = function() {
 		$Kit.prototype.ev.apply($kit, arguments);
 	}
+	/**
+	 * 当前拖拽事件的拖拽元素
+	 * @member dragElement
+	 * @instance
+	 * @memberof $Kit.Event
+	 */
 	this.dragElement = undefined;
 	/*$kit.ev = function() {
 	 $kit.event.ev.apply($kit.event, arguments);
 	 }*/
 }
-$Kit.Event.prototype = {
-	/**
-	 * 常量
-	 */
+$kit.merge($Kit.Event.prototype,
+/**
+ * @lends $Kit.Event.prototype
+ * @enum
+ */
+{
 	KEYCODE_UP : 38,
 	KEYCODE_DOWN : 40,
 	KEYCODE_LEFT : 37,
@@ -39,12 +56,15 @@ $Kit.Event.prototype = {
 	//
 	KEYCODE_PAGEUP : 33,
 	KEYCODE_PAGEDOWN : 34,
-	//
-	/**
-	 * event增强start
-	 */
+},
+/**
+ * @lends $Kit.Event.prototype
+ */
+{
+	//event增强start
 	/**
 	 * 递归
+	 * @private
 	 */
 	recurEv : function(evCfg, fn) {
 		var me = this;
@@ -83,7 +103,12 @@ $Kit.Event.prototype = {
 		}
 	},
 	/**
-	 * 拖拽
+	 * kit事件注册方法，支持拖拽
+	 * @param {Object} config
+	 * @param {Selector|Element|NodeList} config.el 触发事件的元素，等于event.currentTarget
+	 * @param {String} config.ev 事件type，如click
+	 * @param {Function} config.fn 事件方法
+	 * @param {Object} config.scope this指针
 	 */
 	ev : function(config) {
 		var me = this, defaultConfig = {
@@ -310,5 +335,10 @@ $Kit.Event.prototype = {
 	/**
 	 * event增强end
 	 */
-};
+});
+/**
+ * $Kit.Event的实例，直接通过这个实例访问$Kit.Event所有方法
+ * @global
+ * @type $Kit.Event
+ */
 $kit.event = new $Kit.Event();

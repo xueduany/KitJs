@@ -1,18 +1,44 @@
 /**
  * 数组扩展
+ * @class $Kit.Array
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/array.js">Source code</a>
  */
-$Kit.Array = function() {
+$Kit.Array = function(config) {
 	//
 }
-$Kit.Array.prototype = {
+$Kit.Array.prototype =
+/**
+ * lends $Kit.Array.prototype
+ */
+{
+	/**
+	 * 从小到大排序
+	 * @param {Number}
+	 * @param {Number}
+	 * @return {Array}
+	 * @private
+	 */
 	SORT_ASC : function(left, right) {
 		return left - right;
 	},
+	/**
+	 * 从大到小排序
+	 * @param {Number}
+	 * @param {Number}
+	 * @return {Array}
+	 * @private
+	 */
 	SORT_DESC : function(left, right) {
 		return right - left;
 	},
 	/**
-	 * check if existed
+	 * 判断是否存在
+	 * @param {Array}
+	 * @param {Object}
+	 * @param {Object} config
+	 * @param {Boolean} config.ignoreCase 判断是否相等时候，是否忽略大小写
+	 * @return {Boolean}
 	 */
 	hs : function(ary, check, setting) {
 		var me = this;
@@ -25,7 +51,7 @@ $Kit.Array.prototype = {
 		var setting = $kit.merge(defaultSetting, setting);
 		for(var i = 0; i < ary.length; i++) {
 			var o = ary[i];
-			if(o.toString() == check.toString()//
+			if(o == check//
 			|| (setting.ignoreCase && o.toString().toLowerCase() == check.toString().toLowerCase())) {
 				return true;
 			}
@@ -33,7 +59,12 @@ $Kit.Array.prototype = {
 		return false;
 	},
 	/**
-	 * 添加元素
+	 * 向数组中添加元素
+	 * @param {Array}
+	 * @param {Object|Array}
+	 * @param {Object} config
+	 * @param {Boolean} config.ifExisted 为true时候，则进行存在判断，存在则不加，为false，直接第一个数组冗余相加
+	 * @param {Boolean} config.ignoreCase 判断是否相等时候，是否忽略大小写
 	 */
 	ad : function(ary, add, setting) {
 		var me = this;
@@ -66,7 +97,12 @@ $Kit.Array.prototype = {
 		}
 	},
 	/**
-	 * 删除元素
+	 * 数组删除元素
+	 * @param {Array}
+	 * @param {Object|Array}
+	 * @param {Object} config
+	 * @param {Boolean} config.ignoreCase 判断是否相等时候，是否忽略大小写
+	 * @param {Boolean} config.isGlobal 是否全局检查，不仅仅删除第一个发现的
 	 */
 	rm : function(ary, del, setting) {
 		var me = this;
@@ -99,6 +135,9 @@ $Kit.Array.prototype = {
 	},
 	/**
 	 * 排序
+	 * @param {Array}
+	 * @param {String} param 排序类型，目前支持ASC从小到大,DESC从大到小两种类型
+	 * @rettun {Array} 返回被排序的数组
 	 */
 	sort : function(ary, param) {
 		var me = this;
@@ -118,6 +157,10 @@ $Kit.Array.prototype = {
 	},
 	/**
 	 * 通过比较方法取得值
+	 * @param {Array}
+	 * @param {Function} validateFn 遍历数组，执行该方法，等方法返回true时候，获得数组中对应值。方法传入三个参数，当前元素，当前元素索引，数组
+	 * @param {Object} [scope] 执行方法时候的this指针
+	 * @return {Object}
 	 */
 	get : function(ary, validateFn, scope) {
 		var scope = scope || window;
@@ -127,6 +170,12 @@ $Kit.Array.prototype = {
 			}
 		}
 	},
+	/**
+	 * 遍历数组，获得数组中元素以xxx文字开头的
+	 * @param {Array}
+	 * @param {String}
+	 * @return {Object}
+	 */
 	getTextBeginWith : function(ary, beginWithText) {
 		var me = this;
 		return me.get(ary, function(o) {
@@ -136,7 +185,10 @@ $Kit.Array.prototype = {
 		});
 	},
 	/**
-	 * 转换
+	 * 把字符串按照分隔符转换成数组
+	 * @param {String}
+	 * @param {String} [separate] 默认值为','
+	 * @return {Array}
 	 */
 	parse : function(str, separate) {
 		var separate = ',' || separate;
@@ -144,6 +196,9 @@ $Kit.Array.prototype = {
 	},
 	/**
 	 * 过滤满足条件的数组元素
+	 * @param {Array}
+	 * @param {Function} 方法传入三个参数，当前元素，当前元素索引，数组
+	 * @return {Array}
 	 */
 	filter : function(ary, compare) {
 		var re = [];
@@ -193,4 +248,11 @@ $Kit.Array.prototype = {
 		return ary;
 	}
 };
+/**
+ * $Kit.Array实例，直接通过这个实例访问$Kit.Array所有方法
+ * @global
+ * @type $Kit.Array
+ * @name $kit.array
+ * @alias $kit.ary
+ */
 $kit.ary = $kit.array = new $Kit.Array();

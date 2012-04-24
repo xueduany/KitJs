@@ -41,7 +41,7 @@ $kit.merge($kit.ui.CodeExample.prototype, {
 		if(me.config.opener.toString().toLowerCase() == 'about:blank') {
 			$kit.dom.injectJs({
 				where : opener.document.body,
-				content : me.config.script || me.config.scriptContainer ? $kit.val(me.config.scriptContainer) : '',
+				text : me.config.script || me.config.scriptContainer ? $kit.val(me.config.scriptContainer) : '',
 				then : me.config.then
 			});
 		} else if('onload' in opener) {
@@ -51,7 +51,7 @@ $kit.merge($kit.ui.CodeExample.prototype, {
 				fn : function() {
 					$kit.dom.injectJs({
 						where : opener.document.body,
-						content : me.config.script || me.config.scriptContainer ? $kit.val(me.config.scriptContainer) : '',
+						text : me.config.script || me.config.scriptContainer ? $kit.val(me.config.scriptContainer) : '',
 						then : me.config.then
 					});
 				}

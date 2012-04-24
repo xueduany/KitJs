@@ -1,13 +1,20 @@
 /*
- * Kit Js
- * a javascript library used to mobile phone web develop
- * author: 薛端阳<xueduanyang1985@163.com>
- * 3q & enjoy it!
+* a javascript library used to mobile phone web develop
+* 3q & enjoy it!
+* @author 薛端阳<xueduanyang1985@163.com>
+* @copyright 薛端阳  since 2011.10
+*/
+
+/**
+ * Kit Js 基类，包含基本dom操作，object类型判断以及ready方法，还有事件委托等
+ * @constructor $Kit
+ * @param {Object} config 组件配置
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/kit.js">Source code</a>
  */
 $Kit = function(config) {
 	var me = this;
 	var defaultConfig = {
-
+		//默认配置
 	}
 	me.config = me.join(config, defaultConfig);
 	// -----------------------------init------------------------------------
@@ -19,111 +26,223 @@ $Kit = function(config) {
 	// me.merge(me.SYSINFO, inf);
 	// }
 	/**
-	 * register widget
+	 * @namespace $kit.ui
 	 */
 	me.ui = {};
 }
 $Kit.prototype = {
+	constructor : $Kit,
 	//----------------------CONSTANTS----------------------
+	/**
+	 * KitJs内部常量
+	 * @enum
+	 * @const
+	 * @public
+	 * @type {Object}
+	 */
 	CONSTANTS : {
-		//异常处理,最大循环次数
+		/**
+		 * 异常处理,最大循环次数
+		 */
 		MAX_CYCLE_COUNT : 1000,
-		//
+		/**
+		 * element节点
+		 */
 		NODETYPE_ELEMENT : 1,
 		NODETYPE_ELEMENT_ATTR : 2,
+		/**
+		 * 文本节点
+		 */
 		NODETYPE_TEXTNODE : 3,
+		/**
+		 * 注释
+		 */
 		NODETYPE_COMMENT : 8,
+		/**
+		 * 根
+		 */
 		NODETYPE_ROOT : 9,
+		/**
+		 * doc fragment
+		 */
 		NODETYPE_FRAGMENT : 11,
-		//
+		/**
+		 * contains比较结果-同一个
+		 */
 		DOCUMENT_POSITION_SAME : 0, //同一个
+		/**
+		 * contains比较结果-不在一个文档
+		 */
 		DOCUMENT_POSITION_DISCONNECTED : 1, //不在一个文档
+		/**
+		 * contains比较结果-b在a前面
+		 */
 		DOCUMENT_POSITION_PRECEDING : 2, //b在a前面
+		/**
+		 * contains比较结果-b在a后面
+		 */
 		DOCUMENT_POSITION_FOLLOWING : 4, //b在a后面
+		/**
+		 * contains比较结果-b是a祖先
+		 */
 		DOCUMENT_POSITION_CONTAINS : 10, //b是a祖先
+		/**
+		 * contains比较结果-b是a儿子
+		 */
 		DOCUMENT_POSITION_CONTAINED_BY : 20, //b是a儿子
+		/**
+		 * contains比较结果-不常用
+		 */
 		DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC : 32, //不常用
-		//
+		/**
+		 * 空格正则
+		 */
 		REGEXP_SPACE : /\s+/g,
-		//事件注册
+		/**
+		 * kit事件注册前缀
+		 */
 		KIT_EVENT_REGISTER : "_kit_event_register_",
-		//事件
+		/**
+		 * kit事件注册前缀
+		 */
 		KIT_EVENT_REGISTER_EVENT : "_kit_event_register_event",
-		//方法
+		/**
+		 * kit事件注册前缀
+		 */
 		KIT_EVENT_REGISTER_FUNCTION : "_kit_event_register_function",
-		//立即停止所有事件
+		/**
+		 * kit事件信号--立即停止所有事件
+		 */
 		KIT_EVENT_STOPIMMEDIATEPROPAGATION : "_kit_event_stopimmediatepropagation_",
-		//停止所有事件触发
+		/**
+		 * kit事件信号--停止所有事件
+		 */
 		KIT_EVENT_STOPALLEVENT : "_kit_event_stopallevent_",
-		//DOM ID 默认前缀
+		/**
+		 * kit DOM ID 默认前缀
+		 */
 		KIT_DOM_ID_PREFIX : "J_Kit_"
 	},
 	// -----------------------------------is
 	// something-----------------------------------
-	isIE : function(o) {
+	/**
+	 * 判断是否IE
+	 * @return {Boolean}
+	 */
+	isIE : function() {
 		return /MSIE/i.test(navigator.userAgent);
 	},
-	isChrome : function(o) {
+	/**
+	 * 是否是chrome
+	 * @return {Boolean}
+	 */
+	isChrome : function() {
 		return /Chrome/i.test(navigator.userAgent);
 	},
-	isFirefox : function(o) {
+	/**
+	 * 是否是火狐
+	 * @return {Boolean}
+	 */
+	isFirefox : function() {
 		return /Firefox/i.test(navigator.userAgent);
 	},
 	/**
-	 * boolean isString
+	 * 是否已定义
+	 * @param {Object}
+	 * @return {Boolean}
 	 */
 	isDefined : function(o) {
 		return typeof (o) != "undefined";
 	},
+	/**
+	 * 是否是字符串
+	 * @param {Object}
+	 * @return {Boolean}
+	 */
 	isStr : function(o) {
 		return typeof (o) == "string";
 	},
+	/**
+	 * 是否数字
+	 * @param {Object}
+	 * @return {Boolean}
+	 */
 	isNum : function(o) {
 		return isFinite(o)
 	},
+	/**
+	 * 是否是日期
+	 * @param {Object}
+	 * @return {Boolean}
+	 */
 	isDate : function(o) {
 		return (null != o) && !isNaN(o) && ("undefined" !== typeof o.getDate);
 	},
 	/**
-	 * boolean isObject
+	 * 是否是对象类型
+	 * @param {Object}
+	 * @return {Boolean}
 	 */
 	isObj : function(o) {
 		return !!(o && typeof (o) == "object" );
 	},
 	/**
-	 * boolean is function
+	 * 是否是方法类型
+	 * @param {Object}
+	 * @return {Boolean}
 	 */
 	isFn : function(o) {
 		return !!(o && typeof (o) == "function");
 	},
 	/**
-	 * is it can iterator
+	 * 是否是可以迭代
+	 * @param {Object}
+	 * @return {Boolean}
 	 */
 	isAry : function(o) {
 		var me = this;
 		return !!(o && (o.constructor && o.constructor.toString().indexOf("Array") > -1 || me.isNodeList(o)));
 	},
 	/**
-	 * 是否html元素
+	 * 是否是节点列表
+	 * @param {Object}
+	 * @return {Boolean}
 	 */
 	isNodeList : function(o) {
 		return !!(o && (o.toString() == '[object NodeList]' || o.toString() == '[object HTMLCollection]' || (o.length && this.isNode(o[0]))));
 	},
+	/**
+	 * 是否是节点
+	 * @param {Object}
+	 * @return {Boolean}
+	 */
 	isNode : function(o) {
 		return !!(o && o.nodeType);
 	},
 	/**
-	 * is string can be split into a array which elements total > 2
+	 * 一个字符串能否根据空格拆分成一个数组，数组内元素个数大于1
+	 * @param {String}
+	 * @return {Boolean}
 	 */
 	isCanSplit2Ary : function(o, sign) {
 		var me = this;
 		return me.isStr(o) && o.split(sign || /\s+/g).length > 1;
 	},
+	/**
+	 * 是否为空
+	 * @param {Object}
+	 * @return {Boolean}
+	 */
 	isEmpty : function(o) {
 		var me = this;
 		return typeof (o) == "undefined" || o == null || (!me.isNode(o) && me.isAry(o) && o.length == 0 || (me.isStr(o) && o == ""));
 	},
 	// -----------------------------------string-----------------------------------
+	/**
+	 * 去除所有空格
+	 * @param {String}
+	 * @return {String}
+	 */
 	trimAll : function(str) {
 		if(str == null) {
 			return null;
@@ -133,7 +252,9 @@ $Kit.prototype = {
 	},
 	// -----------------------------------array-----------------------------------
 	/**
-	 * remove some from array
+	 * 从一个数组里面剔除部分元素
+	 * @param {String|Array}
+	 * @return {Array}
 	 */
 	aryDel : function(ary, del) {
 		var me = this;
@@ -154,7 +275,9 @@ $Kit.prototype = {
 		return ary;
 	},
 	/**
-	 * if someone in array
+	 * 判断是否数组中是否存在参数
+	 * @param {String|Array}
+	 * @return {Boolean}
 	 */
 	inAry : function(ary, o) {
 		var me = this, flag = false;
@@ -180,7 +303,10 @@ $Kit.prototype = {
 	},
 	// -----------------------------------find dom-----------------------------------
 	/**
-	 * by id
+	 * ==document.getElementById 根据id选择
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {Element}
 	 */
 	el8id : function(id, root) {
 		var me = this, re = document.getElementById(id);
@@ -193,33 +319,51 @@ $Kit.prototype = {
 		return re;
 	},
 	/**
-	 * by cls
+	 * ==document.getElementsByClassName 根据className选择，返回第一个找到的
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {Element|Null}
 	 */
 	el8cls : function(cls, root) {
 		var re = (root || document).getElementsByClassName(cls);
 		return (re != null && re.length ) ? re[0] : null;
 	},
 	/**
-	 * by tagName
-	 */
-	els8tag : function(tagName, root) {
-		var re = (root || document).getElementsByTagName(tagName);
-		return re != null && re.length ? re : null;
-	},
-	el8tag : function(tagName, root) {
-		var me = this;
-		var re = me.els8tag(tagName, root);
-		return re != null && re.length ? re[0] : null;
-	},
-	/**
-	 * els by cls
+	 * ==document.getElementsByClassName 根据className选择，返回所有找到的
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {[Element]|Null}
 	 */
 	els8cls : function(cls, root) {
 		var re = (root || document).getElementsByClassName(cls);
 		return re != null && re.length ? re : null;
 	},
 	/**
-	 * els by name
+	 * ==document.getElementsByTagName 根据tagName选择，返回所有找到的
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {[Element]|Null}
+	 */
+	els8tag : function(tagName, root) {
+		var re = (root || document).getElementsByTagName(tagName);
+		return re != null && re.length ? re : null;
+	},
+	/**
+	 * ==document.getElementsByTagName 根据tagName选择，返回第一个找到的
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {[Element]|Null}
+	 */
+	el8tag : function(tagName, root) {
+		var me = this;
+		var re = me.els8tag(tagName, root);
+		return re != null && re.length ? re[0] : null;
+	},
+	/**
+	 * ==document.getElementsByName 根据name选择，返回第一个找到的
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {[Element]|Null}
 	 */
 	el8name : function(name, root) {
 		var me = this, re = document.getElementsByName(name);
@@ -233,10 +377,12 @@ $Kit.prototype = {
 		}
 		return (re != null && re.length ) ? re[0] : null;
 	},
-	el8nm : function(name, root) {
-		var me = this;
-		return me.el8name(name, root);
-	},
+	/**
+	 * ==document.getElementsByName 根据name选择，返回所有找到的
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {[Element]|Null}
+	 */
 	els8name : function(name, root) {
 		var me = this, re = document.getElementsByName(name);
 		if(root) {
@@ -250,12 +396,11 @@ $Kit.prototype = {
 		}
 		return re != null && re.length ? re : null;
 	},
-	els8nm : function(name, root) {
-		var me = this;
-		return me.els8name(name, root);
-	},
 	/**
-	 * elect interface
+	 * 简单Css选择器 支持#id，.className，@formName，还有tagName.className，四种格式
+	 * @param {String}
+	 * @param {Element} [root] 可选,从哪个根节点查找
+	 * @return {[Element]|Null}
 	 */
 	el : function(selector, root) {
 		var me = this;
@@ -290,14 +435,20 @@ $Kit.prototype = {
 	},
 	// -----------------------------------dom manipulate-----------------------------------
 	/**
-	 * 比较element位置
-	 * 如果a包含b返回true，否则返回false
+	 * 比较element位置 如果a包含b返回true，否则返回false
+	 * @param {Element}
+	 * @param {Element}
+	 * @reutn {Boolean}
 	 */
 	contains : function(a, b) {
 		return a.contains ? a != b && a.contains(b) : !!(a.compareDocumentPosition(b) & 16);
 	},
 	/**
-	 * get/set attr
+	 * 设置或者获取Element的attribute
+	 * @param {Element}
+	 * @param {String|Object} attr 可以为属性值，也可以为一个枚举对象，按照key,value顺序批量设置
+	 * @param {String} [value]
+	 * @reutn {String|Null}
 	 */
 	attr : function(el, attr, value) {
 		var me = this;
@@ -321,7 +472,11 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * set/get style
+	 * 设置或者获取Element的css
+	 * @param {Element}
+	 * @param {String|Object} attr 可以为属性值，也可以为一个枚举对象，按照key,value顺序批量设置
+	 * @param {String} [value]
+	 * @reutn {String|Null}
 	 */
 	css : function(el, attr, value) {
 		var me = this;
@@ -347,9 +502,9 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * 取值
-	 * div等取innerHTML
-	 * textarea等form元素取value
+	 * 取值 div等取innerHTML textarea等form元素取value
+	 * @param {Element}
+	 * @return {String}
 	 */
 	val : function(el) {
 		var me = this;
@@ -372,7 +527,11 @@ $Kit.prototype = {
 		return el.innerHTML;
 	},
 	/**
-	 * insert element
+	 * 插入元素
+	 * @param {Object} config
+	 * @param {String} config.pos pos表示插入位置，有last,first,before(previous),after(nextSibling)，4种类型值
+	 * @param {Element} config.where where为被插入目标Element
+	 * @param {Element|String} config.what what为插入值，可以为一段HTML，也可以为一个HTML Node
 	 */
 	insEl : function(config) {
 		var me = this, defaultConfig = {
@@ -420,7 +579,9 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * replace element
+	 * 替换元素
+	 * @param {Element}
+	 * @param {Element|String} html 为一个html元素或者一段HTML string
 	 */
 	rpEl : function(element, html) {
 		var me = this;
@@ -437,7 +598,8 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * remove node
+	 * 删除元素
+	 * @param {Element}
 	 */
 	rmEl : function(element) {
 		var me = this;
@@ -461,7 +623,9 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * add className
+	 * 添加className
+	 * @param {Element}
+	 * @param {String}
 	 */
 	adCls : function(el, cls) {
 		var me = this;
@@ -494,7 +658,9 @@ $Kit.prototype = {
 		el.className = el.className.split(/\s+/).join(' ') + ' ' + cls;
 	},
 	/**
-	 * remove className
+	 * 删除ClassName
+	 * @param {Element}
+	 * @param {String}
 	 */
 	rmCls : function(el, cls) {
 		var me = this;
@@ -518,7 +684,9 @@ $Kit.prototype = {
 			el.className = el.className.replace(re, ' ');
 	},
 	/**
-	 * has class true?
+	 * 判断是否含有某个className
+	 * @param {Element}
+	 * @param {String}
 	 */
 	hsCls : function(el, cls) {
 		var me = this;
@@ -542,6 +710,8 @@ $Kit.prototype = {
 	},
 	/**
 	 * 切换css，有则删，无则加
+	 * @param {Element}
+	 * @param {String}
 	 */
 	toggleCls : function(el, cls) {
 		var me = this;
@@ -552,7 +722,10 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * Dom traversal
+	 * Dom遍历
+	 * @param {Object} config
+	 * @param {Object} config.root 遍历的根节点，表示从哪儿开始遍历
+	 * @param {Object} config.fn 每遍历一个节点，执行的方法fn(node,root)
 	 */
 	traversal : function(config) {
 		var me = this, defaultConfig = {
@@ -576,7 +749,11 @@ $Kit.prototype = {
 
 	},
 	/**
-	 * nextElementSibling/Dom traversal
+	 * 返回当前元素满足条件的下一个元素
+	 * @param {Element}
+	 * @param {Function} condition 用于检测是否满足条件的方法，返回true表示满足
+	 * @param {Obejct} [scope] 执行condition时候的this指针
+	 * @return {Element}
 	 */
 	nextEl : function(el, condition, scope) {
 		var me = this;
@@ -617,7 +794,11 @@ $Kit.prototype = {
 		return next;
 	},
 	/**
-	 * previousElementSibling/Dom traversal
+	 * 返回当前元素满足条件的前一个元素
+	 * @param {Element}
+	 * @param {Function} condition 用于检测是否满足条件的方法，返回true表示满足
+	 * @param {Obejct} [scope] 执行condition时候的this指针
+	 * @return {Element}
 	 */
 	prevEl : function(el, condition, scope) {
 		var me = this;
@@ -658,8 +839,11 @@ $Kit.prototype = {
 		return prev;
 	},
 	/**
-	 * parentNode search
-	 * 注意，不包含自己
+	 * 返回当前元素满足条件的父元素
+	 * @param {Element}
+	 * @param {Function} condition 用于检测是否满足条件的方法，返回true表示满足
+	 * @param {Obejct} [scope] 执行condition时候的this指针
+	 * @return {Element}
 	 */
 	parentEl : function(el, condition, scope) {
 		var me = this;
@@ -683,7 +867,9 @@ $Kit.prototype = {
 		return parent;
 	},
 	/**
-	 * return a documentFragment with html
+	 * 返回一个 documentFragment，包含了HTML
+	 * @param {String}
+	 * @return {DocumentFragment}
 	 */
 	newHTML : function(html) {
 		var me = this;
@@ -700,7 +886,16 @@ $Kit.prototype = {
 		return o;
 	},
 	/**
-	 * offset
+	 * 计算元素相对于doc的 绝对偏移
+	 * @param {Element}
+	 * @return {Number} top 距离顶部
+	 * @return {Number} left 距离左边
+	 * @return {Number} height 高度
+	 * @return {Number} width 宽度
+	 * @return {Number} bottom 底部距离顶部
+	 * @return {Number} right 右边距离最左边
+	 * @return {Number} middleTop 中间距离顶部
+	 * @return {Number} middleLeft 中间距离最左边
 	 */
 	offset : function(el) {
 		var me = this;
@@ -728,7 +923,14 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * 获取可视区域信息
+	 * 计算元素相对于doc的 绝对偏移
+	 * @param {Element}
+	 * @return {Number} clientWidth 可视内容的宽度
+	 * @return {Number} clientHeight 可视内容的高度
+	 * @return {Number} scrollWidth 滚动条的宽度
+	 * @return {Number} scrollHeight 滚动条的高度
+	 * @return {Number} scrollLeft 滚动条距离左边的宽度
+	 * @return {Number} scrollTop 滚动条距离顶部的高度
 	 */
 	viewport : function() {
 		var cWidth, cHeight, sWidth, sHeight, sLeft, sTop;
@@ -759,19 +961,19 @@ $Kit.prototype = {
 	// -----------------------------------event-----------------------------------
 	// -----------------------------------event-----------------------------------
 	/**
-	 * register event
-	 *
-	 * @el : event triggle element
-	 * @ev : event
-	 * @fn : event call out function
-	 * @scope : execute context
+	 * kit事件注册方法
+	 * @param {Object} config
+	 * @param {Selector|Element|NodeList} config.el 触发事件的元素，等于event.currentTarget
+	 * @param {String} config.ev 事件type，如click
+	 * @param {Function} config.fn 事件方法
+	 * @param {Object} config.scope this指针
 	 */
 	ev : function(config) {
 		var me = this, defaultConfig = {
 			el : window,
 			ev : null,
 			fn : null,
-			args : null
+			scope : null
 		}
 		config = me.join(defaultConfig, config);
 		if(me.isAry(config.el)) {
@@ -907,14 +1109,17 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * remove event register
+	 * kit事件注销方法
+	 * @param {Object} config
+	 * @param {Selector|Element|NodeList} config.el 触发事件的元素，等于event.currentTarget
+	 * @param {String} [config.ev] 事件type，如无，则注销该元素下所有类型的事件
+	 * @param {Function} [config.fn] 事件方法，如有，则根据toString对比，找到后注销，如无，则注销该事件下所有的方法
 	 */
 	delEv : function(config) {
 		var me = this, defaultConfig = {
 			el : window,
 			ev : null,
-			fn : null,
-			scope : this
+			fn : null
 		}
 		config = me.join(defaultConfig, config);
 		if(me.isAry(config.el)) {
@@ -997,6 +1202,12 @@ $Kit.prototype = {
 		}
 
 	},
+	/**
+	 * 触发事件
+	 * @param {Object} config
+	 * @param {Element} config.el 触发元素
+	 * @param {String} [config.ev] 事件类型
+	 */
 	newEv : function(config) {
 		var me = this, defaultConfig = {
 			el : window,
@@ -1018,6 +1229,7 @@ $Kit.prototype = {
 	},
 	/**
 	 * set event extra info
+	 * @param {Event}
 	 * @private
 	 */
 	evExtra : function(ev) {
@@ -1031,6 +1243,7 @@ $Kit.prototype = {
 	},
 	/**
 	 * get event coordinate info
+	 * @param {Event}
 	 * @private
 	 */
 	evPos : function(ev) {
@@ -1051,7 +1264,9 @@ $Kit.prototype = {
 	},
 	// -----------------------------------object manipulate-----------------------------------
 	/**
-	 * combine object
+	 * 合并对象，生成一个新的对象
+	 * @param {Object ...}
+	 * @return {Object}
 	 */
 	join : function() {
 		var a = arguments, b = {};
@@ -1068,7 +1283,9 @@ $Kit.prototype = {
 		return b;
 	},
 	/**
-	 * draw from another
+	 * 合并对象，后面所有的对象的属性都加到第一个身上
+	 * @param {Object ...}
+	 * @return {Object}
 	 */
 	merge : function() {
 		var a = arguments;
@@ -1085,7 +1302,9 @@ $Kit.prototype = {
 		return a[0];
 	},
 	/**
-	 * if first one has , do not override
+	 * 合并对象，后面所有的对象的属性都加到第一个身上，注意，如果第一个有了，则不覆盖
+	 * @param {Object ...}
+	 * @return {Object}
 	 */
 	mergeIf : function() {
 		var a = arguments;
@@ -1135,6 +1354,11 @@ $Kit.prototype = {
 	},*/
 
 	// -----------------------------------log-----------------------------------
+	/**
+	 * 简单的log
+	 * @param {String} info
+	 * @param {Object} config
+	 */
 	log : function(info, config) {
 		try {
 			var me = this;
@@ -1167,6 +1391,9 @@ $Kit.prototype = {
 			throw e;
 		}
 	},
+	/**
+	 * 清空log
+	 */
 	clsLog : function() {
 		var me = this;
 		var a = me.els8cls("J_Debug_Info");
@@ -1175,12 +1402,17 @@ $Kit.prototype = {
 		}
 	},
 	// -----------------------------------else-----------------------------------
+	/**
+	 * 返回随机数
+	 * @private
+	 */
 	only : function() {
 		var rnd = Math.random(10000);
 		return rnd.toString().substr(2, 10);
 	},
 	/**
 	 * generate unique DOM id
+	 * @return {String}
 	 */
 	onlyId : function() {
 		var me = this;
@@ -1200,6 +1432,10 @@ $Kit.prototype = {
 		}
 		return id
 	},
+	/**
+	 * 判断iOS版本信息
+	 * @return {Object}
+	 */
 	iOSInfo : function() {
 		var me = this, regExp_appleDevice = /\(([a-z; ]+)CPU ([a-z ]*)OS ([\d_]+) like Mac OS X/i;
 		var ver, device, re;
@@ -1216,11 +1452,6 @@ $Kit.prototype = {
 		}
 		return re;
 	},
-	/**
-	 * config include array, exclude, fn, scope iterator each element in array
-	 * not include exclude
-	 * return false退出循环
-	 */
 	// each : function(config) {
 	// var me = this;
 	// var a = config.array;
@@ -1232,6 +1463,12 @@ $Kit.prototype = {
 	// }
 	// }
 	// },
+	/**
+	 * 数组遍历
+	 * @param {Array|NodeList}
+	 * @param {Function} fn 遍历执行方法，执行方法中返回false值，则停止继续遍历
+	 * @param {Object} [scope] 执行方法的this指针
+	 */
 	each : function(ary, fn, scope) {
 		if(ary == null) {
 			return;
@@ -1259,6 +1496,10 @@ $Kit.prototype = {
 	},
 	/**
 	 * 合并字符串
+	 * @param {Array|Map}
+	 * @param {String} connectStr 链接每个属性的字符
+	 * @param {String} 遍历Map的时候，链接key与value的字符
+	 * @return {String}
 	 */
 	concat : function(o, connectStr, connectOper) {
 		if($kit.isStr(o)) {
@@ -1276,8 +1517,10 @@ $Kit.prototype = {
 		return reStr.join(connectStr);
 	},
 	/**
-	 * subClass inherit superClass
-	 * 简单继承
+	 * 简单继承subClass inherit superClass
+	 * @param {Object} config
+	 * @param {Object} config.child 子类
+	 * @param {Object} config.father 父类
 	 */
 	inherit : function(config) {
 		var me = this, child = config.child, father = config.father;
@@ -1293,11 +1536,8 @@ $Kit.prototype = {
 	},
 	/**
 	 * 模板的简单实现
-	 *
-	 * @public
-	 * @param {string}模板文本
-	 * @param {object}替换对象
-	 *
+	 * @param {String} templ 模板文本
+	 * @param {Map} data 替换对象
 	 * <pre>
 	 * render('this is ${obj}', {
 	 * 	obj : 'car'
@@ -1319,9 +1559,18 @@ $Kit.prototype = {
 		});
 	}
 }
+/**
+ * $Kit的实例，直接通过这个实例访问$Kit所有方法
+ * @type $Kit
+ */
 $kit = new $Kit();
 /**
- * dom ready
+ * dom ready event
+ * @memberof $Kit
+ * @member $
+ * @function
+ * @instance
+ * @param {Function}
  */
 $kit.$ = function(fn) {
 	document.addEventListener('DOMContentLoaded', fn, false);

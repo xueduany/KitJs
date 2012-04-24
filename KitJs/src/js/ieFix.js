@@ -7,25 +7,19 @@ $kit.merge(String.prototype, {
 		}
 	}
 });
+
 $kit.merge($Kit.prototype, {
-	/**
-	 * 是否ie...
-	 */
+	// 是否ie...
 	isIE : function(o) {
 		if(document.all) {
 			return true;
 		}
 		return false;
 	},
-	/**
-	 * 是否html元素
-	 */
+	//是否html元素
 	isNodeList : function(o) {
 		return !!(o && $kit.isObj(o) && 'length' in o && o.item && this.isNode(o[0]))
 	},
-	/**
-	 * by cls
-	 */
 	el8cls : function(cls, root) {
 		var root = root || document, me = this, re = null;
 		me.each(root.getElementsByTagName('*'), function(o) {
@@ -36,9 +30,6 @@ $kit.merge($Kit.prototype, {
 		});
 		return re;
 	},
-	/**
-	 * els by cls
-	 */
 	els8cls : function(cls, root) {
 		var root = root || document, me = this, re = [];
 		me.each(root.getElementsByTagName('*'), function(o) {
@@ -48,9 +39,6 @@ $kit.merge($Kit.prototype, {
 		});
 		return re.length ? re : null;
 	},
-	/**
-	 * set/get style
-	 */
 	css : function(el, attr, value) {
 		var me = this;
 		if(me.isEmpty(el)) {
@@ -112,9 +100,6 @@ $kit.merge($Kit.prototype, {
 		}
 		return firstLetter.toLowerCase() + a.join('');
 	},
-	/**
-	 * replace element
-	 */
 	rpEl : function(element, html) {
 		var me = this;
 		if(me.isEmpty(element) || me.isEmpty(html)) {
@@ -126,9 +111,6 @@ $kit.merge($Kit.prototype, {
 			element.parentNode.replaceChild(html, element);
 		}
 	},
-	/**
-	 * nextElementSibling/Dom traversal
-	 */
 	nextEl : function(el, condition, scope) {
 		var me = this;
 		if(me.isEmpty(el)) {
@@ -171,9 +153,6 @@ $kit.merge($Kit.prototype, {
 		}
 		return next;
 	},
-	/**
-	 * previousElementSibling/Dom traversal
-	 */
 	prevEl : function(el, condition, scope) {
 		var me = this;
 		if(me.isEmpty(el)) {
@@ -223,7 +202,7 @@ $kit = new $Kit();
 $kit.$ = function(fn) {
 	IEContentLoaded(window, fn);
 	/*
-	*
+	* @ignore
 	* IEContentLoaded.js
 	*
 	* Author: Diego Perini (diego.perini at gmail.com) NWBOX S.r.l.
@@ -282,14 +261,12 @@ $kit.$ = function(fn) {
 	}
 
 }
-/*!
-* Cross-Browser Split 1.1.1
-* Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
-* Available under the MIT License
-* ECMAScript compliant, uniform cross-browser split method
-*/
-
-/**
+/*
+ * @ignore
+ * Cross-Browser Split 1.1.1
+ * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
+ * Available under the MIT License
+ * ECMAScript compliant, uniform cross-browser split method
  * Splits a string into an array of strings using a regex or string separator. Matches of the
  * separator are not included in the result array. However, if `separator` is a regex that contains
  * capturing groups, backreferences are spliced into the result each time `separator` is matched.

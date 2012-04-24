@@ -1,12 +1,32 @@
 /**
  * ajax
+ * @class $Kit.IO
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/ajax.js">Source code</a>
  */
 $Kit.IO = function() {
-
+	//
 }
-$Kit.IO.prototype = {
+$kit.merge($Kit.IO.prototype,
+/**
+ * @lends $Kit.IO.prototype
+ */
+{
 	/**
 	 * ajax
+	 * @param {Object} config
+	 * @param {String} config.url
+	 * @param {Object} [config.params] {key:value}格式
+	 * @param {Stirng} [config.method] get或者post或者delete或者...，默认get
+	 * @param {Boolean} [config.async] 是否异步，默认true，异步
+	 * @param {Object} [config.head] requestHead {key:value}格式
+	 * @param {Obejct} [config.body] {key:value}格式
+	 * @param {Function} [config.onProgress] 处理中回调，bigpipe
+	 * @param {Function} [config.onSuccess] 成功回调
+	 * @param {Function} [config.onError] 错误回调
+	 * @param {Function} [config.onOvertime] 超时回调
+	 * @param {Number} [config.overtime] 默认3000，单位毫秒
+	 * @param {Function} [config.readyStateChangeFn] ready状态回调
 	 */
 	ajax : function(config) {
 		var me = this;
@@ -77,7 +97,12 @@ $Kit.IO.prototype = {
 		}
 	},
 	/**
-	 * ajax get
+	 * get
+	 * @param {Object} config
+	 * @param {String} config.url
+	 * @param {Object} [config.params] {key:value}格式
+	 * @param {Boolean} [config.async] 是否异步，默认true，异步
+	 * @param {Function} [config.onSuccess] 成功回调
 	 */
 	get : function(config) {
 		var me = this;
@@ -95,6 +120,13 @@ $Kit.IO.prototype = {
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},
+	/**
+	 * 同步get
+	 * @param {Object} config
+	 * @param {String} config.url
+	 * @param {Object} [config.params] {key:value}格式
+	 * @param {Function} [config.onSuccess] 成功回调
+	 */
 	syncGet : function(config) {
 		var me = this;
 		var defaultConfig = {
@@ -111,6 +143,14 @@ $Kit.IO.prototype = {
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},
+	/**
+	 * post
+	 * @param {Object} config
+	 * @param {String} config.url
+	 * @param {Obejct} [config.body] {key:value}格式
+	 * @param {Boolean} [config.async] 是否异步，默认true，异步
+	 * @param {Function} [config.onSuccess] 成功回调
+	 */
 	post : function(config) {
 		var me = this;
 		var defaultConfig = {
@@ -126,6 +166,13 @@ $Kit.IO.prototype = {
 		}
 		return me.ajax($kit.join(config, defaultConfig));
 	},
+	/**
+	 * 同步post
+	 * @param {Object} config
+	 * @param {String} config.url
+	 * @param {Obejct} [config.body] {key:value}格式
+	 * @param {Function} [config.onSuccess] 成功回调
+	 */
 	syncPost : function(config) {
 		var me = this;
 		var defaultConfig = {
@@ -143,6 +190,10 @@ $Kit.IO.prototype = {
 	},
 	/**
 	 * jsonp
+	 * @param {Object} config
+	 * @param {Object} config.url
+	 * @param {Object} config.params
+	 * @param {Object} config.onSuccess
 	 */
 	josnp : function(config) {
 		if(config.url) {
@@ -155,18 +206,18 @@ $Kit.IO.prototype = {
 				}
 			}
 			var script = document.createElement('script');
-			if(config.callback) {
+			if(config.onSuccess) {
 				if(script.readyState) {//ie
 					script.onreadystatechange = function() {
 						a.push(script.readyState);
 						if(script.readyState == "loaded" || script.readyState == "complete") {
 							script.onreadystatechange = null;
-							config.callback && config.callback();
+							config.onSuccess && config.onSuccess();
 						}
 					}
 				} else {
 					script.onload = function() {
-						config.callback && config.callback();
+						config.onSuccess && config.onSuccess();
 					}
 				}
 			}
@@ -174,5 +225,11 @@ $Kit.IO.prototype = {
 			document.body.appendChild(script);
 		}
 	}
-};
+});
+/**
+ * $Kit.IO的实例，直接通过这个实例访问$Kit.IO所有方法
+ * @global
+ * @name $kit.io
+ * @type $Kit.IO
+ */
 $kit.io = new $Kit.IO();

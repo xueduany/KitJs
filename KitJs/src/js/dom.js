@@ -1,12 +1,23 @@
 /**
  * Dom扩展
+ * @class $Kit.Dom
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/dom.js">Source code</a>
  */
 $Kit.Dom = function() {
 	//
 }
-$Kit.Dom.prototype = {
+$kit.merge($Kit.Dom.prototype,
+/**
+ * @lends $Kit.Dom.prototype
+ */
+{
 	/**
-	 * 查找父元素
+	 * 根据tagName查找父元素
+	 * @param {Element}
+	 * @param {String}
+	 * @param {Element} [topEl] 到topEl停止查找
+	 * @return {Element|Null}
 	 */
 	parentEl8tag : function(el, tagName, topEl) {
 		var topEl = topEl || document.body;
@@ -19,6 +30,13 @@ $Kit.Dom.prototype = {
 			}
 		}, topEl);
 	},
+	/**
+	 * 根据className查找父元素
+	 * @param {Element}
+	 * @param {String}
+	 * @param {Element} [topEl] 到topEl停止查找
+	 * @return {Element|Null}
+	 */
 	parentEl8cls : function(el, cls, topEl) {
 		var topEl = topEl || document.body;
 		return $kit.parentEl(el, function(p) {
@@ -31,7 +49,14 @@ $Kit.Dom.prototype = {
 		}, topEl);
 	},
 	/**
-	 * 注入js
+	 * 注入script块
+	 * @param {Object} config
+	 * @param {String} config.id 注入script的id，自定义，只要与现有dom里面的元素id不相同即可
+	 * @param {String} [config.url] 注入script的加载url
+	 * @param {String} [config.text] 注入script的script内容
+	 * @param {String} [config.then] 注入script的加载完毕的回调方法
+	 * @param {String} [config.scope] 注入script的回调方法的this指针
+	 * @return {Element} script
 	 */
 	injectJs : function() {
 		if(arguments.length == 1) {
@@ -39,22 +64,23 @@ $Kit.Dom.prototype = {
 			if(config.id && $kit.el8id(config.id)) {
 				return;
 			}
+			config.id = config.id || $kit.onlyId();
 			var where = config.where || window.document.body;
 			var script = document.createElement('script');
 			$kit.attr(script, 'type', 'text/javascript');
 			if(config.id) {
 				$kit.attr(script, 'id', config.id);
 			}
-			if(!$kit.isEmpty(config.src)) {
-				script.src = config.src;
+			if(!$kit.isEmpty(config.url)) {
+				script.src = config.url;
 				if(!$kit.isEmpty(config.then)) {
 					var scope = config.scope || window;
 					script.onload = function() {
 						config.then.call(scope, script);
 					}
 				}
-			} else if(!$kit.isEmpty(config.content)) {
-				script.innerHTML = config.content;
+			} else if(!$kit.isEmpty(config.text)) {
+				script.innerHTML = config.text;
 				if(!$kit.isEmpty(config.then)) {
 					setTimeout(function() {
 						config.then.call(scope, script);
@@ -62,19 +88,24 @@ $Kit.Dom.prototype = {
 				}
 			}
 			where.appendChild(script);
+			return script;
 		}
 	},
 	/**
 	 * 注入css
+	 * @param {Object} config
+	 * @param {String} config.id 注入css的id，自定义，只要与现有dom里面的元素id不相同即可
+	 * @param {String} [config.url] 注入css的url
+	 * @param {String} [config.text] 如果没有url的话，写入style的文本
+	 * @return {Element} css
 	 */
-	// **Dynamic CSS injection**
-	// Takes a string of css, inserts it into a `<style>`, then injects it in at the very top of the `<head>`. This ensures any user-defined styles will take precedence.
 	injectCss : function() {
 		if(arguments.length == 1) {
 			var config = arguments[0];
 			if(config.id && $kit.el8id(config.id)) {
 				return;
 			}
+			// Takes a string of css, inserts it into a `<style>`, then injects it in at the very top of the `<head>`. This ensures any user-defined styles will take precedence.
 			var where = config.where || document.getElementsByTagName('head')[document.getElementsByTagName('head').length - 1];
 			var css;
 			if(!$kit.isEmpty(config.url)) {
@@ -97,10 +128,13 @@ $Kit.Dom.prototype = {
 					where : where
 				});
 			}
+			return css;
 		}
 	},
 	/**
-	 * 删除样式
+	 * 删除所有样式
+	 * @param {String}
+	 * @param {Element}
 	 */
 	rmClsAll : function(cls, top) {
 		var a = $kit.el8cls(cls, top);
@@ -111,6 +145,9 @@ $Kit.Dom.prototype = {
 	},
 	/**
 	 * 通过className前缀取className
+	 * @param {Element}
+	 * @param {String}
+	 * @return {NodeList||Null}
 	 */
 	getClassNameByPrefix : function(el, prefixCls) {
 		var clsAry = el.className.split(/\s+/);
@@ -127,6 +164,9 @@ $Kit.Dom.prototype = {
 	},
 	/**
 	 * innerText
+	 * @param {Element}
+	 * @param {String} [text]
+	 * @return {String|Null}
 	 */
 	text : function(el, text) {
 		if(el != null && 'innerText' in el) {
@@ -145,6 +185,9 @@ $Kit.Dom.prototype = {
 	},
 	/**
 	 * innerHTML
+	 * @param {Element}
+	 * @param {String} [html]
+	 * @return {String|Null}
 	 */
 	html : function(el, html) {
 		if(html) {
@@ -157,6 +200,8 @@ $Kit.Dom.prototype = {
 	},
 	/**
 	 * clone a node
+	 * @param {Element}
+	 * @return {Element}
 	 */
 	clone : function(node) {
 		if(document.createElement("nav").cloneNode(true).outerHTML !== "<:nav></:nav>") {
@@ -172,7 +217,10 @@ $Kit.Dom.prototype = {
 		}
 	},
 	/**
-	 * height+padding+border
+	 * height
+	 * @param {Element}
+	 * @param {Number} [value]
+	 * @return {Number|Null}
 	 */
 	height : function(node, value) {
 		var me = this;
@@ -193,6 +241,12 @@ $Kit.Dom.prototype = {
 		}
 		return $kit.viewport().clientHeight;
 	},
+	/**
+	 * width
+	 * @param {Element}
+	 * @param {Number} [value]
+	 * @return {Number|Null}
+	 */
 	width : function(node, value) {
 		var me = this;
 		if(node != null) {
@@ -214,6 +268,8 @@ $Kit.Dom.prototype = {
 	},
 	/**
 	 * height + padding
+	 * @param {Element}
+	 * @return {Number}
 	 */
 	innerHeight : function(node) {
 		var me = this;
@@ -224,6 +280,8 @@ $Kit.Dom.prototype = {
 	},
 	/**
 	 * width + padding
+	 * @param {Element}
+	 * @return {Number}
 	 */
 	innerWidth : function(node) {
 		var me = this;
@@ -232,6 +290,11 @@ $Kit.Dom.prototype = {
 		}
 		return $kit.css(node, 'width') + ($kit.css(node, 'padding-left-width') || 0) - ($kit.css(node, 'padding-right-width') || 0);
 	},
+	/**
+	 * height + padding + border
+	 * @param {Element}
+	 * @return {Number}
+	 */
 	outerHeight : function(node) {
 		var me = this;
 		if(document.compatMode == "BackCompat") {
@@ -240,6 +303,11 @@ $Kit.Dom.prototype = {
 		return $kit.css(node, 'height') + ($kit.css(node, 'padding-top-width') || 0) - ($kit.css(node, 'padding-bottom-width') || 0)//
 		+ ($kit.css(node, 'border-top-width') || 0) + ($kit.css(node, 'border-bottom-width') || 0);
 	},
+	/**
+	 * width + padding + border
+	 * @param {Element}
+	 * @return {Number}
+	 */
 	outerWidth : function(node) {
 		var me = this;
 		if(document.compatMode == "BackCompat") {
@@ -250,6 +318,8 @@ $Kit.Dom.prototype = {
 	},
 	/**
 	 * 包围一个html
+	 * @param {Element}
+	 * @param {String}
 	 */
 	wrap : function(node, html) {
 		if($kit.isNode(html)) {
@@ -266,26 +336,57 @@ $Kit.Dom.prototype = {
 		});
 		html.appendChild(node);
 	},
+	/**
+	 * 序列化form元素
+	 * @param {Element}
+	 * @param {String}
+	 * @return {String}
+	 */
 	serialize : function(form) {
 		if($kit.isNode(form)) {
 			if(form.tagName.toLowerCase() == 'form') {
-				var formEls = [];
+				var formEls = {};
 				$kit.each($kit.el('input', form), function(o) {
-					formEls.push(o);
+					if(o.type && o.type.toString.toLowerCase() == 'text') {
+						formEls[o.name] = o.value;
+					} else if(o.type && o.type.toString().toLowerCase() == 'radio') {
+						if(o.checked) {
+							formEls[o.name] = o.value;
+						}
+					} else if(o.type && o.type.toString().toLowerCase() == 'checkbox') {
+						if(o.checked) {
+							if(!$kit.isAry(formEls[o.name])) {
+								formEls[o.name] = [formEls[o.name]];
+							}
+							formEls[o.name].push(o.value);
+						}
+					}
 				});
-				$kit.each($kit.el('input', form), function(o) {
-					formEls.push(o);
+				$kit.each($kit.el('textarea', form), function(o) {
+					formEls[o.name] = o.value;
 				});
-				$kit.each($kit.el('input', form), function(o) {
-					formEls.push(o);
+				$kit.each($kit.el('select', form), function(o) {
+					formEls[o.name] = o.options[o.selectedIndex].value;
 				});
-				$kit.each(formEls, function(o) {
-
-				})
-			} else {
-				return form.name + '=' + encodeURIComponent($kit.val(form));
+				var re = [];
+				for(var key in formEls) {
+					if($kit.isAry(formEls[key])) {
+						re.push(key + '=' + encodeURIComponent(formEls[key].join(',')));
+					} else {
+						re.push(key + '=' + encodeURIComponent(formEls[key]));
+					}
+				}
+				return re.join('');
 			}
+			return form.name + '=' + encodeURIComponent($kit.val(form));
 		}
 	}
-};
-$kit.d = $kit.dom = new $Kit.Dom();
+});
+/**
+ * $Kit.Dom的实例，直接通过这个实例访问$Kit.Dom所有方法
+ * @global
+ * @name $kit.dom
+ * @alias $kit.d
+ * @type $Kit.Dom
+ */
+$kit.dom = $kit.d = new $Kit.Dom();

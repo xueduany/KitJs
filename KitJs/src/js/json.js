@@ -1,4 +1,4 @@
-/**
+/* @ignore
  Referrence:
 
  See http://www.JSON.org/js.html
@@ -63,6 +63,12 @@
 // Create a JSON object only if one does not already exist. We create the
 // methods in a closure to avoid creating global variables.
 
+/**
+ * JSON扩展
+ * @class $Kit.JSON
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/json.js">Source code</a>
+ */
 $Kit.JSON = function() {
 
 	function f(n) {
@@ -274,8 +280,29 @@ $Kit.JSON = function() {
 		}
 	}
 }
-$Kit.JSON.prototype = {
+$kit.merge($Kit.JSON.prototype,
+/**
+ * @lends $Kit.JSON.prototype
+ */
+{
+	/**
+	 * 把json序列化成为json String
+	 * @function
+	 * @param {Object} json
+	 * @return {String} string
+	 */
 	stringify : this.stringify,
+	/**
+	 * 解析json string成为json object
+	 * @function
+	 * @param {String} jsonString
+	 * @return {Object} json
+	 */
 	parse : this.parse
-}
+});
+/**
+ * $Kit.JSON的实例，直接通过这个实例访问$Kit.JSON所有方法
+ * @global
+ * @type $Kit.JSON
+ */
 $kit.json = new $Kit.JSON();

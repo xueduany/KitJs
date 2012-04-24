@@ -1,10 +1,21 @@
 /**
- * 选取
+ * 鼠标选取热区
+ * @class $Kit.Selection
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/selection.js">Source code</a>
  */
 $Kit.Selection = function() {
 	//
 }
-$kit.merge($Kit.Selection.prototype, {
+$kit.merge($Kit.Selection.prototype,
+/**
+ * @lends $Kit.Selection.prototype
+ */
+{
+	/**
+	 * 获得selection
+	 * @return {Selection}
+	 */
 	getSelection : function() {
 		if(window.getSelection) {
 			return window.getSelection();
@@ -13,6 +24,10 @@ $kit.merge($Kit.Selection.prototype, {
 		}
 		return document.selection;
 	},
+	/**
+	 * 获得selection的textRange
+	 * @return {TextRange}
+	 */
 	getRange : function() {
 		var selection = this.getSelection();
 		if(selection.getRangeAt) {
@@ -22,6 +37,7 @@ $kit.merge($Kit.Selection.prototype, {
 	},
 	/**
 	 * 获得相对于viewport的offset
+	 * @return {Object}
 	 */
 	getRect : function() {
 		var range = this.getRange();
@@ -41,6 +57,7 @@ $kit.merge($Kit.Selection.prototype, {
 	},
 	/**
 	 * 取输入框的游标位置
+	 * @return {Number}
 	 */
 	getCaretPos : function(el) {
 		if(el.selectionStart) {
@@ -60,6 +77,7 @@ $kit.merge($Kit.Selection.prototype, {
 	},
 	/**
 	 * 获取包含选中内容的node
+	 * @return {Element}
 	 */
 	getContainer : function() {
 		var range = this.getRange();
@@ -68,6 +86,10 @@ $kit.merge($Kit.Selection.prototype, {
 		}
 		return range.commonAncestorContainer || range.parentElement();
 	},
+	/**
+	 * 获得选取文本
+	 * @return {String}
+	 */
 	getText : function() {
 		var range = this.getRange();
 		if(range == null) {
@@ -75,6 +97,10 @@ $kit.merge($Kit.Selection.prototype, {
 		}
 		return range.text || range.toString();
 	},
+	/**
+	 * 获得选取HTML
+	 * @return {String}
+	 */
 	getHTML : function() {
 		var range = this.getRange();
 		if(range == null) {
@@ -90,6 +116,7 @@ $kit.merge($Kit.Selection.prototype, {
 	},
 	/**
 	 * 未完成
+	 * @inner
 	 */
 	getBegin : function() {
 		if(window.getSelection) {
@@ -97,4 +124,9 @@ $kit.merge($Kit.Selection.prototype, {
 		}
 	}
 });
+/**
+ * $Kit.Selection的实例，直接通过这个实例访问$Kit.Selection所有方法
+ * @global
+ * @type $Kit.Selection
+ */
 $kit.selection = new $Kit.Selection();

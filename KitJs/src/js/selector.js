@@ -1,4 +1,4 @@
-/*!
+/* @ignore
  * Sizzle CSS Selector Engine
  *  Copyright 2011, The Dojo Foundation
  *  Released under the MIT, BSD, and GPL Licenses.
@@ -7,7 +7,13 @@
  * version: 1.5.1-33
  * update 2012/04/10
  */
-(function() {
+
+(function()
+/**
+ * @class $kit.selector
+ * @sington
+ */
+{
 
 	var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^\[\]]*\]|['"][^'"]*['"]|[^\[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g, expando = "sizcache" + (Math.random() + '').replace('.', ''), done = 0, toString = Object.prototype.toString, hasDuplicate = false, baseHasDuplicate = true, rBackslash = /\\/g, rNonWord = /\W/;
 
@@ -169,15 +175,37 @@
 
 		return results;
 	};
-
+	/**
+	 * matches
+	 * @name matches
+	 * @memberof $kit.selector
+	 * @param {Selector}
+	 * @param {Array}
+	 * @return {Boolean}
+	 */
 	Sizzle.matches = function(expr, set) {
 		return Sizzle(expr, null, null, set);
 	};
-
+	/**
+	 * matchesSelector
+	 * @name matchesSelector
+	 * @memberof $kit.selector
+	 * @param {Element}
+	 * @param {Selector}
+	 * @return {Boolean}
+	 */
 	Sizzle.matchesSelector = function(node, expr) {
 		return Sizzle(expr, null, null, [node]).length > 0;
 	};
-
+	/**
+	 * matchesSelector
+	 * @name find
+	 * @memberof $kit.selector
+	 * @param {Selector}
+	 * @param {Element} [context]
+	 * @param {Boolean} [isXML]
+	 * @return {[Element]}
+	 */
 	Sizzle.find = function(expr, context, isXML) {
 		var set, i, len, match, type, left;
 
@@ -213,7 +241,6 @@
 			expr : expr
 		};
 	};
-
 	Sizzle.filter = function(expr, set, inplace, not) {
 		var match, anyFound, type, found, item, filter, left, i, pass, old = expr, result = [], curLoop = set, isXMLFilter = set && set[0] && Sizzle.isXML(set[0]);
 
@@ -935,8 +962,7 @@
 
 		// release memory in IE
 		root = form = null;
-	})();
-	(function() {
+	})(); (function() {
 		// Check to see if the browser returns only elements
 		// when doing getElementsByTagName("*")
 
@@ -1118,8 +1144,7 @@
 				return Sizzle(expr, null, null, [node]).length > 0;
 			};
 		}
-	})();
-	(function() {
+	})(); (function() {
 		var div = document.createElement("div");
 
 		div.innerHTML = "<div class='test e'></div><div class='test'></div>";
@@ -1222,6 +1247,12 @@
 			return a !== b && (a.contains ? a.contains(b) : true);
 		};
 	} else if(document.documentElement.compareDocumentPosition) {
+		/**
+		 * contains
+		 * @params {Element}
+		 * @params {Element}
+		 * @return {Boolean}
+		 */
 		Sizzle.contains = function(a, b) {
 			return !!(a.compareDocumentPosition(b) & 16);
 		};
@@ -1252,13 +1283,25 @@
 		for(var i = 0, l = root.length; i < l; i++) {
 			Sizzle(selector, root[i], tmpSet, seed);
 		}
-
+		/**
+		 * filter
+		 * @memberof $kit.selector
+		 * @param {Selector} selector
+		 * @param {Element} context
+		 * @return {[Element]}
+		 */
 		return Sizzle.filter(later, tmpSet);
 	};
 	// EXPOSE
 
 	$kit.selector = window.Sizzle = Sizzle;
-
+	/**
+	 * sizzle选择器
+	 * @global
+	 * @param {Selector}
+	 * @param {Element}
+	 * @return {[Element]}
+	 */
 	$kit.$el = function(selector, root) {
 		return Sizzle(selector, root);
 	}

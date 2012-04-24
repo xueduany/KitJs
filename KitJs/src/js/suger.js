@@ -1,8 +1,15 @@
 /**
  * 语法糖
  * 纯链式结构，jquery的思想
+ * @class $Kit.Suger
+ * @requires kit.js
+ * @requires array.js
+ * @requires anim.js
+ * @requires dom.js
+ * @requires event.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/suger.js">Source code</a>
  */
-$kit.Suger = function() {
+$Kit.Suger = function() {
 	var selector = arguments[0];
 	var context = arguments[1];
 	if(this.isSuger(context)) {
@@ -33,9 +40,9 @@ $kit.Suger = function() {
 	this.length = this.nodes.length;
 	this.name = 'kitSuger';
 }
-$kit.Suger.prototype = {
+$Kit.Suger.prototype = {
 	_new : function(selector) {
-		var _suger = new $kit.Suger(selector);
+		var _suger = new $Kit.Suger(selector);
 		_suger.previousSugerObject = this;
 		return _suger;
 	},
@@ -657,7 +664,7 @@ $kit.Suger.prototype = {
 				re.push(nextElementSibling);
 			}
 		}
-		var _suger = new $kit.Suger(re);
+		var _suger = new $Kit.Suger(re);
 		_suger.previousSugerObject = me;
 		return _suger;
 	},
@@ -1188,6 +1195,6 @@ $k = $kit.$ = function() {
 			fn($kit.$);
 		});
 	} else {
-		return new $kit.Suger(arguments[0], arguments[1]);
+		return new $Kit.Suger(arguments[0], arguments[1]);
 	}
 }

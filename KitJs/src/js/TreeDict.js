@@ -1,6 +1,8 @@
 /**
- * 树状字典
- *
+ * 树状字典，加速下拉菜单读取速度
+ * @class TreeDict
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/TreeDict.js">Source code</a>
+ * @modify
  * 2012/04/09
  * 清明休假想到的，如果遇到“北京”和“北京市”，这两个作为key存入字典，时，按照现在的逻辑，北京市会把北京盖掉，
  * 现在改为对于同前缀的key，加入结束标记作为区分，这样时间存在字典里面的是"北京endSing"和北京市endSign，这样就可以区分开了
@@ -12,14 +14,21 @@ var TreeDict = function(config) {
 	me.deep = me.config.deep;
 	me.data = {};
 }
+/**
+ * @member
+ * @enum
+ */
 TreeDict.defaultConfig = {
 	deep : 10, //嵌套深度，此参数影响词典内存对象大小，也影响search索引性能
 	data : undefined,
 	endSign : '$end$'//避免"北京"作为key被"北京市"覆盖掉，现引用结束标记概念，以区别ab和abc这样的字符
 }
 TreeDict.prototype = {
+	constructor : TreeDict,
 	/**
 	 * 判断是否存在
+	 * @param {String}
+	 * @return {Boolean}
 	 */
 	hs : function(key) {
 		var key = key || null, me = this;
@@ -50,6 +59,8 @@ TreeDict.prototype = {
 	},
 	/**
 	 * 添加
+	 * @param {String}
+	 * @param {String}
 	 */
 	ad : function(key, value) {
 		var value = value || null;
@@ -88,6 +99,7 @@ TreeDict.prototype = {
 	},
 	/**
 	 * 删除
+	 * @param {String}
 	 */
 	rm : function(key) {
 		var key = key || null;
@@ -128,6 +140,7 @@ TreeDict.prototype = {
 	},
 	/**
 	 * 存放数据总数
+	 * @return {Number}
 	 */
 	size : function() {
 		this.size = this.count(0, this.data);
@@ -147,6 +160,8 @@ TreeDict.prototype = {
 	},
 	/**
 	 * 从字典中取出符合key的value值
+	 * @param {String}
+	 * @return {String}
 	 */
 	get : function(key) {
 		var value = value || null;
@@ -181,6 +196,8 @@ TreeDict.prototype = {
 	/**
 	 * 按首字符匹配原则查询，返回
 	 * [{key: 'key', value: 'value'}, {key: 'key', value: 'value'}]格式数组
+	 * @param {String}
+	 * @return {Array}
 	 */
 	search : function(key) {
 		var value = value || null;
@@ -223,6 +240,9 @@ TreeDict.prototype = {
 		me.travel(beginData, re, keyArray.join(''));
 		return re;
 	},
+	/**
+	 * @private
+	 */
 	travel : function(tree, array, key, currentKey) {
 		var me = this;
 		if(tree == null) {
@@ -243,4 +263,8 @@ TreeDict.prototype = {
 		}
 	}
 };
+/**
+ * @class $kit.TreeDict
+ * @extends TreeDict
+ */
 $kit.TreeDict = TreeDict;

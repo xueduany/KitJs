@@ -1,15 +1,28 @@
 /**
  * 本地存储
+ * @class $Kit.LocalStorage
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/localStorage.js">Source code</a>
  */
 $Kit.LocalStorage = function() {
 	//
-	if (!window.localStorage) {
+	if(!window.localStorage) {
 		document.documentElement.style.behavior = 'url(#default#userData)';
 	}
 }
-$Kit.LocalStorage.prototype = {
-	setItem : function(key, val, context) {
-		if (window.localStorage) {
+$kit.merge($Kit.LocalStorage.prototype,
+/**
+ * @lends $Kit.LocalStorage.prototype
+ */
+{
+	/**
+	 * 保存
+	 * @param {Object}
+	 * @param {Object}
+	 * @param {Obejct}
+	 */
+	set : function(key, val, context) {
+		if(window.localStorage) {
 			return window.localStorage.setItem(key, val, context);
 		} else {
 			try {
@@ -19,8 +32,13 @@ $Kit.LocalStorage.prototype = {
 			}
 		}
 	},
-	getItem : function(key, context) {
-		if (window.localStorage) {
+	/**
+	 * 读取
+	 * @param {Object}
+	 * @param {Object}
+	 */
+	get : function(key, context) {
+		if(window.localStorage) {
 			return window.localStorage.getItem(key, context);
 		} else {
 			try {
@@ -30,8 +48,13 @@ $Kit.LocalStorage.prototype = {
 			}
 		}
 	},
-	removeItem : function(key, context) {
-		if (window.localStorage) {
+	/**
+	 * 删除
+	 * @param {Object}
+	 * @param {Object}
+	 */
+	rm : function(key, context) {
+		if(window.localStorage) {
 			return window.localStorage.removeItem(key, context);
 		} else {
 			try {
@@ -43,8 +66,11 @@ $Kit.LocalStorage.prototype = {
 			}
 		}
 	},
+	/**
+	 * 清空
+	 */
 	clear : function() {
-		if (window.localStorage) {
+		if(window.localStorage) {
 			return window.localStorage.clear();
 		} else {
 			try {
@@ -53,5 +79,10 @@ $Kit.LocalStorage.prototype = {
 			}
 		}
 	}
-}
+});
+/**
+ * $Kit.LocalStorage的实例，直接通过这个实例访问$Kit.LocalStorage所有方法
+ * @global
+ * @type $Kit.LocalStorage
+ */
 $kit.localStorage = new $Kit.LocalStorage();

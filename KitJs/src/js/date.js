@@ -1,12 +1,21 @@
 /**
  * 日期时间扩展
+ * @class $Kit.Date
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/date.js">Source code</a>
  */
 $Kit.Date = function() {
 	//
 }
-$Kit.Date.prototype = {
+$kit.merge($Kit.Date.prototype,
+/**
+ * @lends $Kit.Date.prototype
+ */
+{
 	/**
 	 * 返回时间，单位秒 dd:dd:dd 时:分:秒
+	 * @param {String}
+	 * @return {Date}
 	 */
 	parseTime : function(timeStr) {
 		if($kit.isEmpty(timeStr)) {
@@ -34,6 +43,8 @@ $Kit.Date.prototype = {
 	},
 	/**
 	 * 返回时间字符串 dd:dd:dd，参数time，单位秒
+	 * @param {String}
+	 * @return {String}
 	 */
 	formatTime : function(time) {
 		time = parseFloat(time);
@@ -46,12 +57,17 @@ $Kit.Date.prototype = {
 	},
 	/**
 	 * 是否闰年
+	 * @param {Date}
+	 * @return {Boolean}
 	 */
 	isLeapYear : function(year) {
 		return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0))
 	},
 	/**
 	 * 一个月有多少天
+	 * @param {Date}
+	 * @param {String}
+	 * @return {Number}
 	 */
 	getDaysInMonth : function(year, month) {
 		return [31, (this.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month]
@@ -61,7 +77,8 @@ $Kit.Date.prototype = {
 	dateSplitRegExp : /(E{1}|D{1}|F{1}|a{1}|hh{1}|HH{1}|SS{1}|ss{1}|dd{1}|mm{1}|MM{1}|yy(?:yy){1})/g,
 	nonpunctuation : /[^ -\/:-@\[-`{-~\t\n\r\D]+/g,
 	/**
-	 *
+	 * 解析时间格式
+	 * @param {String} format 如"yyyy年MM月dd日"
 	 */
 	parseFormat : function(format) {
 		// IE treats \0 as a string end in inputs (truncating the value),
@@ -79,9 +96,15 @@ $Kit.Date.prototype = {
 		};
 	},
 	/**
-	 * 按照按照format解析返回日期对象
+	 * 日期语言包
+	 * @member
+	 * @enum
+	 * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/date.js">查看代码</a>
 	 */
 	languagePack : {
+		/**
+		 * 英文月份语言包
+		 */
 		en : {
 			days : ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 			daysShort : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -90,6 +113,9 @@ $Kit.Date.prototype = {
 			monthsShort : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 			weekStart : 0
 		},
+		/**
+		 * 中文月份语言包
+		 */
 		cn : {
 			days : ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
 			daysShort : ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
@@ -99,6 +125,13 @@ $Kit.Date.prototype = {
 			weekStart : 1
 		}
 	},
+	/**
+	 * 解析日期
+	 * @param {Date}
+	 * @param {DateFormat} format 需要$kit.date.parseFormat('yyyy年MM月dd日')
+	 * @param {String} [language] 语言包，默认中文
+	 * @return {Date}
+	 */
 	parseDate : function(date, format, language) {
 		var me = this;
 		if( date instanceof Date) {
@@ -175,6 +208,22 @@ $Kit.Date.prototype = {
 		}
 		return date;
 	},
+	/**
+	 * 改变月份
+	 * @param {Date}
+	 * @param {Number} dir 月份增量
+	 * @return {Date}
+	 */
+	addMonths : function(date, months) {
+		return this.moveMonth(date, months)
+	},
+	/**
+	 * 改变月份
+	 * @param {Date}
+	 * @param {Number} dir 月份增量
+	 * @return {Date}
+	 * @private
+	 */
 	moveMonth : function(date, dir) {
 		if(!dir)
 			return date;
@@ -217,9 +266,32 @@ $Kit.Date.prototype = {
 		}
 		return new_date;
 	},
+	/**
+	 * 改变年份
+	 * @param {Date}
+	 * @param {Number} dir 年份增量
+	 * @return {Date}
+	 */
+	addYears : function(date, years) {
+		return this.moveYear(date, years)
+	},
+	/**
+	 * 改变年份
+	 * @param {Date}
+	 * @param {Number} dir 年份增量
+	 * @return {Date}
+	 * @private
+	 */
 	moveYear : function(date, dir) {
 		return this.moveMonth(date, dir * 12);
 	},
+	/**
+	 * 按照format格式（如yyyy年MM月dd日）格式化日期
+	 * @param {Date}
+	 * @param {DateFormat} format 需要$kit.date.parseFormat('yyyy年MM月dd日')
+	 * @param {String} [language] 语言
+	 * @return {String}
+	 */
 	formatDate : function(date, format, language) {
 		var me = this;
 		var val = {
@@ -243,7 +315,8 @@ $Kit.Date.prototype = {
 		return date.join('');
 	},
 	/**
-	 * datetool end
+	 * 返回当前日期，时分秒为00
+	 * @return {Date}
 	 */
 	dateNow : function() {
 		var d = new Date();
@@ -255,9 +328,17 @@ $Kit.Date.prototype = {
 	},
 	/**
 	 * 增加天数
+	 * @param {Date}
+	 * @param {Number}
+	 * @return {Date}
 	 */
-	addDays : function(d, days) {
-		d.setDate(d.getDate() + days);
+	addDays : function(date, days) {
+		date.setDate(date.getDate() + days);
 	}
-};
+});
+/**
+ * $Kit.Date的实例，直接通过这个实例访问$Kit.Date所有方法
+ * @global
+ * @type $Kit.Date
+ */
 $kit.date = new $Kit.Date();

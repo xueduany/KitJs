@@ -1,12 +1,22 @@
 /**
  * 数组扩展
+ * @class $Kit.Math
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/math.js">Source code</a>
  */
 $Kit.Math = function() {
 	//
 }
-$Kit.Math.prototype = {
+$kit.merge($Kit.Math.prototype,
+/**
+ * @lends $Kit.Math.prototype
+ */
+{
 	/**
-	 * 补0
+	 * 前面补0
+	 * @param {Number|String}
+	 * @param {Number}
+	 * @return {String}
 	 */
 	padZero : function(num, length) {
 		var re = num.toString();
@@ -19,7 +29,10 @@ $Kit.Math.prototype = {
 		return re;
 	},
 	/**
-	 * 随机数
+	 * 返回min与max之间的随机数，没有max，则返回0~min之间
+	 * @param {Number}
+	 * @param {Number} [max]
+	 * @return {Number}
 	 */
 	rand : function(min, max) {
 		max = max || min || 100;
@@ -39,13 +52,15 @@ $Kit.Math.prototype = {
 		return rnd;
 	},
 	/**
-	 * 0或者1
+	 * 随机返回0或者1
+	 * @return {Number}
 	 */
 	oneOrZero : function() {
 		return Math.round(Math.random());
 	},
 	/**
-	 * 正或者负
+	 * 随机返回正或者负，return -1 || +1
+	 * @return {Number}
 	 */
 	positiveOrNegative : function() {
 		var flag = this.oneOrZero();
@@ -56,6 +71,8 @@ $Kit.Math.prototype = {
 	},
 	/**
 	 * 取多少位的随机数，返回string
+	 * @param {Number}
+	 * @return {String}
 	 */
 	randUnit : function(length) {
 		length = length || 3;
@@ -63,6 +80,8 @@ $Kit.Math.prototype = {
 	},
 	/**
 	 * 取多少位的随机数，开头非0，返回数字
+	 * @param {Number}
+	 * @return {String}
 	 */
 	randUnitNotZeroBefore : function(length) {
 		length = length || 3;
@@ -74,11 +93,20 @@ $Kit.Math.prototype = {
 	},
 	/**
 	 * 进制转换
+	 * @param {Number|String}
+	 * @param {Number|String}
+	 * @param {Number|String}
+	 * @return {String}
 	 */
 	convert : function(str, oldHex, newHex) {
 		var num = new String(str);
 		num = parseInt(num, parseInt(oldHex));
 		return num.toString(parseInt(newHex));
 	}
-};
+});
+/**
+ * $Kit.Math的实例，直接通过这个实例访问$Kit.Math所有方法
+ * @global
+ * @type $Kit.Math
+ */
 $kit.math = new $Kit.Math();

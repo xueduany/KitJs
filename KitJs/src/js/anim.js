@@ -1,12 +1,27 @@
 /**
  * javascript animation 动画扩展
+ * @class $Kit.Animation
+ * @requires kit.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/anim.js">Source code</a>
  */
-$Kit.Animation = $Kit.Anim = function() {
+$Kit.Animation = $Kit.Anim = function(config) {
 	//
 }
-$Kit.Anim.prototype = {
+$kit.merge($Kit.Anim.prototype,
+/**
+ * @lends $Kit.Animation.prototype
+ */
+{
 	/**
 	 * 动画
+	 * @param {Object} config
+	 * @param {Integer} config.timeSeg 默认值17，单位毫秒
+	 * @param {Integer} config.duration 默认值1000，单位毫秒
+	 * @param {Element|NodeList|Selector} config.el 需要进行动画的元素，或者元素数组
+	 * @param {RegExp} config.elSplitRegExp 参数config.el可以为selector的字符，多个selector字符可以用config.elSplitRegExp合并成一个字符
+	 * @param {Object} config.from 动画开始第一帧的元素初始Css样式，如{opacity:0,display:'none'}，
+	 * 其中key为cssStyleName，value为cssStyleValue，这里支持Css3的样式属性如{'-webkit-transform':'scale(1) translateX(1000px)'},也是可以支持的。
+	 * @see <a href="http://xueduany.github.com/KitJs/KitJs/demo/Animation/demo.html">动画样例</a>
 	 */
 	motion : function(config) {
 		var me = this;
@@ -96,6 +111,8 @@ $Kit.Anim.prototype = {
 	},
 	/**
 	 * 分解css的值，知道哪个是value(数字)，那个是单位
+	 * @param {String}
+	 * @private
 	 */
 	identifyCssValue : function(cssStr) {
 		var me = this;
@@ -122,6 +139,7 @@ $Kit.Anim.prototype = {
 	},
 	/**
 	 * 设置样式
+	 * @private
 	 */
 	setStyle : function() {
 		if(arguments.length == 1 && $kit.isObj(arguments[0])) {
@@ -180,70 +198,204 @@ $Kit.Anim.prototype = {
 	},
 	/**
 	 * 曲线函数
+	 * @enum {Function}
 	 */
 	Fx : {
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		swing : function(t, b, c, d) {
 			return -c * (t /= d) * (t - 2) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInQuad : function(t, b, c, d) {
 			return c * (t /= d) * t + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutQuad : function(t, b, c, d) {
 			return -c * (t /= d) * (t - 2) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutQuad : function(t, b, c, d) {
 			if((t /= d / 2) < 1)
 				return c / 2 * t * t + b;
 			return -c / 2 * ((--t) * (t - 2) - 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInCubic : function(t, b, c, d) {
 			return c * (t /= d) * t * t + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutCubic : function(t, b, c, d) {
 			return c * (( t = t / d - 1) * t * t + 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutCubic : function(t, b, c, d) {
 			if((t /= d / 2) < 1)
 				return c / 2 * t * t * t + b;
 			return c / 2 * ((t -= 2) * t * t + 2) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInQuart : function(t, b, c, d) {
 			return c * (t /= d) * t * t * t + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutQuart : function(t, b, c, d) {
 			return -c * (( t = t / d - 1) * t * t * t - 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutQuart : function(t, b, c, d) {
 			if((t /= d / 2) < 1)
 				return c / 2 * t * t * t * t + b;
 			return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInQuint : function(t, b, c, d) {
 			return c * (t /= d) * t * t * t * t + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutQuint : function(t, b, c, d) {
 			return c * (( t = t / d - 1) * t * t * t * t + 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutQuint : function(t, b, c, d) {
 			if((t /= d / 2) < 1)
 				return c / 2 * t * t * t * t * t + b;
 			return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInSine : function(t, b, c, d) {
 			return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutSine : function(t, b, c, d) {
 			return c * Math.sin(t / d * (Math.PI / 2)) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutSine : function(t, b, c, d) {
 			return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInExpo : function(t, b, c, d) {
 			return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutExpo : function(t, b, c, d) {
 			return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutExpo : function(t, b, c, d) {
 			if(t == 0)
 				return b;
@@ -253,17 +405,45 @@ $Kit.Anim.prototype = {
 				return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
 			return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInCirc : function(t, b, c, d) {
 			return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutCirc : function(t, b, c, d) {
 			return c * Math.sqrt(1 - ( t = t / d - 1) * t) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutCirc : function(t, b, c, d) {
 			if((t /= d / 2) < 1)
 				return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
 			return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInElastic : function(t, b, c, d) {
 			var s = 1.70158;
 			var p = 0;
@@ -281,6 +461,13 @@ $Kit.Anim.prototype = {
 				var s = p / (2 * Math.PI) * Math.asin(c / a);
 			return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutElastic : function(t, b, c, d) {
 			var s = 1.70158;
 			var p = 0;
@@ -298,6 +485,13 @@ $Kit.Anim.prototype = {
 				var s = p / (2 * Math.PI) * Math.asin(c / a);
 			return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutElastic : function(t, b, c, d) {
 			var s = 1.70158;
 			var p = 0;
@@ -317,16 +511,37 @@ $Kit.Anim.prototype = {
 				return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
 			return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInBack : function(t, b, c, d, s) {
 			if(s == undefined)
 				s = 1.70158;
 			return c * (t /= d) * t * ((s + 1) * t - s) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutBack : function(t, b, c, d, s) {
 			if(s == undefined)
 				s = 1.70158;
 			return c * (( t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutBack : function(t, b, c, d, s) {
 			if(s == undefined)
 				s = 1.70158;
@@ -334,9 +549,23 @@ $Kit.Anim.prototype = {
 				return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
 			return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInBounce : function(t, b, c, d) {
 			return c - $kit.anim.Fx.easeOutBounce(d - t, 0, c, d) + b;
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeOutBounce : function(t, b, c, d) {
 			if((t /= d) < (1 / 2.75)) {
 				return c * (7.5625 * t * t) + b;
@@ -348,6 +577,13 @@ $Kit.Anim.prototype = {
 				return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
 			}
 		},
+		/**
+		 * @param {Number} t current time（当前时间）
+		 * @param {Number} b beginning value（初始值）置0，即b=0；
+		 * @param {Number} c change in value（变化量）置1，即c=1；
+		 * @param {Number} d duration（持续时间） 置1，即d=1。
+		 * @return {Number}
+		 */
 		easeInOutBounce : function(t, b, c, d) {
 			if(t < d / 2)
 				return $kit.anim.Fx.easeInBounce(t * 2, 0, c, d) * .5 + b;
@@ -356,6 +592,8 @@ $Kit.Anim.prototype = {
 	},
 	/**
 	 * 根据类型返回对应的曲线函数，或者自定义函数
+	 * @param {String} [type] 如swing,easeInBounce等等
+	 * @return {Function}
 	 */
 	fx : function(type) {
 		var me = this;
@@ -366,5 +604,10 @@ $Kit.Anim.prototype = {
 		}
 		return me.Fx.swing;
 	}
-}
+});
+/**
+ * $Kit.Animation的实例，直接通过这个实例访问$Kit.Animation所有方法
+ * @global
+ * @type $Kit.Animation
+ */
 $kit.anim = new $Kit.Anim();

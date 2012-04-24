@@ -1,13 +1,19 @@
 /**
  * 保留插入顺序的HashMap
+ * @class LinkedHashMap
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/LinkedHashMap.js">Source code</a>
  */
 var LinkedHashMap = function() {
 	this.array = [];
 	this.map = {};
 }
 LinkedHashMap.prototype = {
+	constructor : LinkedHashMap,
 	/**
 	 * 判断是否存在
+	 * @param {Object}
+	 * @param {Object}
+	 * @return {Boolean}
 	 */
 	hs : function(key, value) {
 		var key = key || null, value = value || null, me = this;
@@ -28,6 +34,8 @@ LinkedHashMap.prototype = {
 	},
 	/**
 	 * 添加
+	 * @param {Object}
+	 * @param {Object}
 	 */
 	ad : function(key, value) {
 		var value = value || null;
@@ -45,6 +53,7 @@ LinkedHashMap.prototype = {
 	},
 	/**
 	 * 删除
+	 * @param {Object}
 	 */
 	rm : function(key) {
 		var key = key || null;
@@ -61,6 +70,7 @@ LinkedHashMap.prototype = {
 	},
 	/**
 	 * 从第一个删到找到的key
+	 * @param {Object}
 	 */
 	rmTill : function(key) {
 		var me = this, delIndex = -1;
@@ -79,6 +89,7 @@ LinkedHashMap.prototype = {
 	},
 	/**
 	 * 从找到的key开始，删除到结尾
+	 * @param {Object}
 	 */
 	rmFrom : function(key) {
 		var me = this;
@@ -97,12 +108,15 @@ LinkedHashMap.prototype = {
 	},
 	/**
 	 * 长度
+	 * @return {Number}
 	 */
 	size : function() {
 		return this.array.length;
 	},
 	/**
 	 * 遍历
+	 * @param {Function}
+	 * @param {Object}
 	 */
 	each : function(fn, scope) {
 		var me = this;
@@ -122,16 +136,24 @@ LinkedHashMap.prototype = {
 	},
 	/**
 	 * get
+	 * @param {Object}
+	 * @return {Object}
 	 */
 	get : function(key) {
 		return this.map[key];
 	},
 	/**
 	 * 排序
+	 * @param {Function}
+	 * @return {Object}
 	 */
 	sort : function(compare) {
 		var me = this;
 		me.array.sort(compare);
 	}
 };
+/**
+ * @class $kit.SortMap
+ * @extends LinkedHashMap
+ */
 $kit.SortMap = $kit.LinkedHashMap = LinkedHashMap;
