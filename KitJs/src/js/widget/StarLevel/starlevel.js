@@ -1,3 +1,13 @@
+/**
+ * 划动星星评级
+ * @class $kit.ui.StarLevel
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/StarLevel/starlevel.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/StarLevel/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/StarLevel/demo.png">
+ */
 $kit.ui.StarLevel = function(config) {
 	var defaultConfig = {
 		pos : 'last',
@@ -29,7 +39,14 @@ $kit.ui.StarLevel = function(config) {
 	me.config = $kit.join(defaultConfig, config);
 	me.init();
 };
-$kit.merge($kit.ui.StarLevel.prototype, {
+$kit.merge($kit.ui.StarLevel.prototype,
+/**
+ * @lends $kit.ui.StarLevel.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		me.kitId = $kit.onlyId();
@@ -46,6 +63,9 @@ $kit.merge($kit.ui.StarLevel.prototype, {
 		me.starLevelContainer = $kit.el8cls(me.config.starLevelContainerCls, me.config.where);
 		me.bindEvent();
 	},
+	/**
+	 * 绑定事件
+	 */
 	bindEvent : function() {
 		var me = this;
 		//

@@ -1,5 +1,15 @@
 /**
- * 多月日历
+ * 多月日历（支持滑动多选,界面仿Twitter风格，多语言支持，Ctrl/Shift多选支持，日期范围限制支持，自定义事件支持）
+ * @class $kit.ui.DatePicker.NMonths
+ * @extends $kit.ui.DatePicker
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @required array.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/DatePicker/datepicker-n-months.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/DatePicker/n-months.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/DatePicker/nmonth.png">
  */
 $kit.ui.DatePicker.NMonths = function(config) {
 	$kit.inherit({
@@ -9,8 +19,20 @@ $kit.ui.DatePicker.NMonths = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 }
-$kit.merge($kit.ui.DatePicker.NMonths, {
-	defaultConfig : $kit.join($kit.ui.DatePicker.defaultConfig, {
+$kit.merge($kit.ui.DatePicker.NMonths,
+/**
+ * @lends $kit.ui.DatePicker.NMonths
+ */
+{
+	/**
+	 * @enum
+	 */
+	defaultConfig : $kit.join($kit.ui.DatePicker.defaultConfig,
+	/**
+	 * @lends $kit.ui.DatePicker.NMonths.defaultConfig
+	 * @enum
+	 */
+	{
 		template : {
 			pickerHTML : [//
 			'<div class="datepicker">', //
@@ -49,10 +71,18 @@ $kit.merge($kit.ui.DatePicker.NMonths, {
 			'</table>' //
 			].join('')
 		},
+		/**
+		 * 配置显示多少个月的日历
+		 * @type {Number}
+		 */
 		nMonths : 3 //配置显示多少个月的日历
 	})
 });
-$kit.merge($kit.ui.DatePicker.NMonths.prototype, {
+$kit.merge($kit.ui.DatePicker.NMonths.prototype,
+/**
+ * @lends $kit.ui.DatePicker.NMonths.prototype
+ */
+{
 	buildHTML : function() {
 		var me = this;
 		var str = $kit.tpl(me.config.template.pickerDaysHTML, me.config.template);
@@ -112,9 +142,7 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype, {
 			} else {
 				$kit.$el('.datepicker-days table:eq('+i+') th:eq(1)',me.picker)[0].innerHTML = _year + '年' + $kit.date.languagePack[me.language].months[month];
 			}
-			/**
-			 * start
-			 */
+			// start
 			html = [];
 			var clsName;
 			while(prevMonth.valueOf() < nextMonth.valueOf()) {

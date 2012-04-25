@@ -178,7 +178,7 @@
 	/**
 	 * matches
 	 * @name matches
-	 * @memberof $kit.selector
+	 * @memberOf $kit.selector
 	 * @param {Selector}
 	 * @param {Array}
 	 * @return {Boolean}
@@ -189,7 +189,7 @@
 	/**
 	 * matchesSelector
 	 * @name matchesSelector
-	 * @memberof $kit.selector
+	 * @memberOf $kit.selector
 	 * @param {Element}
 	 * @param {Selector}
 	 * @return {Boolean}
@@ -200,7 +200,7 @@
 	/**
 	 * matchesSelector
 	 * @name find
-	 * @memberof $kit.selector
+	 * @memberOf $kit.selector
 	 * @param {Selector}
 	 * @param {Element} [context]
 	 * @param {Boolean} [isXML]
@@ -1285,7 +1285,7 @@
 		}
 		/**
 		 * filter
-		 * @memberof $kit.selector
+		 * @memberOf $kit.selector
 		 * @param {Selector} selector
 		 * @param {Element} context
 		 * @return {[Element]}

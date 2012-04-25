@@ -1,16 +1,37 @@
+/**
+ * 基本编辑器
+ * @class $kit.ui.Editor
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Editor/editor.js">Source code</a>
+ */
 $kit.ui.Editor = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 }
-$kit.merge($kit.ui.Editor, {
+$kit.merge($kit.ui.Editor,
+/**
+ * @lends $kit.ui.Editor
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		kitWidgetName : "kitEditor",
 		el : undefined
 	}
 });
-$kit.merge($kit.ui.Editor.prototype, {
+$kit.merge($kit.ui.Editor.prototype,
+/**
+ * @lends $kit.ui.Editor.prototype
+ */
+{
 	/**
-	 * add event triggle
+	 * 注册自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 * @param {Function} config.fn
 	 */
 	ev : function() {
 		if(arguments.length == 1) {
@@ -28,6 +49,11 @@ $kit.merge($kit.ui.Editor.prototype, {
 			}
 		}
 	},
+	/**
+	 * 触发自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 */
 	newEv : function() {
 		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
 			var evAry, evCfg, _evCfg = {};

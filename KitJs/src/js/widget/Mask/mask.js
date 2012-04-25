@@ -1,5 +1,13 @@
 /**
  * 半透明的遮罩
+ * @class $kit.ui.Mask
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Mask/mask.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Mask/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/Mask/demo.png" width="300">
  */
 $kit.ui.Mask = function(config) {
 	var me = this;
@@ -24,6 +32,9 @@ $kit.ui.Mask = function(config) {
 		me.what = what;
 	}
 }
+/**
+ * @enum
+ */
 $kit.ui.Mask.defaultConfig = {
 	where : null,
 	pos : 'last',
@@ -65,7 +76,11 @@ $kit.ui.Mask.defaultConfig = {
 	opacity : 0.75, //透明度
 	anim : true//是否使用动画
 }
-$kit.merge($kit.ui.Mask.prototype, {
+$kit.merge($kit.ui.Mask.prototype,
+/**
+ * @lends $kit.ui.Mask.prototype
+ */
+{
 	/**
 	 * 销毁
 	 */
@@ -73,6 +88,9 @@ $kit.merge($kit.ui.Mask.prototype, {
 		clearInterval(window[this.animTimeout]);
 		$kit.rmEl(this.what);
 	},
+	/**
+	 * 隐藏
+	 */
 	hide : function() {
 		var me = this;
 		if(me.config.anim) {
@@ -92,6 +110,9 @@ $kit.merge($kit.ui.Mask.prototype, {
 			me.what.style.display = 'none';
 		}
 	},
+	/**
+	 * 显示
+	 */
 	show : function() {
 		var me = this;
 		if(me.config.anim) {

@@ -1,13 +1,28 @@
 /**
  * Tag系统
  * 模仿stackOverFlow的表单提交tag系统
+ * @class $kit.ui.TagInput
+ * @required kit.js
+ * @required ieFix.js
+ * @required array.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/TagInput/tagInput.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/TagInput/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/TagInput/demo.png">
  */
 $kit.ui.TagInput = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.TagInput, {
+$kit.merge($kit.ui.TagInput,
+/**
+ * @lends $kit.ui.TagInput
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		el : undefined,
 		kitWidgetName : 'kitTag',
@@ -38,7 +53,14 @@ $kit.merge($kit.ui.TagInput, {
 		}
 	}
 });
-$kit.merge($kit.ui.TagInput.prototype, {
+$kit.merge($kit.ui.TagInput.prototype,
+/**
+ * @lends $kit.ui.TagInput.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		if(me.config.wrapperId && $kit.el('#' + me.config.wrapperId)) {
@@ -84,6 +106,9 @@ $kit.merge($kit.ui.TagInput.prototype, {
 			});
 		}
 	},
+	/**
+	 * 处理输入
+	 */
 	handleInput : function() {
 		var me = this;
 		var inputStr = me.tagInput.value.toString();
@@ -126,6 +151,9 @@ $kit.merge($kit.ui.TagInput.prototype, {
 		}
 		me.tagInput.value == '';
 	},
+	/**
+	 * 删除tag
+	 */
 	removeTag : function(tag) {
 		var me = this;
 		var tagValue = $kit.attr(tag, 'alt');
@@ -135,7 +163,10 @@ $kit.merge($kit.ui.TagInput.prototype, {
 		$kit.rmEl(tag);
 	},
 	/**
-	 * add event triggle
+	 * 注册自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 * @param {Function} config.fn
 	 */
 	ev : function() {
 		if(arguments.length == 1) {
@@ -153,6 +184,11 @@ $kit.merge($kit.ui.TagInput.prototype, {
 			}
 		}
 	},
+	/**
+	 * 触发自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 */
 	newEv : function() {
 		if(arguments.length == 1) {
 			var evAry, evCfg, _evCfg = {};

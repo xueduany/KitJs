@@ -1,9 +1,26 @@
+/*
+ * tabPanel
+ * @class $kit.ui.TabPanel
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/TabPanel/tabpanel.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/TabPanel/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/TabPanel/demo.png">
+ */
 $kit.ui.TabPanel = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 };
-$kit.merge($kit.ui.TabPanel, {
+$kit.merge($kit.ui.TabPanel,
+/**
+ * @lends $kit.ui.TabPanel
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		pos : 'last',
 		what : [//
@@ -37,7 +54,14 @@ $kit.merge($kit.ui.TabPanel, {
 		}]
 	}
 });
-$kit.merge($kit.ui.TabPanel.prototype, {
+$kit.merge($kit.ui.TabPanel.prototype,
+/**
+ * @lends $kit.ui.TabPanel.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		me.kitId = $kit.onlyId();
@@ -466,6 +490,9 @@ $kit.merge($kit.ui.TabPanel.prototype, {
 			}
 		});
 	},
+	/**
+	 * 隐藏所有
+	 */
 	hideAll : function() {
 		this.showAll(false);
 	}

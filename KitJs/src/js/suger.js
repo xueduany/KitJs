@@ -1,13 +1,16 @@
 /**
- * 语法糖
- * 纯链式结构，jquery的思想
+ * kitjs语法糖
+ * 纯链式结构，jQuery API 100%实现
  * @class $Kit.Suger
  * @requires kit.js
  * @requires array.js
  * @requires anim.js
  * @requires dom.js
  * @requires event.js
+ * @requires json.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/suger.js">Source code</a>
+ * @property {[Element]} nodes Element Array List
+ * @property {Number} length Element Array List Length
  */
 $Kit.Suger = function() {
 	var selector = arguments[0];
@@ -35,12 +38,18 @@ $Kit.Suger = function() {
 			this.nodes = [selector];
 		} else if($kit.isNodeList(selector)) {
 			this.nodes = $kit.array.clone(selector);
+		} else if(this.isSuger(selector)) {
+			this.nodes = $kit.array.clone(selector.nodes);
 		}
 	}
 	this.length = this.nodes.length;
 	this.name = 'kitSuger';
 }
-$Kit.Suger.prototype = {
+$kit.merge($Kit.Suger.prototype,
+/**
+ * @lends $Kit.Suger.prototype
+ */
+{
 	_new : function(selector) {
 		var _suger = new $Kit.Suger(selector);
 		_suger.previousSugerObject = this;
@@ -48,6 +57,11 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 给已匹配的nodelist加点料
+	 * Add elements to the set of matched elements.
+	 * @param {Selector|Element|[Element,Element,Element ...]|HTML|$Kit.Suger Instance Object} selector
+	 * @param {Context} [context]
+	 * @return {Object} current $Kit.Suger Instance
+	 * @see <a href="http://api.jquery.com/add/">详细看jQuery的解释，和他一样</a>
 	 */
 	add : function() {
 		var me = this;
@@ -64,58 +78,92 @@ $Kit.Suger.prototype = {
 					ifExisted : true
 				});
 			}
+		} else if($kit.isNode(object)) {
+			re.push(object);
+		} else if($kit.isNodeList(object)) {
+			$kit.array.ad(re, object, {
+				ifExisted : true
+			});
+		} else if(me.isSuger(object)) {
+			$kit.array.ad(re, object.nodes, {
+				ifExisted : true
+			});
 		}
 		return me._new(re);
 	},
 	/**
-	 * 你懂得
+	 * 你懂得，添加样式
+	 * Adds the specified class(es) to each of the set of matched elements.
+	 * @param {String|Function} className
+	 * @return {Object} current $Kit.Suger Instance
+	 * @see <a href="http://api.jquery.com/addClass/">详细看jQuery的解释，和他一样</a>
 	 */
-	addClass : function(className) {
+	addClass : function() {
 		var me = this;
-		$kit.each(me.nodes, function(o) {
-			$kit.adCls(o, className);
-		})
-		return me;
-	},
-	/**
-	 * 当前对象的nextSibling插入一个神马东东
-	 */
-	after : function() {
-		var me = this;
-		if(arguments.length) {
-			for(var i = 0; i < arguments.length; i++) {
-				me.after(arguments[i]);
-			}
-		} else {
-			var object = arguments[0];
-			if($kit.isNode(o)) {
-				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : o,
-						pos : 'after',
-						what : object
-					});
-				});
-			} else if($kit.isFn(object)) {
-				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : o,
-						pos : 'after',
-						what : object.call(o, object)
-					});
-				});
-			}
+		var className = arguments[0];
+		if($kit.isStr(className)) {
+			$kit.each(me.nodes, function(o) {
+				$kit.adCls(o, className);
+			});
+		} else if($kit.isFn(className)) {
+			$kit.each(me.nodes, function(o, index) {
+				$kit.adCls(o, className.apply(o, [index]));
+			});
 		}
 		return me;
 	},
 	/**
-	 * 你懂得
+	 * Remove a single class, multiple classes, or all classes from each element in the set of matched elements.
+	 * @param {String}
+	 * @return {Object} current $Kit.Suger Instance
 	 */
-	ajax : function() {
-
+	removeClass : function(className) {
+		var me = this;
+		$kit.each(me.nodes, function(o) {
+			$kit.rmCls(o, className);
+		});
+		return me;
+	},
+	/**
+	 * 切换className
+	 * Add or remove one or more classes from each element in the set of matched elements, depending on either the class's presence or the value of the switch argument.
+	 * @param {String|Function} className
+	 * @param {Boolean} switch add or del?
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	toggleClass : function(className, flag) {
+		var me = this;
+		$kit.each(me.nodes, function(o) {
+			if($kit.isFn(className)) {
+				className = className.call(o, index);
+			}
+			if(flag == null) {
+				$kit.toggleCls(o, className);
+			} else {
+				if(flag == true) {
+					$kit.adCls(o, className);
+				} else if(flag == false) {
+					$kit.rmCls(o, className);
+				}
+			}
+		});
+		return me;
+	},
+	/**
+	 * 是否有某个样式
+	 * Determine whether any of the matched elements are assigned the given class.
+	 * @param {String}
+	 * @return {Boolean}
+	 */
+	hasClass : function(className) {
+		var me = this;
+		return $kit.hsCls(me.nodes[0], className);
 	},
 	/**
 	 * 将上一次调用的nodelist加到当前的nodelist里面
+	 * Add the previous set of elements on the stack to the current set.
+	 * @return {Object} new $Kit.Suger Instance
+	 * @see <a href="http://api.jquery.com/andSelf/">详细看jQuery的解释，和他一样</a>
 	 */
 	andSelf : function() {
 		var me = this;
@@ -127,13 +175,113 @@ $Kit.Suger.prototype = {
 		return me;
 	},
 	/**
-	 * 不着急
+	 * 在previousSibling插入元素
+	 * Insert content, specified by the parameter, before each element in the set of matched elements.
+	 * @see <a href="http://api.jquery.com/before/">详细看jQuery的解释，和他一样</a>
+	 * @param {HTML|Element|[Element]|$Kit.Suger Instance Object|Function} content
+	 * @return {Object} current $Kit.Suger Instance
 	 */
-	animate : function() {
-
+	before : function() {
+		var me = this;
+		if(arguments.length) {
+			for(var i = 0; i < arguments.length; i++) {
+				me.after(arguments[i]);
+			}
+		} else {
+			var object = arguments[0];
+			if($kit.isNode(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.insEl({
+						where : o,
+						pos : 'before',
+						what : object
+					});
+				});
+			} else if($kit.isNodeList(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.each(object, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'before',
+							what : o1
+						});
+					});
+				});
+			} else if(me.isSuger(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.each(object.nodes, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'before',
+							what : o1
+						});
+					});
+				});
+			} else if($kit.isFn(object)) {
+				$kit.each(me.nodes, function(o, index) {
+					me.after(object.call(object, index));
+				});
+			}
+		}
+		return me;
+	},
+	/**
+	 * 当前对象的nextSibling插入一个神马东东
+	 * Insert content, specified by the parameter, after each element in the set of matched elements.
+	 * @see <a href="http://api.jquery.com/after/">详细看jQuery的解释，和他一样</a>
+	 * @return {Object} current $Kit.Suger Instance
+	 * @param {HTML|Element|[Element]|$Kit.Suger Instance Object|Function} content
+	 */
+	after : function() {
+		var me = this;
+		if(arguments.length) {
+			for(var i = 0; i < arguments.length; i++) {
+				me.after(arguments[i]);
+			}
+		} else {
+			var object = arguments[0];
+			if($kit.isNode(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.insEl({
+						where : o,
+						pos : 'after',
+						what : object
+					});
+				});
+			} else if($kit.isNodeList(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.each(object, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'after',
+							what : o1
+						});
+					});
+				});
+			} else if(me.isSuger(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.each(object.nodes, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'after',
+							what : o1
+						});
+					});
+				});
+			} else if($kit.isFn(object)) {
+				$kit.each(me.nodes, function(o, index) {
+					me.after(object.call(object, index));
+				});
+			}
+		}
+		return me;
 	},
 	/**
 	 * 在屁股插入html
+	 * Insert content, specified by the parameter, to the end of each element in the set of matched elements.
+	 * @see <a href="http://api.jquery.com/append/">详细看jQuery的解释，和他一样</a>
+	 * @param {HTML|Element|[Element]|$Kit.Suger Instance Object|Function} content
+	 * @return {Object} current $Kit.Suger Instance
 	 */
 	append : function() {
 		var me = this;
@@ -143,21 +291,37 @@ $Kit.Suger.prototype = {
 			}
 		} else {
 			var object = arguments[0];
-			if($kit.isNode(o)) {
+			if($kit.isNode(object)) {
 				$kit.each(me.nodes, function(o) {
 					$kit.insEl({
 						where : o,
-						pos : 'after',
+						pos : 'last',
 						what : object
 					});
 				});
-			} else if($kit.isFn(object)) {
+			} else if($kit.isNodeList(object)) {
 				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : o,
-						pos : 'after',
-						what : object.call(o, object)
+					$kit.each(object, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'last',
+							what : o1
+						});
 					});
+				});
+			} else if(me.isSuger(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.each(object.nodes, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'last',
+							what : o1
+						});
+					});
+				});
+			} else if($kit.isFn(object)) {
+				$kit.each(me.nodes, function(o, index) {
+					me.after(object.call(object, index));
 				});
 			}
 		}
@@ -165,6 +329,10 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 添加到谁的屁股
+	 * Insert every element in the set of matched elements to the end of the target.
+	 * @see <a href="http://api.jquery.com/appendTo/">详细看jQuery的解释，和他一样</a>
+	 * @param {Element|$Kit.Suger Instance Object}
+	 * @return {Object} current $Kit.Suger Instance
 	 */
 	appendTo : function(target) {
 		var me = this;
@@ -172,17 +340,151 @@ $Kit.Suger.prototype = {
 			$kit.each(me.nodes, function(o) {
 				target.appendChild(o);
 			});
+		} else if(me.isSuger(target)) {
+			$kit.each(me.nodes, function(o) {
+				target.nodes[0].appendChild(o);
+			});
+		}
+		return me;
+	},
+	/**
+	 * 在头部插入
+	 * Insert every element in the set of matched elements before the target.
+	 * @see <a href="http://api.jquery.com/insertBefore/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector|Element||$Kit.Suger Instance Object}
+	 * @param {Element} [context]
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	insertBefore : function(selector, context) {
+		var me = this, target = selector;
+		if($kit.isNode(target)) {
+			//
+		} else if($kit.isSuger(target)) {
+			target = target.nodes[0];
+		} else if($kit.isStr(target)) {
+			target = $kit.$el(selector, context)[0];
+		}
+		$kit.each(me.nodes, function(o) {
+			$kit.insEl({
+				where : target,
+				what : o,
+				pos : 'before'
+			});
+		});
+		return me;
+	},
+	/**
+	 * 在屁股插入
+	 * Insert every element in the set of matched elements after the target.
+	 * @see <a href="http://api.jquery.com/insertAfter/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector|Element||$Kit.Suger Instance Object}
+	 * @param {Element} [context]
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	insertAfter : function(selector, context) {
+		var me = this, target = selector;
+		if($kit.isNode(target)) {
+			//
+		} else if($kit.isSuger(target)) {
+			target = target.nodes[0];
+		} else if($kit.isStr(target)) {
+			target = $kit.$el(selector, context)[0];
+		}
+		$kit.each(me.nodes, function(o) {
+			$kit.insEl({
+				where : target,
+				what : o,
+				pos : 'after'
+			});
+		});
+		return me;
+	},
+	/**
+	 * 在头部插入html
+	 * Insert content, specified by the parameter, to the beginning of each element in the set of matched elements.
+	 * @see <a href="http://api.jquery.com/prepend/">详细看jQuery的解释，和他一样</a>
+	 * @param {HTML|Element|[Element]|$Kit.Suger Instance Object|Function} content
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	prepend : function() {
+		var me = this;
+		if(arguments.length) {
+			for(var i = 0; i < arguments.length; i++) {
+				me.after(arguments[i]);
+			}
 		} else {
-			if(target.nodes) {
+			var object = arguments[0];
+			if($kit.isNode(object)) {
 				$kit.each(me.nodes, function(o) {
-					target.nodes[0].appendChild(o);
+					$kit.insEl({
+						where : o,
+						pos : 'first',
+						what : object
+					});
+				});
+			} else if($kit.isNodeList(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.each(object, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'first',
+							what : o1
+						});
+					});
+				});
+			} else if(me.isSuger(object)) {
+				$kit.each(me.nodes, function(o) {
+					$kit.each(object.nodes, function(o1) {
+						$kit.insEl({
+							where : o,
+							pos : 'first',
+							what : o1
+						});
+					});
+				});
+			} else if($kit.isFn(object)) {
+				$kit.each(me.nodes, function(o, index) {
+					me.after(object.call(object, index));
 				});
 			}
 		}
 		return me;
 	},
 	/**
+	 * 添加到谁的头部
+	 * Insert every element in the set of matched elements to the beginning of the target.
+	 * @see <a href="http://api.jquery.com/prependTo/">详细看jQuery的解释，和他一样</a>
+	 * @param {Element|$Kit.Suger Instance Object}
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	prependTo : function(target) {
+		var me = this;
+		if($kit.isNode(target)) {
+			$kit.each(me.nodes, function(o) {
+				$kit.insEl({
+					where : target,
+					what : o,
+					pos : 'first'
+				});
+			});
+		} else if(me.isSuger(target)) {
+			$kit.each(me.nodes, function(o) {
+				$kit.insEl({
+					where : target.nodes[0],
+					what : o,
+					pos : 'first'
+				});
+			});
+		}
+		return me;
+	},
+	/**
 	 * 属性设置
+	 * Get the value of an attribute for the first element in the set of matched elements.
+	 * @see <a href="http://api.jquery.com/attr/">详细看jQuery的解释，和他一样</a>
+	 * @param {String}
+	 * @param {String}
+	 * @return {Object|String} current $Kit.Suger Instance or string value
 	 */
 	attr : function(attrName, attrValue) {
 		var me = this;
@@ -196,78 +498,34 @@ $Kit.Suger.prototype = {
 		return me;
 	},
 	/**
-	 * 属性
+	 * 属性，同attr
 	 */
 	prop : function() {
 		return this.attr.apply(this, arguments);
 	},
 	/**
-	 * 删除
+	 * Remove an attribute from each element in the set of matched elements.
+	 * @param {String}
+	 * @return {Object} current $Kit.Suger Instance
 	 */
-	remove : function(selector) {
+	removeAttr : function(attrName) {
 		var me = this;
-	},
-	/**
-	 * 在previousSibling插入元素
-	 */
-	before : function() {
-		var me = this;
-		if(arguments.length) {
-			for(var i = 0; i < arguments.length; i++) {
-				me.after(arguments[i]);
-			}
-		} else {
-			var object = arguments[0];
-			if($kit.isNode(o)) {
-				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : o,
-						pos : 'before',
-						what : object
-					});
-				});
-			} else if($kit.isFn(object)) {
-				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : o,
-						pos : 'before',
-						what : object.call(o, object)
-					});
-				});
-			}
-		}
+		$kit.each(me.nodes, function(o) {
+			$kit.attr(o, attrName, null);
+		});
 		return me;
 	},
 	/**
-	 * 绑定事件
+	 * Remove an attribute from each element in the set of matched elements.
+	 * @param {String}
+	 * @return {Object} current $Kit.Suger Instance
 	 */
-	bind : function() {
-		return this.on.apply(this, arguments);
-	},
-	/**
-	 * 失去焦点
-	 */
-	blur : function() {
-		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'blur'
-		});
-		return me
-	},
-	/**
-	 * click事件
-	 */
-	click : function() {
-		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'click'
-		});
-		return me
+	removeProp : function() {
+		return this.removeAttr.apply(this, arguments);
 	},
 	/**
 	 * clone node
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	clone : function() {
 		var cloneNodes = [], me = this;
@@ -278,6 +536,8 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 从自身开始查找，返回符合条件的元素
+	 * Get the first element that matches the selector, beginning at the current element and progressing up through the DOM tree.
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	closest : function(selector, context) {
 		var me = this;
@@ -290,6 +550,8 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 样式
+	 * Get the value of a style property for the first element in the set of matched elements.
+	 * @return {Object|String} current $Kit.Suger Instance or string value
 	 */
 	css : function(propertyName, value) {
 		var me = this;
@@ -298,6 +560,9 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 判断dom位置是否包含
+	 * @param {Element|Selector}
+	 * @param {Element} [contenxt]
+	 * @return {Boolean}
 	 */
 	contains : function(selector, context) {
 		var me = this, context = context || document;
@@ -309,6 +574,11 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 建立dom与js对象的关系
+	 * Store arbitrary data associated with the matched elements.
+	 * @see <a href="http://api.jquery.com/data/">详细看jQuery的解释，和他一样</a>
+	 * @param {String}
+	 * @param {String}
+	 * @return {Object} current $Kit.Suger Instance
 	 */
 	data : function(key, value) {
 		var me = this;
@@ -322,30 +592,23 @@ $Kit.Suger.prototype = {
 		return me;
 	},
 	/**
-	 * 双击
+	 * Remove a previously-stored piece of data.
+	 * @param {String}
+	 * @return {Object} current $Kit.Suger Instance
 	 */
-	dblclick : function() {
+	removeData : function(dataName) {
 		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'dblclick'
+		$kit.each(me.nodes, function(o) {
+			o.dataName = undefined;
 		});
-		return me
-	},
-	/**
-	 * 不着急
-	 */
-	delay : function() {
-
-	},
-	/**
-	 * 就是on
-	 */
-	delegate : function() {
-		return this.on.apply(this, arguments);
+		return me;
 	},
 	/**
 	 * 从this.nodes里面删除匹配的元素
+	 * Remove the set of matched elements from the DOM.
+	 * @see <a href="http://api.jquery.com/detach/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector}
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	detach : function(selector) {
 		var me = this;
@@ -359,13 +622,11 @@ $Kit.Suger.prototype = {
 		return me._new(nodesClone);
 	},
 	/**
-	 * 不着急
-	 */
-	die : function() {
-
-	},
-	/**
 	 * 遍历
+	 * Iterate over a jQuery object, executing a function for each matched element.
+	 * @param {Function} fn function(index, Element)A function to execute for each matched element.
+	 * @return {Object} current $Kit.Suger Instance
+	 * @see <a href="http://api.jquery.com/each/">详细看jQuery的解释，和他一样</a>
 	 */
 	each : function(fn) {
 		var me = this;
@@ -376,6 +637,9 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 删除childNodes
+	 * Remove all child nodes of the set of matched elements from the DOM.
+	 * @return {Object} current $Kit.Suger Instance
+	 * @see <a href="http://api.jquery.com/empty/">详细看jQuery的解释，和他一样</a>
 	 */
 	empty : function() {
 		var me = this;
@@ -386,6 +650,8 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 返回前一个
+	 * End the most recent filtering operation in the current chain and return the set of matched elements to its previous state.
+	 * @return {Object} previous $Kit.Suger Instance
 	 */
 	end : function() {
 		var me = this;
@@ -396,6 +662,10 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 返回数组中第几个元素
+	 * Reduce the set of matched elements to the one at the specified index.
+	 * @param {Number}
+	 * @return {Object} new $Kit.Suger Instance
+	 * @see <a href="http://api.jquery.com/eq/">详细看jQuery的解释，和他一样</a>
 	 */
 	eq : function(index) {
 		var me = this;
@@ -405,34 +675,22 @@ $Kit.Suger.prototype = {
 		return me._new(me.nodes[me.nodes.length + index]);
 	},
 	/**
-	 * error事件
-	 */
-	error : function() {
-		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'error'
-		});
-		return me
-	},
-	/**
-	 * 不着急
-	 */
-	fadeIn : function() {
-
-	},
-	fadeOut : function() {
-
-	},
-	fadeTo : function() {
-
-	},
-	/**
 	 * 过滤，生成新的
+	 * Reduce the set of matched elements to those that match the selector or pass the function's test.
+	 * @param {Selector|Element|[Element]}
+	 * @return {Object} new $Kit.Suger Instance
+	 * @see <a href="http://api.jquery.com/filter/">详细看jQuery的解释，和他一样</a>
 	 */
 	filter : function(selector) {
 		var me = this, re = [];
-		var find = $kit.selector.matches(selector, me.nodes);
+		var find;
+		if($kit.isStr(selector)) {
+			find = $kit.selector.matches(selector, me.nodes);
+		} else if($kit.isNode(selector)) {
+			find = [selector];
+		} else if($kit.isNodeList(selector)) {
+			find = selector;
+		}
 		$kit.each(me.nodes, function(o) {
 			var ifExisted = false;
 			$kit.each(find, function(c) {
@@ -449,52 +707,74 @@ $Kit.Suger.prototype = {
 	},
 	/**
 	 * 找到，生成新的
+	 * Get the descendants of each element in the current set of matched elements, filtered by a selector, jQuery object, or element.
+	 * @param {Selector|Element|[Element]}
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	find : function(selector) {
 		var me = this;
-		var find = $kit.selector.matches(selector, me.nodes);
+		var find;
+		if($kit.isStr(selector)) {
+			find = $kit.selector.matches(selector, me.nodes);
+		} else if($kit.isNode(selector)) {
+			$kit.each(me.nodes, function(o) {
+				if(o == selector) {
+					find = o;
+					return false;
+				}
+			});
+		} else if($kit.isNodeList(selector)) {
+			var re = [];
+			$kit.each(me.nodes, function(o) {
+				var flag = true;
+				$kit.each(selector, function(p) {
+					if(o == p) {
+						$kit.array.ad(re, o, {
+							ifExisted : true
+						});
+					}
+				});
+			});
+			if(re.length) {
+				find = re;
+			}
+		}
 		return me._new(find);
 	},
 	/**
 	 * 返回第一个
+	 * Reduce the set of matched elements to the first in the set.
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	first : function() {
 		var me = this;
 		return me._new(me.nodes[0]);
 	},
 	/**
-	 * 焦点事件
-	 */
-	focus : function() {
-		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'focus'
-		});
-		return me
-	},
-	/**
 	 * 返回包含某种node的
+	 * Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.
+	 * @param {Selector|Element}
+	 * @see <a href="http://api.jquery.com/has/">详细看jQuery的解释，和他一样</a>
 	 */
 	has : function(selector) {
 		var me = this, re = [];
 		$kit.each(me.nodes, function(o, index, ary) {
-			var find = $kit.$el(selector, o);
-			if(find != null && find.length > 0) {
-				re.push(o);
+			if($kit.isStr(selector)) {
+				var find = $kit.$el(selector, o);
+				if(find != null && find.length > 0) {
+					re.push(o);
+				}
+			} else if($kit.isNode(selector)) {
+				if($kit.contains(o, selector)) {
+					re.push(o);
+				}
 			}
 		});
 		return me._new(re);
 	},
 	/**
-	 * 是否有某个样式
-	 */
-	hasClass : function(className) {
-		var me = this;
-		return $kit.hsCls(me.nodes[0], className);
-	},
-	/**
 	 * 隐藏
+	 * Hide the matched elements.
 	 */
 	hide : function() {
 		var me = this;
@@ -502,24 +782,40 @@ $Kit.Suger.prototype = {
 		return me;
 	},
 	/**
-	 * hover事件
+	 * 显示
 	 */
-	hover : function() {
+	show : function() {
 		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'mouseover'
-		});
-		return me
+		if(me.nodes[0].style.display == 'none') {
+			me.nodes[0].style.display = '';
+		}
+		return me;
 	},
 	/**
 	 * 返回html
+	 * Get the HTML contents of the first element in the set of matched elements.
+	 * @see <a href="http://api.jquery.com/html/">详细看jQuery的解释，和他一样</a>
+	 * @param {String} [html]
 	 */
-	html : function() {
-		return this.nodes[0].innerHTML;
+	html : function(html) {
+		return $kit.dom.html(this.nodes[0], html);
+	},
+	/**
+	 * 返回html
+	 * Get the combined text contents of each element in the set of matched elements, including their descendants.
+	 * @see <a href="http://api.jquery.com/text/">详细看jQuery的解释，和他一样</a>
+	 * @param {String} [text]
+	 */
+	text : function(text) {
+		return $kit.dom.text(this.nodes[0], html);
 	},
 	/**
 	 * 返回索引
+	 * Search for a given element from among the matched elements.
+	 * @param {Element|Selector}
+	 * @param {Element} [context]
+	 * @return {Number}
+	 * @see <a href="http://api.jquery.com/index/">详细看jQuery的解释，和他一样</a>
 	 */
 	index : function(selector, context) {
 		if($kit.isNode(selector)) {
@@ -529,100 +825,96 @@ $Kit.Suger.prototype = {
 		return $kit.array.indexOf(this.nodes, find[0]);
 	},
 	/**
+	 * 高度
+	 * @param {Number} [value]
+	 * @return {Number|$Kit.Suger Instance}
+	 */
+	height : function(value) {
+		var me = this;
+		if(value != null) {
+			$kit.dom.height(me.nodes[0], value);
+			return me;
+		}
+		return $kit.dom.height(me.nodes[0]);
+	},
+	/**
+	 *  宽度
+	 * @param {Number} [value]
+	 * @return {Number|$Kit.Suger Instance}
+	 */
+	width : function(value) {
+		var me = this;
+		if(value != null) {
+			$kit.dom.width(me.nodes[0], value);
+			return me;
+		}
+		return $kit.dom.width(me.nodes[0]);
+	},
+	/**
 	 * 内高度包括padding，不包括border
+	 * Get the current computed height for the first element in the set of matched elements, including padding but not border.
+	 * @see <a href="http://api.jquery.com/innerHeight/">详细看jQuery的解释，和他一样</a>
 	 */
 	innerHeight : function() {
 		return $kit.dom.innerHeight(this.nodes[0]);
 	},
+	/**
+	 * Get the current computed width for the first element in the set of matched elements, including padding but not border.
+	 * @see <a href="http://api.jquery.com/innerWidth/">详细看jQuery的解释，和他一样</a>
+	 */
 	innerWidth : function() {
 		return $kit.dom.innerWidth(this.nodes[0]);
 	},
 	/**
-	 * 把当前的插入到node的后面
+	 * 包括padding和border
+	 * Get the current computed height for the first element in the set of matched elements, including padding, border, and optionally margin. Returns an integer (without "px") representation of the value or null if called on an empty set of elements.
+	 * @see <a href="http://api.jquery.com/outerHeight/">详细看jQuery的解释，和他一样</a>
+	 * @return {Number}
 	 */
-	insertAfter : function(selector, context) {
-		var me = this, target = selector;
-		if(!$kit.isNode(target)) {
-			target = $kit.$el(selector, context)[0];
-		}
-		$kit.each(me.nodes, function(o) {
-			$kit.insEl({
-				where : selector,
-				what : o,
-				pos : 'after'
-			});
-		});
-		return me;
+	outerHeight : function() {
+		return $kit.dom.outerHeight(this.nodes[0]);
 	},
-	insertBefore : function() {
-		var me = this, target = selector;
-		if(!$kit.isNode(target)) {
-			target = $kit.$el(selector, context)[0];
-		}
-		$kit.each(me.nodes, function(o) {
-			$kit.insEl({
-				where : selector,
-				what : o,
-				pos : 'before'
-			});
-		});
-		return me;
+	/**
+	 * 包括padding和border
+	 * Get the current computed width for the first element in the set of matched elements, including padding and border.
+	 * @see <a href="http://api.jquery.com/outerWidth/">详细看jQuery的解释，和他一样</a>
+	 * @return {Number}
+	 */
+	outerWidth : function() {
+		return $kit.dom.outerWidth(this.nodes[0]);
 	},
 	/**
 	 * 判断是否满足选择器
+	 * Check the current matched set of elements against a selector, element, or jQuery object and return true if at least one of these elements matches the given arguments.
+	 * @see <a href="http://api.jquery.com/is/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector|$Kit.Suger Instance Object|Element}
 	 */
 	is : function(selector) {
-		var find = $kit.selector(selector, this.nodes[0]);
-		if(find != null && find.length) {
-			return true;
+		if($kit.isNode(selector)) {
+			return this.nodes[0] == selector;
+		} else if(this.isSuger(selector)) {
+			return selector.nodes.length == 1 && this.nodes[0] == selector.nodes[0]
+		} else if($kit.isStr(selector)) {
+			return $kit.selector.matchesSelector(this.nodes[0], selector);
 		}
 		return false;
 	},
 	/**
-	 * key事件
-	 */
-	keydown : function() {
-		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'keydown'
-		});
-		return me;
-	},
-	keypress : function() {
-		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'keypress'
-		});
-		return me;
-	},
-	keyup : function() {
-		var me = this;
-		$kit.newEv({
-			el : me.nodes[0],
-			ev : 'keyup'
-		});
-		return me;
-	},
-	/**
 	 * 最后一个
+	 * Reduce the set of matched elements to the final one in the set.
+	 * @see <a href="http://api.jquery.com/last/">详细看jQuery的解释，和他一样</a>
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	last : function() {
 		var me = this;
 		return me._new(me.nodes[me.nodes.length - 1]);
 	},
 	/**
-	 * 不着急
-	 */
-	live : function() {
-
-	},
-	load : function() {
-
-	},
-	/**
 	 * 遍历，返回值加入到一个数组
+	 * Pass each element in the current matched set through a function, producing a new jQuery object containing the return values.
+	 * @see <a href="http://api.jquery.com/map/">详细看jQuery的解释，和他一样</a>
+	 * @param {Function}
+	 * @return {Array}
 	 */
 	map : function(fn) {
 		var me = this, re = [];
@@ -632,61 +924,10 @@ $Kit.Suger.prototype = {
 		return re;
 	},
 	/**
-	 * mouse事件
-	 */
-	mousedown : function() {
-	},
-	mouseenter : function() {
-	},
-	mouseleave : function() {
-	},
-	mousemove : function() {
-	},
-	mouseout : function() {
-	},
-	mouseover : function() {
-	},
-	mouseup : function() {
-	},
-	/**
-	 * 下一个元素
-	 */
-	next : function() {
-		var me = this;
-		return me._new($kit.$el('+*', me.nodes[0]));
-	},
-	nextAll : function() {
-		var re = [], me = this;
-		var nextElementSibling = me.nodes[0];
-		while(nextElementSibling.nextSibling) {
-			nextElementSibling = nextElementSibling.nextSibling;
-			if(nextElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
-				re.push(nextElementSibling);
-			}
-		}
-		var _suger = new $Kit.Suger(re);
-		_suger.previousSugerObject = me;
-		return _suger;
-	},
-	/**
-	 * 同级后面所有，不包含selector
-	 */
-	nextUntil : function(selector) {
-		var me = this, re = [];
-		var nextElementSibling = me.nodes[0];
-		while(nextElementSibling.nextSibling) {
-			nextElementSibling = nextElementSibling.nextSibling;
-			if(nextElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
-				if($kit.selector.matchesSelector(nextElementSibling, selector)) {
-					break;
-				}
-				re.push(nextElementSibling);
-			}
-		}
-		return me._new(re);
-	},
-	/**
 	 * 去掉匹配的
+	 * Remove elements from the set of matched elements.
+	 * @see <a href="http://api.jquery.com/andSelf/">详细看jQuery的解释，和他一样</a>
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	not : function(selector, context) {
 		var me = this, re = [];
@@ -697,7 +938,7 @@ $Kit.Suger.prototype = {
 				}
 			});
 			return me._new(re);
-		} else if($kit.isNodes(selector)) {
+		} else if($kit.isNodeList(selector)) {
 			$kit.each(me.nodes, function(o) {
 				var existed = false;
 				$kit.each(selector, function(c) {
@@ -711,82 +952,196 @@ $Kit.Suger.prototype = {
 				}
 			});
 			return me._new(re);
-		}
-		selector = $kit.$el(selector, context);
-		$kit.each(me.nodes, function(o) {
-			var existed = false;
-			$kit.each(selector, function(c) {
-				if(o == c) {
-					existed = true;
-					return false;
+		} else if($kit.isStr(selector)) {
+			selector = $kit.$el(selector, context);
+			$kit.each(me.nodes, function(o) {
+				var existed = false;
+				$kit.each(selector, function(c) {
+					if(o == c) {
+						existed = true;
+						return false;
+					}
+				});
+				if(!existed) {
+					re.push(o);
 				}
 			});
-			if(!existed) {
-				re.push(o);
-			}
-		});
-		return me._new(re);
+			return me._new(re);
+		} else if($kit.isFn(selector)) {
+			$kit.each(me.nodes, function(o, idx) {
+				if(selector.call(o, idx) != true) {
+					re.push(o);
+				}
+			});
+		}
+		return null;
 	},
 	/**
-	 * 不着急
+	 * 注销事件
+	 * @param {String} event
+	 * @param {Function} [eventFunction]
+	 * @return {Object} current $Kit.Suger Instance
 	 */
 	off : function() {
-
-	},
-	on : function() {
-
-	},
-	one : function() {
-
+		var me = this;
+		if(arguments.length == 2) {
+			var ev = arguments[0];
+			var fn = arguments[1];
+			$kit.each(me.nodes, function(o) {
+				$kit.delEv({
+					el : o,
+					ev : ev,
+					fn : fn
+				});
+			});
+		}
+		return me;
 	},
 	/**
-	 * offset
+	 * 注销事件，同off
+	 * @param {String} event
+	 * @param {Function} [eventFunction]
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	unbind : function() {
+		return this.off.apply(this, arguments);
+	},
+	/**
+	 * 注销事件，同off
+	 * @param {String} event
+	 * @param {Function} [eventFunction]
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	undelegate : function() {
+		return this.off.apply(this, arguments);
+	},
+	/**
+	 * 绑定事件，同on
+	 * @param {String} event
+	 * @param {Function} eventFunction
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	bind : function() {
+		return this.on.apply(this, arguments);
+	},
+	/**
+	 * 绑定事件，同on
+	 * @param {String} event
+	 * @param {Function} eventFunction
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	delegate : function() {
+		return this.on.apply(this, arguments);
+	},
+	/**
+	 * 绑定事件
+	 * @param {String} event
+	 * @param {Function} eventFunction
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	on : function() {
+		var me = this;
+		if(arguments.length == 2) {
+			var ev = arguments[0];
+			var fn = arguments[1];
+			$kit.each(me.nodes, function(o) {
+				$kit.ev({
+					el : o,
+					ev : ev,
+					fn : fn,
+					scope : o
+				});
+			});
+		}
+		return me;
+	},
+	/**
+	 * 只执行一次的事件
+	 * @param {String} event
+	 * @param {Function} eventFunction
+	 * @return {Object} current $Kit.Suger Instance
+	 */
+	one : function(event, fn) {
+		var me = this;
+		var _fn = function(ev, evCfg) {
+			fn.call(this, ev, evCfg);
+			$kit.delEv(evCfg);
+		}
+		me.on(event, _fn);
+	},
+	/**
+	 * offset，看$kit.offset
+	 * Get the current coordinates of the first element in the set of matched elements, relative to the document.
+	 * @return {Object}
 	 */
 	offset : function() {
 		return $kit.offset(this.nodes[0]);
 	},
+	/**
+	 * position，看$kit.position
+	 * Get the current coordinates of the first element in the set of matched elements, relative to the offset parent.
+	 * @return {Object}
+	 */
+	position : function() {
+		return $kit.position(this.nodes[0]);
+	},
+	/**
+	 * Get the closest ancestor element that is positioned.
+	 * @return {Object} new $Kit.Suger Instance
+	 */
 	offsetParent : function() {
 		return this._new(this.nodes[offsetParent]);
 	},
 	/**
-	 * 包括padding和border
-	 */
-	outerHeight : function() {
-		return $kit.dom.outerHeight(this.nodes[0]);
-	},
-	outerWidth : function() {
-		return $kit.dom.outerWidth(this.nodes[0]);
-	},
-	/**
 	 * 查找父节点
+	 * Get the parent of each element in the current set of matched elements, optionally filtered by a selector.
+	 * @see <a href="http://api.jquery.com/parent/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector|Element|$Kit.Suger Instance Object}
+	 * @param {Element} [context]
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	parent : function(selector, context) {
 		var me = this;
 		context = context || document;
 		var me = this, element = me.nodes[0];
-		var find = $kit.selector.matches(selector, [element]);
 		var parentNode = me.nodes[0];
 		while(parentNode != context) {
 			parentNode = parentNode.parentNode;
-			find = $kit.selector.matches(selector, [parentNode]);
-			if(find.length && find[0] == parentNode) {
+			if($kit.isStr(selector) && $kit.selector.matchesSelector(parentNode, selector)) {
 				return me._new(parentNode);
+			} else if($kit.isNode(selector) && parentNode == selector) {
+				return me._new(parentNode);
+			} else if(me.isSuger(selector) && parentNode == selector.nodes[0]) {
+				return me._new(parentNode);
+			} else {
+				break;
 			}
 		}
 		return null;
 	},
+	/**
+	 * 返回所有父节点
+	 * Get the ancestors of each element in the current set of matched elements, optionally filtered by a selector.
+	 * @param {Selector|Element|$Kit.Suger Instance Object}
+	 * @param {Element} [context]
+	 * @return {Object} new $Kit.Suger Instance
+	 */
 	parents : function(selector, context) {
 		var me = this;
 		context = context || document;
 		var me = this, element = me.nodes[0];
-		var find = $kit.selector.matches(selector, [element]);
 		var parentNode = me.nodes[0];
 		var re = [];
 		while(parentNode != context) {
 			parentNode = parentNode.parentNode;
-			find = $kit.selector.matches(selector, [parentNode]);
-			if(find.length && find[0] == parentNode) {
-				re.push(parentNode);
+			if($kit.isStr(selector) && $kit.selector.matchesSelector(parentNode, selector)) {
+				re.push(me._new(parentNode));
+			} else if($kit.isNode(selector) && parentNode == selector) {
+				re.push(me._new(parentNode));
+			} else if(me.isSuger(selector) && parentNode == selector.nodes[0]) {
+				re.push(me._new(parentNode));
+			} else {
+				break;
 			}
 		}
 		if(re.length) {
@@ -794,7 +1149,14 @@ $Kit.Suger.prototype = {
 		}
 		return null;
 	},
-	parentsUntil : function() {
+	/**
+	 * 返回所有父节点直到
+	 * Get the ancestors of each element in the current set of matched elements, up to but not including the element matched by the selector, DOM node, or jQuery object.
+	 * @param {Selector|Element|$Kit.Suger Instance Object}
+	 * @param {Element} [context]
+	 * @return {Object} new $Kit.Suger Instance
+	 */
+	parentsUntil : function(selector, context) {
 		var me = this;
 		context = context || document;
 		var me = this, element = me.nodes[0];
@@ -803,11 +1165,14 @@ $Kit.Suger.prototype = {
 		var re = [];
 		while(parentNode != context) {
 			parentNode = parentNode.parentNode;
-			find = $kit.selector.matches(selector, [parentNode]);
-			if(find.length && find[0] == parentNode) {
+			if($kit.isStr(selector) && $kit.selector.matchesSelector(parentNode, selector)) {
+				break;
+			} else if($kit.isNode(selector) && parentNode == selector) {
+				break;
+			} else if(me.isSuger(selector) && parentNode == selector.nodes[0]) {
 				break;
 			} else {
-				re.push(parentNode);
+				re.push(me._new(parentNode));
 			}
 		}
 		if(re.length) {
@@ -816,101 +1181,171 @@ $Kit.Suger.prototype = {
 		return null;
 	},
 	/**
-	 * 前插，类似append是后插
+	 * 下一个元素
+	 * Get the immediately following sibling of each element in the set of matched elements. If a selector is provided, it retrieves the next sibling only if it matches that selector.
+	 * @see <a href="http://api.jquery.com/next/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector} [selector]
+	 * @return {Object} new $Kit.Suger Instance
 	 */
-	prepend : function() {
-		var me = this;
-		if(arguments.length) {
-			for(var i = 0; i < arguments.length; i++) {
-				me.after(arguments[i]);
-			}
-		} else {
-			var object = arguments[0];
-			if($kit.isNode(o)) {
-				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : o,
-						pos : 'first',
-						what : object
-					});
-				});
-			} else if($kit.isFn(object)) {
-				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : o,
-						pos : 'first',
-						what : object.call(o, object)
-					});
-				});
+	next : function(selector) {
+		var re = [], me = this;
+		var nextElementSibling = me.nodes[0];
+		while(nextElementSibling.nextSibling) {
+			nextElementSibling = nextElementSibling.nextSibling;
+			if(nextElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
+				if($kit.isStr(selector)) {
+					if($kit.selector.matchesSelector(nextElementSibling, selector)) {
+						re.push(nextElementSibling);
+						break;
+					}
+				} else {
+					re.push(nextElementSibling);
+					break;
+				}
 			}
 		}
-		return me;
+		return me._new(re);
 	},
-	prependTo : function() {
-		var me = this;
-		if($kit.isNode(target)) {
-			$kit.each(me.nodes, function(o) {
-				$kit.insEl({
-					where : target,
-					what : o,
-					pos : 'first'
-				});
-			});
-		} else {
-			if(target.nodes) {
-				$kit.each(me.nodes, function(o) {
-					$kit.insEl({
-						where : target.nodes[0],
-						what : o,
-						pos : 'first'
-					});
-				});
+	/**
+	 * 后面所有元素
+	 * Get all following siblings of each element in the set of matched elements, optionally filtered by a selector.
+	 * @see <a href="http://api.jquery.com/nextAll/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector} [selector]
+	 * @return {Object} new $Kit.Suger Instance
+	 */
+	nextAll : function(selector) {
+		var re = [], me = this;
+		var nextElementSibling = me.nodes[0];
+		while(nextElementSibling.nextSibling) {
+			nextElementSibling = nextElementSibling.nextSibling;
+			if(nextElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
+				if($kit.isStr(selector)) {
+					if($kit.selector.matchesSelector(nextElementSibling, selector)) {
+						re.push(nextElementSibling);
+					}
+				} else {
+					re.push(nextElementSibling);
+				}
 			}
 		}
-		return me;
+		return me._new(re);
+	},
+	/**
+	 * 同级后面所有，不包含selector
+	 * Get all following siblings of each element up to but not including the element matched by the selector, DOM node, or jQuery object passed.
+	 * @see <a href="http://api.jquery.com/nextUntil/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector ...|Element ...|$Kit.Suger Instance Object ...}
+	 * @return {Object} new $Kit.Suger Instance
+	 */
+	nextUntil : function() {
+		var me = this, re = [];
+		var nextElementSibling = me.nodes[0];
+		while(nextElementSibling.nextSibling) {
+			nextElementSibling = nextElementSibling.nextSibling;
+			if(nextElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
+				var flag = true;
+				for(var i = 0; i < arguments.length; i++) {
+					var selector = arguments[i];
+					if($kit.isStr(selector) && $kit.selector.matchesSelector(nextElementSibling, selector)) {
+						flag = false;
+						break;
+					} else if($kit.isNode(selector) && nextElementSibling == selector) {
+						flag = false;
+						break;
+					}
+				}
+				if(flag) {
+					re.push(nextElementSibling);
+				}
+			}
+		}
+		return me._new(re);
 	},
 	/**
 	 * 前面
+	 * Get the immediately preceding sibling of each element in the set of matched elements, optionally filtered by a selector.
+	 * @see <a href="http://api.jquery.com/prev/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector} [selector]
+	 * @return {Object} new $Kit.Suger Instance
 	 */
-	prev : function() {
+	prev : function(selector) {
 		var me = this, re = [];
 		var previousElementSibling = me.nodes[0];
 		while(previousElementSibling.previousSibling) {
 			previousElementSibling = previousElementSibling.previousSibling;
 			if(previousElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
-				re.push(previousElementSibling);
-				break;
+				if($kit.isStr(selector)) {
+					if($kit.selector.matchesSelector(previousElementSibling, selector)) {
+						re.push(previousElementSibling);
+						break;
+					}
+				} else {
+					re.push(previousElementSibling);
+					break;
+				}
 			}
 		}
 		return me._new(re);
 	},
-	prevAll : function() {
+	/**
+	 * 之前所有的
+	 * Get all preceding siblings of each element in the set of matched elements, optionally filtered by a selector.
+	 * @see <a href="http://api.jquery.com/prevAll/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector} [selector]
+	 * @return {Object} new $Kit.Suger Instance
+	 */
+	prevAll : function(selector) {
 		var me = this, re = [];
 		var previousElementSibling = me.nodes[0];
 		while(previousElementSibling.previousSibling) {
 			previousElementSibling = previousElementSibling.previousSibling;
 			if(previousElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
-				re.push(previousElementSibling);
+				if($kit.isStr(selector)) {
+					if($kit.selector.matchesSelector(previousElementSibling, selector)) {
+						re.push(previousElementSibling);
+					}
+				} else {
+					re.push(previousElementSibling);
+				}
 			}
 		}
 		return me._new(re);
 	},
+	/**
+	 * 之前所有的，直到
+	 * Get all preceding siblings of each element up to but not including the element matched by the selector, DOM node, or jQuery object.
+	 * @see <a href="http://api.jquery.com/prevUntil/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector ...|Element ...|$Kit.Suger Instance Object ...}
+	 * @return {Object} new $Kit.Suger Instance
+	 */
 	prevUntil : function(selector) {
 		var me = this, re = [];
 		var previousElementSibling = me.nodes[0];
 		while(previousElementSibling.previousSibling) {
 			previousElementSibling = previousElementSibling.previousSibling;
 			if(previousElementSibling.nodeType == $kit.CONSTANTS.NODETYPE_ELEMENT) {
-				if($kit.selector.matchesSelector(previousElementSibling, selector)) {
-					break;
+				var flag = true;
+				for(var i = 0; i < arguments.length; i++) {
+					var selector = arguments[i];
+					if($kit.isStr(selector) && $kit.selector.matchesSelector(previousElementSibling, selector)) {
+						flag = false;
+						break;
+					} else if($kit.isNode(selector) && previousElementSibling == selector) {
+						flag = false;
+						break;
+					}
 				}
-				re.push(previousElementSibling);
+				if(flag) {
+					re.push(previousElementSibling);
+				}
 			}
 		}
 		return me._new(re);
 	},
 	/**
 	 * 删除
+	 * Remove the set of matched elements from the DOM.
+	 * @return {Object} current $Kit.Suger Instance
 	 */
 	remove : function() {
 		var me = this;
@@ -919,89 +1354,70 @@ $Kit.Suger.prototype = {
 		});
 		return me;
 	},
-	removeAttr : function(attrName) {
-		var me = this;
-		$kit.each(me.nodes, function(o) {
-			$kit.attr(o, attrName, null);
-		});
-		return me;
-	},
-	removeClass : function(className) {
-		var me = this;
-		$kit.each(me.nodes, function(o) {
-			$kit.rmCls(o, className);
-		});
-		return me;
-	},
-	removeDate : function(dataName) {
-		var me = this;
-		$kit.each(me.nodes, function(o) {
-			o.dataName = undefined;
-		});
-		return me;
-	},
-	removeProp : function() {
-		return this.removeAttr.apply(this, arguments);
-	},
 	/**
 	 * 替换
+	 * Replace each target element with the set of matched elements.
+	 * @see <a href="http://api.jquery.com/replaceAll/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector|Element|$Kit.Suger Instance Object}
+	 * @param {Element} [context]
+	 * @return {Object} current $Kit.Suger Instance
 	 */
 	replaceAll : function(selector, context) {
 		var me = this;
-		var target = $kit.$el(selector, context);
-		$kit.each(target, function(o) {
-			$kit.rpEl(o, me.nodes[0]);
-		});
-		return me;
-	},
-	replaceWith : function(selector) {
-		var me = this;
+		var target;
 		if($kit.isNode(selector)) {
-			$kit.rpEl(o, selector);
+			target = [selector];
+		} else if($kit.isStr(selector)) {
+			target = $kit.$el(selector, context);
 		} else if(me.isSuger(selector)) {
-			$kit.rpEl(o, selector.nodes[0]);
+			target = selector.nodes;
+		}
+		if(target) {
+			$kit.each(target, function(o) {
+				$kit.rpEl(o, me.nodes[0]);
+			});
 		}
 		return me;
 	},
 	/**
-	 * resize事件
+	 * Replace each element in the set of matched elements with the provided new content.\
+	 * @see <a href="http://api.jquery.com/replaceWith/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector|Element|$Kit.Suger Instance Object|Function}
+	 * @param {Element} [context]
+	 * @return {Object} current $Kit.Suger Instance
 	 */
-	resize : function() {
-
-	},
-	scroll : function() {
-
-	},
-	scrollLeft : function() {
-
-	},
-	scrollTop : function() {
-
-	},
-	select : function() {
-
+	replaceWith : function(selector, context) {
+		var me = this;
+		var target;
+		if($kit.isNode(selector)) {
+			target = selector;
+		} else if(me.isSuger(selector)) {
+			target = selector.nodes[0];
+		} else if($kit.isStr(selector)) {
+			target = $kit.$el(selector, context)[0];
+		} else if($kit.isFn(selector)) {
+			target = selector.call(me.nodes[0]);
+		}
+		if(target) {
+			$kit.rpEl(me.nodes[0], target);
+		}
+		return me;
 	},
 	/**
 	 * form元素序列化
 	 */
 	serialize : function() {
-
-	},
-	serializeArray : function() {
-
-	},
-	/**
-	 * 显示
-	 */
-	show : function() {
-		var me = this;
-		if(me.nodes[0].style.display == 'none') {
-			me.nodes[0].style.display = '';
-		}
-		return me;
+		var re = [], me = this;
+		$kit.each(me.nodes, function(o) {
+			re.push($kit.dom.serialize(o));
+		});
+		return re.join('&');
 	},
 	/**
 	 * 找到所有同级其他元素
+	 * @see <a href="http://api.jquery.com/siblings/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector} [selector]
+	 * @return {[Element]}
 	 */
 	siblings : function(selector) {
 		var me = this;
@@ -1017,74 +1433,39 @@ $Kit.Suger.prototype = {
 		});
 	},
 	/**
-	 * 不着急
+	 * 返回nodes长度
+	 * @return {Number}
 	 */
 	size : function() {
-
-	},
-	slice : function() {
-
-	},
-	slideDown : function() {
-
-	},
-	slideTriggle : function() {
-
-	},
-	slideUp : function() {
-
-	},
-	stop : function() {
-
+		return this.nodes.length;
 	},
 	/**
-	 * innerText
+	 * Reduce the set of matched elements to a subset specified by a range of indices.
+	 * @param {Number}
+	 * @param {Number} [end]
+	 * @return {Object} new $Kit.Suger Instance
 	 */
-	text : function(text) {
-		var me = this;
-		if(text == null) {
-			return $kit.dom.text(me.nodes[0]);
+	slice : function(begin, end) {
+		if(end != null) {
+			return this._new(this.nodes.slice(begin, end));
+		} else if(begin != null) {
+			return this._new(this.nodes.slice(begin));
 		}
-		$kit.dom.text(me.nodes[0], text);
-		return me;
-	},
-	/**
-	 * 切换className
-	 */
-	toggleClass : function(className) {
-		var me = this;
-		$kit.each(me.nodes, function(o) {
-			$kit.toggleCls(o, className);
-		});
-		return me;
+		return this;
 	},
 	/**
 	 * 获得value
+	 * Get the current value of the first element in the set of matched elements.
+	 * @return {String}
 	 */
 	val : function() {
 		return $kit.val(me.nodes);
 	},
 	/**
-	 * 高度 宽度
-	 */
-	height : function(value) {
-		var me = this;
-		if(value != null) {
-			$kit.dom.height(me.nodes[0], value);
-			return me;
-		}
-		return $kit.dom.height(me.nodes[0]);
-	},
-	width : function(value) {
-		var me = this;
-		if(value != null) {
-			$kit.dom.width(me.nodes[0], value);
-			return me;
-		}
-		return $kit.dom.width(me.nodes[0]);
-	},
-	/**
 	 * 包围
+	 * Wrap an HTML structure around each element in the set of matched elements.
+	 * @param {HTML|Element|$Kit.Suger Instance}
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	wrap : function(node) {
 		var me = this;
@@ -1101,6 +1482,11 @@ $Kit.Suger.prototype = {
 		}
 		return null;
 	},
+	/**
+	 * Wrap an HTML structure around all elements in the set of matched elements.
+	 * @param {HTML|Element|$Kit.Suger Instance}
+	 * @return {Object} new $Kit.Suger Instance
+	 */
 	wrapAll : function(node) {
 		var me = this;
 		if($kit.isNode(node)) {
@@ -1125,7 +1511,12 @@ $Kit.Suger.prototype = {
 		}
 		return null;
 	},
-	wrapInner : function() {
+	/**
+	 * Wrap an HTML structure around the content of each element in the set of matched elements.
+	 * @param {HTML|Element|$Kit.Suger Instance|Function}
+	 * @return {Object} new $Kit.Suger Instance
+	 */
+	wrapInner : function(node) {
 		var me = this;
 		if($kit.isNode(node)) {
 			me.nodes[0].appendChild(node);
@@ -1146,42 +1537,82 @@ $Kit.Suger.prototype = {
 			me.nodes[0].innerHTML = '';
 			node.innerHTML = innerHTML;
 			return me._new(node);
+		} else if($kit.isFn(node)) {
+			node = node.call(me.nodes[0]);
+			return me.wrapInner(node);
 		}
 		return null;
 	},
 	/**
-	 * 绑定事件
+	 * Remove the parents of the set of matched elements from the DOM, leaving the matched elements in their place.
+	 * @return {Object} new $Kit.Suger Instance
 	 */
-	on : function() {
+	unwrap : function() {
 		var me = this;
-		if(arguments.length == 2) {
-			var ev = arguments[0];
-			var fn = arguments[1];
-			$kit.each(me.nodes, function(o) {
-				$kit.ev({
-					el : o,
-					ev : ev,
-					fn : fn,
-					scope : o
-				});
-			});
-		}
+		$kit.each(me.nodes, function(o) {
+			$kit.rpEl(o.parentNode, o);
+		});
 		return me;
 	},
 	/**
 	 * 是否是kitSuger对象
+	 * @param {Object}
+	 * @return {Boolean}
+	 * @private
 	 */
 	isSuger : function(o) {
 		return o != null && $kit.isObj(o) && o.name == 'kitSuger';
 	},
 	/**
 	 * 生成一个新的jquery队列
+	 * @param {Selector|Element|[Element]|$Kit.Suger Instance}
+	 * @return {Object} new $Kit.Suger Instance
 	 */
 	pushStack : function(selector) {
 		var me = this;
 		return me._new(selector);
+	},
+	/**
+	 * Get the children of each element in the set of matched elements, optionally filtered by a selector.
+	 * @see <a href="http://api.jquery.com/children/">详细看jQuery的解释，和他一样</a>
+	 * @param {Selector} [selector]
+	 * @return {Object} new $Kit.Suger Instance
+	 */
+	children : function(selector) {
+		var me = this;
+		var re = [];
+		$kit.each(me.nodes, function(o) {
+			if(selector == null) {
+				$kit.array.ad(re, o.childNodes, {
+					ifExisted : true
+				});
+			} else {
+				$kit.each(o.childNodes, function(o1) {
+					if($kit.selector.matchesSelector(selector, o1)) {
+						re.push(o1);
+					}
+				});
+			}
+		});
+		return me._new(re);
+	},
+	/**
+	 * 返回DOM element
+	 * @param {Number} index
+	 * @return {[Element]|Element}
+	 */
+	get : function(index) {
+		if(index == null) {
+			return this.nodes;
+		} else {
+			if(index > 0) {
+				return this.nodes[index];
+			} else {
+				return this.nodes[this.nodes.length - index];
+			}
+		}
 	}
-}
+});
 if($kit.$) {
 	$kit._$ = $kit.$;
 }

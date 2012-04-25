@@ -679,9 +679,17 @@ $Kit.prototype = {
 		 el.className = "";
 		 me.attr(el, 'class', null);
 		 }*/
-		var re = new RegExp('(\\s|^)' + cls + '(\\s|$)');
-		if(el.className)
-			el.className = el.className.replace(re, ' ');
+		var clsAry = cls.split(/\s+/g);
+		var reCls = el.className;
+		for(var i = 0; i < clsAry.length; i++) {
+			var cls = clsAry[i];
+			var re = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+			if(reCls) {
+				reCls = reCls.replace(re, ' ');
+			}
+		}
+		reCls = reCls.trim();
+		el.className = reCls;
 	},
 	/**
 	 * 判断是否含有某个className
@@ -911,6 +919,38 @@ $Kit.prototype = {
 			top += el.offsetTop;
 			left += el.offsetLeft;
 		}
+		return {
+			top : top,
+			left : left,
+			width : width,
+			height : height,
+			bottom : top + height,
+			right : left + width,
+			middleTop : top + height / 2,
+			middleLeft : left + width / 2
+		}
+	},
+	/**
+	 * 计算元素相对于他的offsetParent的偏移
+	 * @param {Element}
+	 * @return {Number} top 距离顶部
+	 * @return {Number} left 距离左边
+	 * @return {Number} height 高度
+	 * @return {Number} width 宽度
+	 * @return {Number} bottom 底部距离顶部
+	 * @return {Number} right 右边距离最左边
+	 * @return {Number} middleTop 中间距离顶部
+	 * @return {Number} middleLeft 中间距离最左边
+	 */
+	position : function(el) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		var top = el.offsetTop, //
+		left = el.offsetLeft, //
+		width = el.offsetWidth, //
+		height = el.offsetHeight;
 		return {
 			top : top,
 			left : left,
@@ -1566,7 +1606,7 @@ $Kit.prototype = {
 $kit = new $Kit();
 /**
  * dom ready event
- * @memberof $Kit
+ * @memberOf $Kit
  * @member $
  * @function
  * @instance

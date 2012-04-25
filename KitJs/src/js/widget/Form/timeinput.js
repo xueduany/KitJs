@@ -1,3 +1,10 @@
+/**
+ * 时间输入框
+ * @class $kit.ui.Form.TimeInput
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/timeinput.js">Source code</a>
+ */
 $kit.ui.Form.TimeInput = function(config) {
 	$kit.inherit({
 		child : $kit.ui.Form.TimeInput,
@@ -7,7 +14,14 @@ $kit.ui.Form.TimeInput = function(config) {
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.Form.TimeInput, {
+$kit.merge($kit.ui.Form.TimeInput,
+/**
+ * @lends $kit.ui.Form.TimeInput
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		el : undefined,
 		kitWidgetName : "kitTimeInput",
@@ -16,7 +30,14 @@ $kit.merge($kit.ui.Form.TimeInput, {
 		thenScope : undefined
 	}
 });
-$kit.merge($kit.ui.Form.TimeInput.prototype, {
+$kit.merge($kit.ui.Form.TimeInput.prototype,
+/**
+ * @lends $kit.ui.Form.TimeInput.ptototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		$kit.ev({
@@ -32,6 +53,9 @@ $kit.merge($kit.ui.Form.TimeInput.prototype, {
 			scope : me
 		});
 	},
+	/**
+	 * keyDown事件
+	 */
 	evKeyDown : function(ev, evCfg) {
 		var me = this;
 		//时间修改
@@ -69,6 +93,9 @@ $kit.merge($kit.ui.Form.TimeInput.prototype, {
 			ev.stopDefault();
 		}
 	},
+	/*
+	 * 输入完成事件
+	 */
 	evInputComplete : function(ev, evCfg) {
 		var me = this;
 		//时间修改

@@ -1,13 +1,33 @@
 /**
- * 日历
+ * 功能强大的日历（中文，支持多选，划动多选，多语言支持，API操作，自定义事件，界面定制等等）
+ * @class $kit.ui.DatePicker
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @required array.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/DatePicker/datepicker.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/DatePicker/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/DatePicker/demo.png">
  */
 $kit.ui.DatePicker = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 }
-$kit.merge($kit.ui.DatePicker, {
+$kit.merge($kit.ui.DatePicker,
+/**
+ * @lends $kit.ui.DatePicker
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		kitWidgetName : 'kitjs-datepicker',
+		/**
+		 * 接受和输出的日期格式
+		 * @type {String}
+		 */
 		dateFormat : 'yyyy年mm月dd日', //接受和输出的日期格式
 		template : {
 			pickerHTML : [//
@@ -44,8 +64,20 @@ $kit.merge($kit.ui.DatePicker, {
 			contHTML : '<tbody><tr><td colspan="7"></td></tr></tbody>',
 			dropDownCls : 'dropdown-menu'
 		},
+		/**
+		 * 语言，默认cn
+		 * @type {String}
+		 */
 		language : 'cn',
+		/**
+		 * 初始显示的view，0为日历,1为月，2为年
+		 * @type {Number}
+		 */
 		startView : 0,
+		/**
+		 * 初始日期
+		 * @type {Date}
+		 */
 		date : undefined, //$kit.date.dateNow(),
 		modes : [{
 			clsName : 'days',
@@ -60,17 +92,45 @@ $kit.merge($kit.ui.DatePicker, {
 			navFnc : 'FullYear',
 			navStep : 10
 		}],
-		weekStart : undefined, //默认从date对象里面的本地化数据取得一周的开始时间
+		/**
+		 * 默认从date对象里面的本地化数据取得一周的开始时间
+		 * @type {Number}
+		 */
+		weekStart : undefined,
 		weekViewFormat : 'daysMin',
 		monthViewFormat : 'monthsShort',
-		show : false, //默认是否显示
-		canMultipleChoose : true, //能否多选
-		dateStringSeparator : ',', //多选时候输出分隔符
-		shiftSelectOutType : 'full', //多选时候输出类型，full为将选中的日期全部输出，short为输出选中日期的开头和结尾
-		shiftSelectOutTypeShortSeparator : '~'//当输出类型为short时，比如选中了3月1日到3月10日，则输出"3月1日~3月10日",简短输出，只有开头+分隔符+结尾
+		/*
+		 * 默认是否显示
+		 * @type {Boolean}
+		 */
+		show : false,
+		/**
+		 * 能否多选
+		 * @type {Boolean}
+		 */
+		canMultipleChoose : true,
+		/**
+		 * 多选时候输出分隔符
+		 * @type {String}
+		 */
+		dateStringSeparator : ',',
+		/**
+		 * 多选时候输出类型，full为将选中的日期全部输出，short为输出选中日期的开头和结尾
+		 * @type {String}
+		 */
+		shiftSelectOutType : 'full',
+		/**
+		 * 当输出类型为short时，比如选中了3月1日到3月10日，则输出"3月1日~3月10日",简短输出，只有开头+分隔符+结尾
+		 * @type {String}
+		 */
+		shiftSelectOutTypeShortSeparator : '~'
 	}
 });
-$kit.merge($kit.ui.DatePicker.prototype, {
+$kit.merge($kit.ui.DatePicker.prototype,
+/**
+ * @lends $kit.ui.DatePicker.prototype
+ */
+{
 	/**
 	 * main()入口
 	 */
@@ -112,7 +172,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 				break;
 		}
 		me.weekStart = config.weekStart || $kit.date.languagePack[me.language].weekStart || 0;
-		me.weekEnd = me.weekStart == 0 ? 6 : me.weekStart - 1;
+		me.weekEnd = ((me.weekStart + 6) % 7);
 		me.startDate = -Infinity;
 		me.endDate = Infinity;
 		me.setStartDate(config.startDate);
@@ -127,11 +187,17 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		}
 		return me;
 	},
+	/**
+	 * 创建html
+	 */
 	buildHTML : function() {
 		var me = this;
 		me.picker = $kit.newHTML($kit.tpl(me.config.template.pickerHTML, me.config.template)).childNodes[0];
 		document.body.appendChild(me.picker);
 	},
+	/**
+	 * 注册事件
+	 */
 	initEv : function() {
 		var me = this;
 		$kit.ev({
@@ -290,6 +356,9 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			ev : 'change'
 		});
 	},
+	/**
+	 * 获取日历的选中值
+	 */
 	getValue : function() {
 		var me = this;
 		if(me.selectedDateAry.length) {
@@ -575,6 +644,10 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			me.slideSelectFlag = true;
 		}
 	},
+	/**
+	 * 鼠标移动事件
+	 * @private
+	 */
 	mousemove : function(e) {
 		var me = this, target = e.target;
 		if(!me.config.canMultipleChoose) {
@@ -660,6 +733,10 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			}
 		}
 	},
+	/**
+	 * 选中事件
+	 * @private
+	 */
 	mouseup : function(e) {
 		var me = this, target = e.target;
 		if(!me.config.canMultipleChoose) {
@@ -697,6 +774,7 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 	},
 	/**
 	 * 面板click事件
+	 * @private
 	 */
 	click : function(e) {
 		var me = this;
@@ -884,7 +962,10 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 		me.updateNavArrows();
 	},
 	/**
-	 * add event triggle
+	 * 注册自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 * @param {Function} config.fn
 	 */
 	ev : function() {
 		if(arguments.length == 1) {
@@ -902,6 +983,11 @@ $kit.merge($kit.ui.DatePicker.prototype, {
 			}
 		}
 	},
+	/**
+	 * 触发自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 */
 	newEv : function() {
 		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
 			var evAry, evCfg, _evCfg = {};

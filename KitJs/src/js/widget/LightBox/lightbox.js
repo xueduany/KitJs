@@ -1,11 +1,28 @@
 /**
- * 图片预览
+ * 图片预览，点击图片，从图片位置打开一个视窗，居中，显示图片全图
+ * @class $kit.ui.LightBox
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @required widget/Mask/mask.js
+ * @required widget/SemitransparentLoading/semitransparentloading.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/LightBox/lightbox.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Lightbox-Gallery/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/Lightbox-Gallery/demo-2.png" width="800">
  */
 $kit.ui.LightBox = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 }
-$kit.merge($kit.ui.LightBox, {
+$kit.merge($kit.ui.LightBox,
+/**
+ * @lends $kit.ui.LightBox
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		kitWidgetName : "kitLightBox",
 		template : {
@@ -26,7 +43,14 @@ $kit.merge($kit.ui.LightBox, {
 		data : null
 	}
 });
-$kit.merge($kit.ui.LightBox.prototype, {
+$kit.merge($kit.ui.LightBox.prototype,
+/**
+ * @lends $kit.ui.LightBox.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		if(me.config.el == null) {
@@ -41,6 +65,9 @@ $kit.merge($kit.ui.LightBox.prototype, {
 		me.config.el[me.config.kitWidgetName] = me;
 		return me;
 	},
+	/**
+	 * 显示
+	 */
 	show : function(e, evCfg) {
 		var me = this;
 		var item = $kit.dom.parentEl8cls(me.config.el, 'item');
@@ -85,6 +112,10 @@ $kit.merge($kit.ui.LightBox.prototype, {
 			});
 		}
 	},
+	/**
+	 * 第一个显示图片，打开遮罩， load图片
+	 * @private
+	 */
 	initShowImage : function() {
 		var me = this;
 		var loading = new $kit.ui.SemitransparentLoading();
@@ -161,6 +192,9 @@ $kit.merge($kit.ui.LightBox.prototype, {
 		}
 		image.src = imgUrl;
 	},
+	/**
+	 * 隐藏
+	 */
 	hide : function() {
 		var me = this;
 		var offset = $kit.offset(me.config.el);

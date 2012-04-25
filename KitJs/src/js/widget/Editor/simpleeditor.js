@@ -1,3 +1,15 @@
+/**
+ * 简单编辑器
+ * @class $kit.ui.Editor.SimpleEditor
+ * @extends $kit.ui.Editor
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Editor/simpleeditor.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/SimpleEditor/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/SimpleEditor/demo.png">
+ */
 $kit.ui.Editor.SimpleEditor = function(config) {
 	var me = this;
 	$kit.inherit({
@@ -6,7 +18,14 @@ $kit.ui.Editor.SimpleEditor = function(config) {
 	});
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 }
-$kit.merge($kit.ui.Editor.SimpleEditor, {
+$kit.merge($kit.ui.Editor.SimpleEditor,
+/**
+ * @lends $kit.ui.Editor.SimpleEditor
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		kitWidgetName : "kitSimpleEditor",
 		el : undefined,
@@ -30,7 +49,11 @@ $kit.merge($kit.ui.Editor.SimpleEditor, {
 		}
 	}
 });
-$kit.merge($kit.ui.Editor.SimpleEditor.prototype, {
+$kit.merge($kit.ui.Editor.SimpleEditor.prototype,
+/**
+ * @lends $kit.ui.Editor.SimpleEditor.prototype
+ */
+{
 	/**
 	 * 初始化
 	 */
@@ -81,6 +104,10 @@ $kit.merge($kit.ui.Editor.SimpleEditor.prototype, {
 			scope : me
 		})
 	},
+	/**
+	 * 执行命令
+	 * @param {String}
+	 */
 	excuteCommand : function(command) {
 		var me = this;
 		if(command == 'bold') {

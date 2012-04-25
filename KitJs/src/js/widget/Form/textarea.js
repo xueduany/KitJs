@@ -1,3 +1,11 @@
+/**
+ * kitjs form textarea，包含自适应高度
+ * @class $kit.ui.Form.TextArea
+ * @extends $kit.ui.Form
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/textarea.js">Source code</a>
+ */
 $kit.ui.Form.TextArea = function(config) {
 	$kit.inherit({
 		child : $kit.ui.Form.TextArea,
@@ -7,9 +15,19 @@ $kit.ui.Form.TextArea = function(config) {
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.Form.TextArea, {
+$kit.merge($kit.ui.Form.TextArea,
+/**
+ * @lends $kit.ui.Form.TextArea
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		el : undefined,
+		/**
+		 * 最小行数
+		 */
 		minRows : 1,
 		autoFixHeight : true,
 		textIsEmptyFn : undefined,
@@ -20,7 +38,14 @@ $kit.merge($kit.ui.Form.TextArea, {
 		textAreaCls : 'kitjs-form-textarea'
 	}
 });
-$kit.merge($kit.ui.Form.TextArea.prototype, {
+$kit.merge($kit.ui.Form.TextArea.prototype,
+/**
+ * @lends $kit.ui.Form.TextArea.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		me.config.el[me.config.kitWidgetName] = me;
@@ -42,6 +67,9 @@ $kit.merge($kit.ui.Form.TextArea.prototype, {
 		me.fixHeight();
 		//
 	},
+	/**
+	 * 注册自适应高度事件
+	 */
 	autoFixHeight : function() {
 		var me = this;
 		$kit.ev({
@@ -65,6 +93,9 @@ $kit.merge($kit.ui.Form.TextArea.prototype, {
 			});
 		}
 	},
+	/**
+	 * 自适应高度调整
+	 */
 	fixHeight : function() {
 		var me = this;
 		var textarea = me.config.el;
@@ -103,6 +134,9 @@ $kit.merge($kit.ui.Form.TextArea.prototype, {
 			me.config.textNotEmptyFn.apply(me, [me]);
 		}
 	},
+	/**
+	 * 设值
+	 */
 	setValue : function(str) {
 		var me = this;
 		me.config.el.value = str;

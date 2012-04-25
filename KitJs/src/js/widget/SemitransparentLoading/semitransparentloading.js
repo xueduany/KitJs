@@ -1,5 +1,13 @@
 /**
  * 半透明的loading
+ * @class $kit.ui.SemitransparentLoading
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/SemitransparentLoading/semitransparentloading.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Loading/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/Loading/demo.png">
  */
 $kit.ui.SemitransparentLoading = function(config) {
 	var me = this;
@@ -33,17 +41,30 @@ $kit.ui.SemitransparentLoading = function(config) {
 	}
 	loadingImage.src = me.config.img;
 }
+/**
+ * @enum
+ */
 $kit.ui.SemitransparentLoading.defaultConfig = {
 	where : null,
 	pos : 'last',
 	what : '<div style="width:40px;height:40px;display:inline-block;*display:inline;*zoom:1;z-index:99999;"></div>',
 	img : '/KitJs/KitJs/src/img/loading.png'
 }
-$kit.merge($kit.ui.SemitransparentLoading.prototype, {
+$kit.merge($kit.ui.SemitransparentLoading.prototype,
+/**
+ * @lends $kit.ui.SemitransparentLoading.prototype
+ */
+{
+	/**
+	 * 停止转动
+	 */
 	stop : function() {
 		clearInterval(window[this.intervalStr]);
 		window[this.intervalStr] = null;
 	},
+	/**
+	 * 继续转动
+	 */
 	goOn : function() {
 		if(window[this.intervalStr] == null) {
 			window[me.intervalStr] = setInterval(function() {
@@ -52,6 +73,9 @@ $kit.merge($kit.ui.SemitransparentLoading.prototype, {
 			}, 66);
 		}
 	},
+	/**
+	 * 销毁
+	 */
 	destory : function() {
 		this.stop();
 		$kit.rmEl(this.what);

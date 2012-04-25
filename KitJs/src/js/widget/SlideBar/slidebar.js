@@ -1,10 +1,27 @@
+/**
+ * 侧边栏滑块
+ * @class $kit.ui.SlideBar
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/SlideBar/slidebar.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/SlideBar/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/SlideBar/demo.png">
+ */
 $kit.ui.SlideBar = function(config) {
 	var me = this;
 	me.currentMoveTarget = null;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.SlideBar, {
+$kit.merge($kit.ui.SlideBar,
+/**
+ * @lends $kit.ui.SlideBar
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		slideBar : undefined,
 		slideContainer : undefined,
@@ -21,7 +38,14 @@ $kit.merge($kit.ui.SlideBar, {
 		hideThen : undefined
 	}
 });
-$kit.merge($kit.ui.SlideBar.prototype, {
+$kit.merge($kit.ui.SlideBar.prototype,
+/**
+ * @lends $kit.ui.SlideBar.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		if(!me.config.slideBar || !me.config.slideContainer) {

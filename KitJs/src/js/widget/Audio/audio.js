@@ -1,33 +1,79 @@
 /**
- * HTML Audio实现
+ * 兼容各浏览器(包括IE)的HTML Audio控件，支持自定义事件，以及API操作
+ * @class $kit.ui.Audio
+ * @param {Object} config 组件配置
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Audio/kit.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Audio/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/Audio/demo.png">
+ *
+ * @update
  * 修改自github.com/kolber/audiojs/
  * 代码做了重构
  * 添加自定义事件支持，以及换肤支持
  * 部分代码做了性能优化
- *
- * @update-2012/03/22
+
+ * 2012/03/22
  * 优化播放器load性能
  *
- * @update-2012/03/23
+ * @update
+ * 2012/03/23
  * 加入loading过程时候，不能移动进度条
  * 去掉loading次数限制，避免因为网路原因，导致出错
  *
  * @author:xueduanyang1985@163.com
- * @date:2012/03/19
+ * @date 2012/03/19
  */
 $kit.ui.Audio = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.Audio, {
+$kit.merge($kit.ui.Audio,
+/**
+ * @lends $kit.ui.Audio
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
+		/**
+		 * 替换HTML中的哪个元素
+		 * @type {Element}
+		 */
 		el : undefined,
+		/**
+		 * kit组件name，绑定在element上，可以通过element['kitAudio']找到$kit.ui.Audio对象
+		 * @type {String}
+		 */
 		kitWidgetName : "kitAudio",
+		/**
+		 * audio样式
+		 * @type {String}
+		 */
 		audioCls : 'kitjs_audio',
+		/**
+		 * 是否自动播放
+		 * @type {Boolean}
+		 */
 		autoplay : false,
+		/**
+		 * 是否循环播放
+		 * @type {Boolean}
+		 */
 		loop : false,
+		/**
+		 * 是否预读取
+		 * @type {Boolean}
+		 */
 		preload : true,
+		/**
+		 * 播放音乐的flash文件地址,IE下需要使用
+		 * @type {String}
+		 */
 		swfLocation : 'audiojs.swf',
 		useFlash : (function() {
 			var a = document.createElement('audio');
@@ -48,7 +94,10 @@ $kit.merge($kit.ui.Audio, {
 			}
 			return false;
 		})(),
-		// The default markup and classes for creating the player:
+		/**
+		 * The default markup and classes for creating the player
+		 * @type {Object}
+		 */
 		playerTemplate : {
 			markup : ['<div class="${playPauseCls}">', //
 			'<p class="${playButtonCls}"></p>', //
@@ -85,6 +134,10 @@ $kit.merge($kit.ui.Audio, {
 			errorCls : 'error',
 			timeHoverCls : 'time-hover'
 		},
+		/**
+		 * flash HTML
+		 * @type {HTML}
+		 */
 		flashSource : [//
 		'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" id="${arg1}" width="1" height="1" name="${arg1}" style="position: absolute; left: -1px;">', //
 		'<param name="movie" value="${arg2}?playerInstance=${arg4}&datetime=${arg3}">', //
@@ -92,10 +145,15 @@ $kit.merge($kit.ui.Audio, {
 		'<embed name="${arg1}" src="${arg2}?playerInstance=${arg4}&datetime=${arg3}" width="1" height="1" allowscriptaccess="always">', //
 		'</object>'//
 		].join(''),
-		// The default event callbacks:
+		/**
+		 * 播放结束默认回调方法
+		 */
 		trackEnded : function(e) {
 			this.newEv('ended');
 		},
+		/**
+		 * flash错误默认回调方法
+		 */
 		flashError : function() {
 			var player = this.config.playerTemplate, //
 			errorMessage = $kit.el8cls(player.errorMessageCls, this.wrapper), //
@@ -106,6 +164,9 @@ $kit.merge($kit.ui.Audio, {
 			$kit.adCls(this.wrapper, this.config.playerTemplate.errorCls);
 			errorMessage.innerHTML = html;
 		},
+		/**
+		 * 读取错误默认回调方法
+		 */
 		loadError : function(e) {
 			var player = this.config.playerTemplate, //
 			errorMessage = $kit.el8cls(player.errorMessageCls, this.wrapper);
@@ -113,10 +174,16 @@ $kit.merge($kit.ui.Audio, {
 			$kit.adCls(this.wrapper, this.config.playerTemplate.errorCls);
 			errorMessage.innerHTML = 'Error loading: "' + this.mp3 + '"';
 		},
+		/**
+		 * 正在读取默认回调方法
+		 */
 		loading : function() {
 			var player = this.config.playerTemplate;
 			$kit.adCls(this.wrapper, this.config.playerTemplate.loadingCls);
 		},
+		/**
+		 * 读取开始默认回调方法
+		 */
 		loadStarted : function() {
 			var player = this.config.playerTemplate, //
 			duration = $kit.el8cls(player.durationCls, this.wrapper), //
@@ -124,26 +191,41 @@ $kit.merge($kit.ui.Audio, {
 			$kit.rmCls(this.wrapper, player.loadingCls);
 			duration.innerHTML = ((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
 		},
+		/**
+		 * 读取过程中默认回调方法
+		 */
 		loadProgress : function(percent) {
 			var player = this.config.playerTemplate, //
 			scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
 			loaded = $kit.el8cls(player.loaderCls, this.wrapper);
 			loaded.style.width = (scrubber.offsetWidth * percent) + 'px';
 		},
+		/**
+		 * 播放或者暂停方法
+		 */
 		playPause : function() {
 			if(this.playing)
 				this.config.play();
 			else
 				this.config.pause();
 		},
+		/**
+		 * 播放方法
+		 */
 		play : function() {
 			var player = this.config.playerTemplate;
 			$kit.adCls(this.wrapper, this.config.playerTemplate.playingCls);
 		},
+		/**
+		 * 暂停
+		 */
 		pause : function() {
 			var player = this.config.playerTemplate;
 			$kit.rmCls(this.wrapper, player.playingCls);
 		},
+		/**
+		 * 更新播放时间
+		 */
 		updatePlayhead : function(percent) {
 			if(this._flag_dragStart) {
 				return;
@@ -168,9 +250,13 @@ $kit.merge($kit.ui.Audio, {
 		}
 	}
 });
-$kit.merge($kit.ui.Audio.prototype, {
+$kit.merge($kit.ui.Audio.prototype,
+/**
+ * @lends $kit.ui.Audio.prototype
+ */
+{
 	/**
-	 * initialize
+	 * 初始化
 	 */
 	init : function() {
 		var me = this, config = me.config;
@@ -561,10 +647,17 @@ $kit.merge($kit.ui.Audio.prototype, {
 	},
 	// API access events:
 	// Each of these do what they need do and then call the matching methods defined in the settings object.
+	/**
+	 * 更新播放进度
+	 */
 	updatePlayhead : function() {
 		var percent = this.element.currentTime / this.duration;
 		this.config.updatePlayhead.apply(this, [percent]);
 	},
+	/**
+	 * 跳到百分比
+	 * @param {Percent}
+	 */
 	skipTo : function(percent) {
 		/*if(percent > this.loadedPercent)
 		 return;
@@ -576,6 +669,10 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.updatePlayhead();
 		this.newEv('skipTo');
 	},
+	/**
+	 * 跳到那个时间，单位秒
+	 * @param {Second}
+	 */
 	skipTimeTo : function(time) {
 		if(time > this.duration)
 			return;
@@ -584,6 +681,10 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.updatePlayhead();
 		this.newEv('skipTo');
 	},
+	/**
+	 * 读取mp3
+	 * @param {URL}
+	 */
 	load : function(mp3) {
 		this.loadStartedCalled = false;
 		this.source.setAttribute('src', mp3);
@@ -622,12 +723,18 @@ $kit.merge($kit.ui.Audio.prototype, {
 			this.newEv('loadProgress');
 		}
 	},
+	/**
+	 * 播放或者暂停
+	 */
 	playPause : function() {
 		if(this.playing)
 			this.pause();
 		else
 			this.play();
 	},
+	/**
+	 * 播放
+	 */
 	play : function() {
 		var ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
 		// On iOS this interaction will trigger loading the mp3, so run `loading()`.
@@ -645,12 +752,19 @@ $kit.merge($kit.ui.Audio.prototype, {
 		this.config.play.apply(this);
 		this.newEv('play');
 	},
+	/**
+	 * 暂停
+	 */
 	pause : function() {
 		this.playing = false;
 		this.element.pause();
 		this.config.pause.apply(this);
 		this.newEv('pause');
 	},
+	/**
+	 * 设置音量
+	 * @param {Number}
+	 */
 	setVolume : function(v) {
 		this.element.volume = v;
 		this.newEv('setVolume');
@@ -724,7 +838,10 @@ $kit.merge($kit.ui.Audio.prototype, {
 		progress.style.width = (scrubber.offsetWidth * (time / this.duration)) + 'px';
 	},
 	/**
-	 * add event triggle
+	 * 注册自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 * @param {Function} config.fn
 	 */
 	ev : function() {
 		if(arguments.length == 1) {
@@ -742,6 +859,11 @@ $kit.merge($kit.ui.Audio.prototype, {
 			}
 		}
 	},
+	/**
+	 * 触发自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 */
 	newEv : function() {
 		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
 			var evAry, evCfg, _evCfg = {};
@@ -764,6 +886,10 @@ $kit.merge($kit.ui.Audio.prototype, {
 			}
 		}
 	},
+	/**
+	 * bind ready event
+	 * @param {Function}
+	 */
 	ready : function(fn) {
 		/*
 		 var count = 0, audio = this;

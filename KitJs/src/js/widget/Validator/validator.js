@@ -1,21 +1,51 @@
+/**
+ * kitjs验证框架
+ * @class $kit.ui.Validator
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Validator/validator.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Validator/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/Validator/demo.png">
+ */
 $kit.ui.Validator = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 };
-$kit.merge($kit.ui.Validator, {
+$kit.merge($kit.ui.Validator,
+/**
+ * @lends $kit.ui.Validator.prototype
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		el : undefined,
 		kitWidgetName : 'kitValidator',
 		validatorCls : 'kitjs-validator',
 		validatorShowCls : 'validator-show',
 		elAttr : 'for',
+		/**
+		 * 触发方法,如['blur', 'change']
+		 * @type {Array<String>}
+		 */
 		triggleEvent : ['blur', 'change'],
+		/**
+		 * 验证规则，如[{regExp : /^\s*$/i,message : '不能为空！'}]
+		 * @type {Array<Map>}
+		 */
 		rules : [{
 			regExp : /^\s*$/i,
 			message : '不能为空！'
 		}],
 		defaultMessage : '',
+		/**
+		 * 验证方法
+		 * @type {Function(checkStr,rules)return Boolean}
+		 */
 		checkRules : function(checkStr, rules) {
 			for(var i = 0; i < rules.length; i++) {
 				var rule = rules[i];
@@ -59,7 +89,14 @@ $kit.merge($kit.ui.Validator, {
 		}
 	}
 });
-$kit.merge($kit.ui.Validator.prototype, {
+$kit.merge($kit.ui.Validator.prototype,
+/**
+ * @lends $kit.ui.Validator.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		if($kit.isEmpty(me.config.el)) {
@@ -69,6 +106,9 @@ $kit.merge($kit.ui.Validator.prototype, {
 		me.bindForm(me.formEl);
 		me.config.el[me.config.kitWidgetName] = me;
 	},
+	/**
+	 * 绑定表单
+	 */
 	bindForm : function(formEl) {
 		var me = this;
 		$kit.ev({
@@ -117,6 +157,9 @@ $kit.merge($kit.ui.Validator.prototype, {
 			form._flag_kit_validator_bindVailidateEv = true;
 		}
 	},
+	/**
+	 * 验证方法
+	 */
 	validateFn : function() {
 		var me = this;
 		if(!$kit.isEmpty(me.config.rules)) {
@@ -130,6 +173,9 @@ $kit.merge($kit.ui.Validator.prototype, {
 			}
 		}
 	},
+	/**
+	 * checkRules
+	 */
 	checkRules : function(checkStr, rules) {
 		return this.config.checkRules(checkStr, rules);
 	}

@@ -1,5 +1,11 @@
 /**
  * 鼠标键盘操作的列表，常用于input的下拉
+ * @class $kit.ui.Form.List
+ * @extends $kit.ui.Form
+ * @required kit.js
+ * @required ieFix.js
+ * @required dom.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/list.js">Source code</a>
  */
 $kit.ui.Form.List = function(config) {
 	$kit.inherit({
@@ -10,7 +16,14 @@ $kit.ui.Form.List = function(config) {
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.Form.List, {
+$kit.merge($kit.ui.Form.List,
+/**
+ * @lends $kit.ui.Form.List
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		where : undefined,
 		pos : 'last',
@@ -38,7 +51,11 @@ $kit.merge($kit.ui.Form.List, {
 		setValue : undefined
 	}
 });
-$kit.merge($kit.ui.Form.List.prototype, {
+$kit.merge($kit.ui.Form.List.prototype,
+/**
+ * @lends $kit.ui.Form.List.prototype
+ */
+{
 	/*
 	 * 初始化
 	 */
@@ -78,6 +95,9 @@ $kit.merge($kit.ui.Form.List.prototype, {
 			this.listEl.innerHTML = this.config.template.errorHTML;
 		}
 	},
+	/**
+	 * 绑定事件
+	 */
 	bindEv : function() {
 		var me = this;
 		/**
@@ -320,6 +340,9 @@ $kit.merge($kit.ui.Form.List.prototype, {
 			scope : me
 		});
 	},
+	/**
+	 * 调整滚动条保证选择的选项在视野内
+	 */
 	adjustScrollTop : function(listEl) {
 		selectedLi = this.selectedLi;
 		if($kit.isEmpty(selectedLi)) {
@@ -329,19 +352,31 @@ $kit.merge($kit.ui.Form.List.prototype, {
 			selectedLi.scrollIntoView();
 		}
 	},
+	/**
+	 * 是否隐藏
+	 */
 	isHide : function() {
 		var me = this;
 		return me.listEl.style.display != 'block'
 	},
+	/**
+	 * 是否显示
+	 */
 	isShow : function() {
 		var me = this;
 		return me.listEl.style.display == 'block'
 	},
+	/**
+	 * 显示
+	 */
 	show : function() {
 		var me = this;
 		me._flag_listEl_mousedown_ev = false;
 		me.listEl.style.display = 'block';
 	},
+	/**
+	 * 隐藏
+	 */
 	hide : function() {
 		var me = this;
 		me.listEl.style.display = 'none';

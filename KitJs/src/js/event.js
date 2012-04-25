@@ -10,7 +10,7 @@ $Kit.Event = function() {
 	 * 原始的ev事件
 	 * @member _ev
 	 * @instance
-	 * @memberof $Kit.Event
+	 * @memberOf $Kit.Event
 	 */
 	this._ev = function() {
 		$Kit.prototype.ev.apply($kit, arguments);
@@ -19,7 +19,7 @@ $Kit.Event = function() {
 	 * 当前拖拽事件的拖拽元素
 	 * @member dragElement
 	 * @instance
-	 * @memberof $Kit.Event
+	 * @memberOf $Kit.Event
 	 */
 	this.dragElement = undefined;
 	/*$kit.ev = function() {

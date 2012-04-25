@@ -1,3 +1,14 @@
+/**
+ * combobox
+ * @class $kit.ui.Form.ComboBox
+ * @extends $kit.ui.Form
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/combobox.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Combobox/combobox.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/Combobox/demo.png">
+ */
 $kit.ui.Form.ComboBox = function(config) {
 	$kit.inherit({
 		child : $kit.ui.Form.ComboBox,
@@ -7,21 +18,42 @@ $kit.ui.Form.ComboBox = function(config) {
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.Form.ComboBox, {
+$kit.merge($kit.ui.Form.ComboBox,
+/**
+ * @lends $kit.ui.Form.ComboBox
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		el : undefined,
 		kitWidgetName : 'kitFormComboBox',
 		transformCls : 'kitjs-form-combobox',
 		inputCls : 'kitjs-form-combobox-input',
 		wrapperCls : 'kitjs-form-combox-wrapper',
+		/**
+		 * 延时
+		 * @type {Number}
+		 */
 		suggestDelay : 500
 	}
 });
-$kit.merge($kit.ui.Form.ComboBox.prototype, {
+$kit.merge($kit.ui.Form.ComboBox.prototype,
+/**
+ * @lends $kit.ui.Form.ComboBox.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		//me.transform();
 	},
+	/**
+	 * 变形为comboBox
+	 */
 	transform : function() {
 		var me = this;
 		this.wrapper = document.createElement('div');
@@ -108,6 +140,7 @@ $kit.merge($kit.ui.Form.ComboBox.prototype, {
 	},
 	/**
 	 * 给隐藏表单元素赋值
+	 * @private
 	 */
 	_setFormValue : function() {
 		var me = this;

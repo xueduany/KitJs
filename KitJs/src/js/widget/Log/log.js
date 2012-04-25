@@ -1,9 +1,9 @@
 $kit.Log = function(config) {
 	var me = this;
 	var defaultConfig = {
-			template:[//
-			          '<div class="kit-log-view">',//
-			          '</div>'].join("")
+		template : [//
+		'<div class="kit-log-view">', //
+		'</div>'].join("")
 	}
 	$kit.mergeIf(config, defaultConfig);
 }
@@ -12,6 +12,6 @@ $kit.Log.prototype = {
 
 	},
 	init : function() {
-		var div=
+		//var div=
 	}
 }

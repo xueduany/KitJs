@@ -1,3 +1,14 @@
+/**
+ * 带自动完成的select
+ * @class $kit.ui.Form.ComboBox.Select
+ * @extends $kit.ui.Form.ComboBox
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/suggestselect.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/LinkageSelect/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/LinkageSelect/demo.png">
+ */
 $kit.ui.Form.ComboBox.Select = function(config) {
 	$kit.inherit({
 		child : $kit.ui.Form.ComboBox.Select,
@@ -7,7 +18,14 @@ $kit.ui.Form.ComboBox.Select = function(config) {
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 	me.init();
 }
-$kit.merge($kit.ui.Form.ComboBox.Select, {
+$kit.merge($kit.ui.Form.ComboBox.Select,
+/**
+ * @lends $kit.ui.Form.ComboBox.Select
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		el : undefined,
 		kitWidgetName : 'kitFormSuggestSelect',
@@ -17,7 +35,11 @@ $kit.merge($kit.ui.Form.ComboBox.Select, {
 		suggestDelay : 500
 	}
 });
-$kit.merge($kit.ui.Form.ComboBox.Select.prototype, {
+$kit.merge($kit.ui.Form.ComboBox.Select.prototype,
+/**
+ * @lends $kit.ui.Form.ComboBox.Select.prototype
+ */
+{
 	/**
 	 * 给隐藏表单元素赋值
 	 */

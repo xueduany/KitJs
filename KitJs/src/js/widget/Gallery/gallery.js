@@ -1,11 +1,25 @@
 /**
- * 图片窗
+ * 相册效果
+ * @class $kit.ui.Gallery
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Gallery/gallery.js">Source code</a>
+ * @example
+ * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Gallery/demo.html">Demo</a><br/>
+ * <img src="http://xueduany.github.com/KitJs/KitJs/demo/Gallery/demo.png" width="800">
  */
 $kit.ui.Gallery = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 }
-$kit.merge($kit.ui.Gallery, {
+$kit.merge($kit.ui.Gallery,
+/**
+ * @lends $kit.ui.Gallery
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		kitWidgetName : "kitGallery",
 		template : {
@@ -39,12 +53,31 @@ $kit.merge($kit.ui.Gallery, {
 			btnDisabledCls : 'kitjs-gallery-btn-disabled'
 		},
 		el : undefined,
+		/**
+		 * [{href : '',imgSrc : '1.jpg'}, ...]
+		 * @type {Array<Object>}
+		 */
 		data : undefined,
+		/**
+		 * 选中第几个
+		 * @type {Number}
+		 */
 		selectedIndex : 0,
+		/**
+		 * 是否循环
+		 * @type {Boolean}
+		 */
 		loop : false
 	}
 });
-$kit.merge($kit.ui.Gallery.prototype, {
+$kit.merge($kit.ui.Gallery.prototype,
+/**
+ * @lends $kit.ui.Gallery.prototype
+ */
+{
+	/**
+	 * 初始化
+	 */
 	init : function() {
 		var me = this;
 		if(!me.config.el) {
@@ -65,9 +98,15 @@ $kit.merge($kit.ui.Gallery.prototype, {
 		me.initControl();
 		return me;
 	},
+	/**
+	 * 填充数据
+	 */
 	fillData : function(data) {
 		me.config.data = data;
 	},
+	/**
+	 * 创建列表
+	 */
 	buildList : function(data) {
 		var me = this;
 		if(data && data.length) {
@@ -77,6 +116,9 @@ $kit.merge($kit.ui.Gallery.prototype, {
 		}
 		me.initSelectedItemStyle();
 	},
+	/**
+	 * 初始化选中图片的样式
+	 */
 	initSelectedItemStyle : function() {
 		var me = this;
 		me.items = $kit.els8cls(me.config.template.itemCls, me.list);
@@ -102,6 +144,9 @@ $kit.merge($kit.ui.Gallery.prototype, {
 		}
 		$kit.adCls(me.nextItem, me.config.template.nextItemCls);
 	},
+	/**
+	 * 绑定事件
+	 */
 	initControl : function() {
 		var me = this;
 		me.btnPrev = $kit.el8cls(me.config.template.btnPrevCls, me.control);
@@ -132,6 +177,9 @@ $kit.merge($kit.ui.Gallery.prototype, {
 			$kit.attr(me.btnPrev, 'disabled', 'true');
 		}
 	},
+	/**
+	 * 下一个图片
+	 */
 	next : function(count) {
 		var me = this;
 		$kit.rmCls(me.btnPrev, me.config.template.btnDisabledCls);
@@ -152,6 +200,9 @@ $kit.merge($kit.ui.Gallery.prototype, {
 		}
 		me.switchItem(index);
 	},
+	/**
+	 * 上一个图片
+	 */
 	prev : function(count) {
 		var me = this;
 		$kit.rmCls(me.btnNext, me.config.template.btnDisabledCls);
@@ -172,6 +223,9 @@ $kit.merge($kit.ui.Gallery.prototype, {
 		}
 		me.switchItem(index);
 	},
+	/**
+	 * 切换图片
+	 */
 	switchItem : function(selectedIndex) {
 		var me = this;
 		var itemWidth, moveLeftTo, moveLeftNow;

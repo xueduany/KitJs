@@ -1,15 +1,36 @@
+/**
+ * fom组件
+ * @class $kit.ui.Form
+ * @required kit.js
+ * @required ieFix.js
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/form.js">Source code</a>
+ */
 $kit.ui.Form = function(config) {
 	var me = this;
 	me.config = $kit.join(me.constructor.defaultConfig, config);
 };
-$kit.merge($kit.ui.Form, {
+$kit.merge($kit.ui.Form,
+/**
+ * @lends $kit.ui.Form
+ */
+{
+	/**
+	 * @enum
+	 */
 	defaultConfig : {
 		kitWidgetName : "kitForm"
 	}
 });
-$kit.merge($kit.ui.Form.prototype, {
+$kit.merge($kit.ui.Form.prototype,
+/**
+ * @lends $kit.ui.Form.prototype
+ */
+{
 	/**
-	 * add event triggle
+	 * 注册自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 * @param {Function} config.fn
 	 */
 	ev : function() {
 		if(arguments.length == 1) {
@@ -27,6 +48,11 @@ $kit.merge($kit.ui.Form.prototype, {
 			}
 		}
 	},
+	/**
+	 * 触发自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 */
 	newEv : function() {
 		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
 			var evAry, evCfg, _evCfg = {};

@@ -2,6 +2,8 @@
  * 日期时间扩展
  * @class $Kit.Date
  * @requires kit.js
+ * @requires math.js
+ * @requires array.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/date.js">Source code</a>
  */
 $Kit.Date = function() {
