@@ -545,38 +545,119 @@ $Kit.prototype = {
 			switch (config.pos.toString().toLowerCase()) {
 				case "first" :
 					if(me.isStr(what)) {
-						where.insertAdjacentHTML("afterBegin", what);
+						me.insertHTML(where, "afterBegin", what);
 					} else {
-						where.insertAdjacentElement("afterBegin", what);
+						me.insertNode(where, "afterBegin", what);
 					}
 					break;
 				case "before" :
 				case "previous" :
 					if(me.isStr(what)) {
-						where.insertAdjacentHTML("beforeBegin", what);
+						me.insertHTML(where, "beforeBegin", what);
 					} else {
-						where.insertAdjacentElement("beforeBegin", what);
+						me.insertNode(where, "beforeBegin", what);
 					}
 					break;
 				case "after" :
 				case "nextsibling" :
 					if(me.isStr(what)) {
-						where.insertAdjacentHTML("afterEnd", what);
+						me.insertHTML(where, "afterEnd", what);
 					} else {
-						where.insertAdjacentElement("afterEnd", what);
+						me.insertNode(where, "afterEnd", what);
 					}
 					break;
 				case "last" :
 					if(me.isStr(what)) {
-						where.insertAdjacentHTML("beforeEnd", what);
+						me.insertHTML(where, "beforeEnd", what);
 					} else {
-						where.insertAdjacentElement("beforeEnd", what);
+						me.insertNode(where, "beforeEnd", what);
 					}
 					break;
 				default:
 				//i don`t know how to do that
 			}
 		}
+	},
+	/**
+	 * @private
+	 */
+	insertNode : function(el, where, parsedNode) {
+		switch(where) {
+			case "beforeBegin":
+				el.parentNode.insertBefore(parsedNode, el);
+				break;
+			case "afterBegin":
+				el.insertBefore(parsedNode, el.firstChild);
+				break;
+			case "beforeEnd":
+				el.appendChild(parsedNode);
+				break;
+			case "afterEnd":
+				if(el.nextSibling) {
+					el.parentNode.insertBefore(parsedNode, el.nextSibling);
+				} else {
+					el.parentNode.appendChild(parsedNode);
+				}
+				break;
+		}
+	},
+	/**
+	 * @private
+	 */
+	insertHTML : function(el, where, html) {
+		where = where.toLowerCase();
+		if(el.insertAdjacentHTML) {
+			switch(where) {
+				case "beforebegin":
+					el.insertAdjacentHTML('BeforeBegin', html);
+					return el.previousSibling;
+				case "afterbegin":
+					el.insertAdjacentHTML('AfterBegin', html);
+					return el.firstChild;
+				case "beforeend":
+					el.insertAdjacentHTML('BeforeEnd', html);
+					return el.lastChild;
+				case "afterend":
+					el.insertAdjacentHTML('AfterEnd', html);
+					return el.nextSibling;
+			}
+			throw 'Illegal insertion point -> "' + where + '"';
+		}
+		var range = el.ownerDocument.createRange();
+		var frag;
+		switch(where) {
+			case "beforebegin":
+				range.setStartBefore(el);
+				frag = range.createContextualFragment(html);
+				el.parentNode.insertBefore(frag, el);
+				return el.previousSibling;
+			case "afterbegin":
+				if(el.firstChild) {
+					range.setStartBefore(el.firstChild);
+					frag = range.createContextualFragment(html);
+					el.insertBefore(frag, el.firstChild);
+					return el.firstChild;
+				} else {
+					el.innerHTML = html;
+					return el.firstChild;
+				}
+			case "beforeend":
+				if(el.lastChild) {
+					range.setStartAfter(el.lastChild);
+					frag = range.createContextualFragment(html);
+					el.appendChild(frag);
+					return el.lastChild;
+				} else {
+					el.innerHTML = html;
+					return el.lastChild;
+				}
+			case "afterend":
+				range.setStartAfter(el);
+				frag = range.createContextualFragment(html);
+				el.parentNode.insertBefore(frag, el.nextSibling);
+				return el.nextSibling;
+		}
+		throw 'Illegal insertion point -> "' + where + '"';
 	},
 	/**
 	 * 替换元素
