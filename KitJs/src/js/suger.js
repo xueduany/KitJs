@@ -1616,6 +1616,18 @@ $kit.merge($Kit.Suger.prototype,
 if($kit.$) {
 	$kit._$ = $kit.$;
 }
+/**
+ * $kit.$方法
+ * @name $kit.$
+ * @global
+ * @function
+ * @param {Selector|Function|Element|[Element]} arg 
+ * arg为function时候，相当于dom ready，会将$kit.$方法传递进去为参数1，
+ * 例如$kit.$(function($){$.xxxx})这里的function里面的$就等同于$kit.$，相当于别名的功能
+ * arg为其他类型的时候，自动生成一个$Kit.Suger实例，相当于jQuyer.$
+ * @param {Element} [context]
+ * @return {Null|$Kit.Suger Instance Object}
+ */
 $k = $kit.$ = function() {
 	if(arguments[0] == null || arguments[0] == '') {
 		return;

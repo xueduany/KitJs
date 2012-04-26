@@ -1330,8 +1330,9 @@
 	/**
 	 * 加载selector.js之后，可以使用sizzle选择器，使用$kit.$el方法
 	 * @global
-	 * @param {Selector}
-	 * @param {Element}
+	 * @function
+	 * @param {Selector} selector
+	 * @param {Element} [context]
 	 * @return {[Element]}
 	 */
 	$kit.$el = $kit.selector.el;
