@@ -1,20 +1,14 @@
-/* @ignore
+/*
  * Sizzle CSS Selector Engine
  *  Copyright 2011, The Dojo Foundation
  *  Released under the MIT, BSD, and GPL Licenses.
  *  More information: http://sizzlejs.com/
  *
- * version: 1.5.1-33
- * update 2012/04/10
+ * version: 1.5.1-34
+ * update 2012/04/26
  */
 
-(function()
-/**
- * @class $kit.selector
- * @sington
- */
-{
-
+(function() {
 	var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^\[\]]*\]|['"][^'"]*['"]|[^\[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g, expando = "sizcache" + (Math.random() + '').replace('.', ''), done = 0, toString = Object.prototype.toString, hasDuplicate = false, baseHasDuplicate = true, rBackslash = /\\/g, rNonWord = /\W/;
 
 	// Here we check if the JavaScript engine is using some sort of
@@ -175,37 +169,15 @@
 
 		return results;
 	};
-	/**
-	 * matches
-	 * @name matches
-	 * @memberOf $kit.selector
-	 * @param {Selector}
-	 * @param {Array}
-	 * @return {Boolean}
-	 */
+
 	Sizzle.matches = function(expr, set) {
 		return Sizzle(expr, null, null, set);
 	};
-	/**
-	 * matchesSelector
-	 * @name matchesSelector
-	 * @memberOf $kit.selector
-	 * @param {Element}
-	 * @param {Selector}
-	 * @return {Boolean}
-	 */
+
 	Sizzle.matchesSelector = function(node, expr) {
 		return Sizzle(expr, null, null, [node]).length > 0;
 	};
-	/**
-	 * matchesSelector
-	 * @name find
-	 * @memberOf $kit.selector
-	 * @param {Selector}
-	 * @param {Element} [context]
-	 * @param {Boolean} [isXML]
-	 * @return {[Element]}
-	 */
+
 	Sizzle.find = function(expr, context, isXML) {
 		var set, i, len, match, type, left;
 
@@ -241,6 +213,7 @@
 			expr : expr
 		};
 	};
+
 	Sizzle.filter = function(expr, set, inplace, not) {
 		var match, anyFound, type, found, item, filter, left, i, pass, old = expr, result = [], curLoop = set, isXMLFilter = set && set[0] && Sizzle.isXML(set[0]);
 
@@ -962,7 +935,8 @@
 
 		// release memory in IE
 		root = form = null;
-	})(); (function() {
+	})();
+	(function() {
 		// Check to see if the browser returns only elements
 		// when doing getElementsByTagName("*")
 
@@ -1144,7 +1118,8 @@
 				return Sizzle(expr, null, null, [node]).length > 0;
 			};
 		}
-	})(); (function() {
+	})();
+	(function() {
 		var div = document.createElement("div");
 
 		div.innerHTML = "<div class='test e'></div><div class='test'></div>";
@@ -1247,12 +1222,6 @@
 			return a !== b && (a.contains ? a.contains(b) : true);
 		};
 	} else if(document.documentElement.compareDocumentPosition) {
-		/**
-		 * contains
-		 * @params {Element}
-		 * @params {Element}
-		 * @return {Boolean}
-		 */
 		Sizzle.contains = function(a, b) {
 			return !!(a.compareDocumentPosition(b) & 16);
 		};
@@ -1283,26 +1252,87 @@
 		for(var i = 0, l = root.length; i < l; i++) {
 			Sizzle(selector, root[i], tmpSet, seed);
 		}
-		/**
-		 * filter
-		 * @memberOf $kit.selector
-		 * @param {Selector} selector
-		 * @param {Element} context
-		 * @return {[Element]}
-		 */
+
 		return Sizzle.filter(later, tmpSet);
 	};
 	// EXPOSE
 
-	$kit.selector = window.Sizzle = Sizzle;
+	window.Sizzle = Sizzle;
+
 	/**
-	 * sizzle选择器
+	 * 内嵌Sizzle最新版选择器，单独分离成一个Selector类，方便整合代码
+	 * @class $Kit.Selector
+	 * @required kit.js
+	 * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/selector.js">Source code</a>
+	 */
+	$Kit.Selector = function() {
+		//
+	};
+	$kit.merge($Kit.Selector.prototype,
+	/**
+	 * @lends $Kit.Selector.prototype
+	 */
+	{
+		/**
+		 * sizzle选择器
+		 * @param {Selector}
+		 * @param {Element}
+		 * @return {[Element]}
+		 */
+		el : function(selector, root) {
+			return Sizzle(selector, root);
+		},
+		/**
+		 * matches
+		 * @method
+		 * @param {Selector} selector
+		 * @param {[Element]} elementsArray
+		 * @return {Boolean}
+		 */
+		matches : Sizzle.matches,
+		/**
+		 * matchesSelector
+		 * @method
+		 * @param {Element} element
+		 * @param {Selector} selector
+		 * @return {Boolean}
+		 */
+		matchesSelector : Sizzle.matchesSelector,
+		/**
+		 * filter
+		 * @private
+		 */
+		filter : Sizzle.filter,
+		/**
+		 * contains
+		 * @private
+		 */
+		contains : Sizzle.contains,
+		/**
+		 * Utility function for retreiving the text value of an array of DOM nodes
+		 * @method
+		 * @param {Array|Element} elem
+		 * @return {String}
+		 */
+		getText : Sizzle.getText,
+		/**
+		 * find
+		 * @private
+		 */
+		find : Sizzle.find
+	});
+	/**
+	 * $Kit.Selector实例，直接通过这个实例访问$Kit.Selector所有方法
+	 * @global
+	 * @type $Kit.Selector
+	 */
+	$kit.selector = new $Kit.Selector();
+	/**
+	 * 加载selector.js之后，可以使用sizzle选择器，使用$kit.$el方法
 	 * @global
 	 * @param {Selector}
 	 * @param {Element}
 	 * @return {[Element]}
 	 */
-	$kit.$el = function(selector, root) {
-		return Sizzle(selector, root);
-	}
+	$kit.$el = $kit.selector.el;
 })();
