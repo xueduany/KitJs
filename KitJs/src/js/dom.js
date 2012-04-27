@@ -380,6 +380,143 @@ $kit.merge($Kit.Dom.prototype,
 			}
 			return form.name + '=' + encodeURIComponent($kit.val(form));
 		}
+	},
+	/**
+	 * 计算元素相对于他的offsetParent的偏移
+	 * @param {Element}
+	 * @return {Number} top 距离顶部
+	 * @return {Number} left 距离左边
+	 * @return {Number} height 高度
+	 * @return {Number} width 宽度
+	 * @return {Number} bottom 底部距离顶部
+	 * @return {Number} right 右边距离最左边
+	 * @return {Number} middleTop 中间距离顶部
+	 * @return {Number} middleLeft 中间距离最左边
+	 */
+	position : function(el) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		var top = el.offsetTop, //
+		left = el.offsetLeft, //
+		width = el.offsetWidth, //
+		height = el.offsetHeight;
+		return {
+			top : top,
+			left : left,
+			width : width,
+			height : height,
+			bottom : top + height,
+			right : left + width,
+			middleTop : top + height / 2,
+			middleLeft : left + width / 2
+		}
+	},
+	/**
+	 * 计算元素相对于他的可视区的偏移
+	 * @param {Element}
+	 * @return {Number} top 距离顶部
+	 * @return {Number} left 距离左边
+	 * @return {Number} height 高度
+	 * @return {Number} width 宽度
+	 * @return {Number} bottom 底部距离顶部
+	 * @return {Number} right 右边距离最左边
+	 * @return {Number} middleTop 中间距离顶部
+	 * @return {Number} middleLeft 中间距离最左边
+	 */
+	clientOffset : function(el) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		var offset = $kit.offset(el);
+		var viewport = $kit.viewport();
+		return {
+			top : offset.top - viewport.scrollTop,
+			left : offset.left - viewport.scrollLeft,
+			width : offset.width,
+			height : offset.height,
+			bottom : offset.bottom - viewport.scrollTop,
+			right : offset.right - viewport.scrollLeft,
+			middleTop : offset.top - viewport.scrollTop + offset.height / 2,
+			middleLeft : offset.left - viewport.scrollLeft + offset.width / 2
+		}
+	},
+	/**
+	 * 获取当一个元素居中的时候，他相对于doc绝对值的top,bottom,left,right等等
+	 * @param {Element}
+	 * @return {Number} top 距离顶部
+	 * @return {Number} left 距离左边
+	 * @return {Number} height 高度
+	 * @return {Number} width 宽度
+	 * @return {Number} bottom 底部距离顶部
+	 * @return {Number} right 右边距离最左边
+	 * @return {Number} middleTop 中间距离顶部
+	 * @return {Number} middleLeft 中间距离最左边
+	 */
+	offsetCenter : function(el) {
+		var me = this;
+		var viewport = $kit.viewport();
+		var offset = $kit.offset(el);
+		return {
+			top : viewport.clientHeight / 2 + viewport.scrollTop - offset.height / 2,
+			left : viewport.clientWidth / 2 + viewport.scrollLeft - offset.width / 2,
+			right : viewport.clientWidth / 2 + viewport.scrollLeft + offset.width / 2,
+			bottom : viewport.clientHeight / 2 + viewport.scrollTop + offset.height / 2,
+			middleTop : viewport.clientHeight / 2 + viewport.scrollTop,
+			middleLeft : viewport.clientWidth / 2 + viewport.scrollLeft
+		}
+	},
+	/**
+	 * 获取当一个元素居中的时候，他相对于可视区域的top,bottom,left,right等等
+	 * @param {Element}
+	 * @return {Number} top 距离顶部
+	 * @return {Number} left 距离左边
+	 * @return {Number} height 高度
+	 * @return {Number} width 宽度
+	 * @return {Number} bottom 底部距离顶部
+	 * @return {Number} right 右边距离最左边
+	 * @return {Number} middleTop 中间距离顶部
+	 * @return {Number} middleLeft 中间距离最左边
+	 */
+	clientOffsetCenter : function(el) {
+		var me = this;
+		var viewport = $kit.viewport();
+		var offset = $kit.offset(el);
+		return {
+			top : (viewport.clientHeight / 2 - offset.height / 2),
+			left : (viewport.clientWidth / 2 - offset.width / 2),
+			right : (viewport.clientWidth / 2 + offset.width / 2),
+			bottom : (viewport.clientHeight / 2 + offset.height / 2),
+			middleTop : (viewport.clientHeight / 2),
+			middleLeft : (viewport.clientWidth / 2)
+		}
+	},
+	/**
+	 * 获取当一个元素居中的时候，他相对于可视区域的top,bottom,left,right等等
+	 * @param {Element}
+	 * @return {Number} top 距离顶部
+	 * @return {Number} left 距离左边
+	 * @return {Number} height 高度
+	 * @return {Number} width 宽度
+	 * @return {Number} bottom 底部距离顶部
+	 * @return {Number} right 右边距离最左边
+	 * @return {Number} middleTop 中间距离顶部
+	 * @return {Number} middleLeft 中间距离最左边
+	 */
+	clientPos : function(el) {
+		var me = this;
+		var viewport = $kit.viewport();
+		var offset = $kit.offset(el);
+		return {
+			top : viewport.clientHeight / 2 + viewport.scrollTop - offset.height / 2,
+			left : viewport.clientWidth / 2 + viewport.scrollLeft - offset.width / 2,
+			right : viewport.clientWidth / 2 + viewport.scrollLeft + offset.width / 2,
+			bottom : viewport.clientHeight / 2 + viewport.scrollTop + offset.height / 2,
+			middleTop : viewport.clientHeight / 2 + viewport.scrollTop,
+			middleLeft : viewport.clientWidth / 2 + viewport.scrollLeft
+		}
 	}
 });
 /**

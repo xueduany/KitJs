@@ -1,0 +1,21 @@
+.kitjs-dialog {
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+	padding: 10px;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	position: fixed;
+	top: 40px;
+	left: 40px;
+	z-index: 999999;
+	background-color: #fff;
+}
+.kitjs-dialog-panel {
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+	min-width: 100px;
+	min-height: 100px;
+}

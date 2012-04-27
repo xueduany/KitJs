@@ -1083,7 +1083,7 @@ $kit.merge($Kit.Suger.prototype,
 	 * @return {Object}
 	 */
 	position : function() {
-		return $kit.position(this.nodes[0]);
+		return $kit.dom.position(this.nodes[0]);
 	},
 	/**
 	 * Get the closest ancestor element that is positioned.
@@ -1621,7 +1621,7 @@ if($kit.$) {
  * @name $kit.$
  * @global
  * @function
- * @param {Selector|Function|Element|[Element]} arg 
+ * @param {Selector|Function|Element|[Element]} arg
  * arg为function时候，相当于dom ready，会将$kit.$方法传递进去为参数1，
  * 例如$kit.$(function($){$.xxxx})这里的function里面的$就等同于$kit.$，相当于别名的功能
  * arg为其他类型的时候，自动生成一个$Kit.Suger实例，相当于jQuyer.$
@@ -1640,4 +1640,13 @@ $k = $kit.$ = function() {
 	} else {
 		return new $Kit.Suger(arguments[0], arguments[1]);
 	}
+}
+/**
+ * @module suger
+ * @return global.html#$kit.$el
+ */
+if(window['define']) {
+	define(['math', 'anim', 'array', 'dom', 'io', 'json', 'selector'], function() {
+		return $kit.$;
+	});
 }

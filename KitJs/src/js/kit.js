@@ -1012,38 +1012,6 @@ $Kit.prototype = {
 		}
 	},
 	/**
-	 * 计算元素相对于他的offsetParent的偏移
-	 * @param {Element}
-	 * @return {Number} top 距离顶部
-	 * @return {Number} left 距离左边
-	 * @return {Number} height 高度
-	 * @return {Number} width 宽度
-	 * @return {Number} bottom 底部距离顶部
-	 * @return {Number} right 右边距离最左边
-	 * @return {Number} middleTop 中间距离顶部
-	 * @return {Number} middleLeft 中间距离最左边
-	 */
-	position : function(el) {
-		var me = this;
-		if(me.isEmpty(el)) {
-			return;
-		}
-		var top = el.offsetTop, //
-		left = el.offsetLeft, //
-		width = el.offsetWidth, //
-		height = el.offsetHeight;
-		return {
-			top : top,
-			left : left,
-			width : width,
-			height : height,
-			bottom : top + height,
-			right : left + width,
-			middleTop : top + height / 2,
-			middleLeft : left + width / 2
-		}
-	},
-	/**
 	 * 计算元素相对于doc的 绝对偏移
 	 * @param {Element}
 	 * @return {Number} clientWidth 可视内容的宽度
