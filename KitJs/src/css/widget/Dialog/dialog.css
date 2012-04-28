@@ -9,30 +9,31 @@
 	top: 40px;
 	left: 40px;
 	z-index: 999999;
-	min-width: 200px;
+	min-width: 300px;
 	box-shadow: 0 0 5px rgba(200,200,200,0.5);
 }
 .kitjs-dialog-title {
 	padding: 5px;
 	cursor: move;
-	height: 30px;
+	height: 25px;
 	border: 1px solid #ccc;
 	border: 1px solid rgba(200,200,200,0.5);
 	border-bottom: 0;
-	background-color: #fff;
+	background-color: #C9D6ED;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#DEE5F1), to(#C9D6ED));
 }
 .kitjs-dialog-panel {
 	padding: 5px;
 	border: 1px solid #ccc;
 	border: 1px solid rgba(200,200,200,0.5);
 	border-top: 0;
-	min-height: 200px;
+	min-height: 50px;
 	background-color: #fff;
 }
 a.kitjs-dialog-close-btn {
 	position: absolute;
 	right: 17px;
-	top: 14px;
+	top: 16px;
 	z-index: 9999;
 	height: 20px;
 	width: 20px;
@@ -57,59 +58,75 @@ a.kitjs-dialog-close-btn:hover {
 	opacity: 1;
 	background-color: #000;
 }
-
-a.button {
-	font-family: 'PT Sans', arial, serif;
-	color:#ffffff;
-	text-align:center;
-	font-size:24px;
-	font-weight:bold;
-	padding:10px;
-	
-	text-shadow: /* Simulating Text Stroke */
-        -1px -1px 0 #000, 
-        1px -1px 0 #000, 
-        -1px 1px 0 #000, 
-        1px 1px 0 #000;
-	
-	border: 1px solid rgba(0,0,0,0.5);
-	border-bottom: 3px solid rgba(0,0,0,0.5);
-	
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	
-	background: rgba(0,0,0,0.25);
-
-    -o-box-shadow: 
-        0 2px 8px rgba(0,0,0,0.5),
-        inset 0 1px rgba(255,255,255,0.3),
-        inset 0 10px rgba(255,255,255,0.2),
-        inset 0 10px 20px rgba(255,255,255,0.25),
-        inset 0 -15px 30px rgba(0,0,0,0.3);
-
-    -webkit-box-shadow: 
-        0 2px 8px rgba(0,0,0,0.5),
-        inset 0 1px rgba(255,255,255,0.3),
-        inset 0 10px rgba(255,255,255,0.2),
-        inset 0 10px 20px rgba(255,255,255,0.25),
-        inset 0 -15px 30px rgba(0,0,0,0.3);
-
-    -moz-box-shadow:
-        0 2px 8px rgba(0,0,0,0.5),
-        inset 0 1px rgba(255,255,255,0.3),
-        inset 0 10px rgba(255,255,255,0.2),
-        inset 0 10px 20px rgba(255,255,255,0.25),
-        inset 0 -15px 30px rgba(0,0,0,0.3);
-	
-	box-shadow: 
-        0 2px 8px rgba(0,0,0,0.5), /* Exterior Shadow */
-        inset 0 1px rgba(255,255,255,0.3), /* Top light Line */
-        inset 0 10px rgba(255,255,255,0.2), /* Top Light Shadow */
-        inset 0 10px 20px rgba(255,255,255,0.25), /* Sides Light Shadow */
-        inset 0 -15px 30px rgba(0,0,0,0.3); /* Dark Background */
-
-	margin: 40px;
+.kitjs-dialog-confirm-text {
+	padding: 10px;
+	font-weight: bold;
+}
+.kitjs-dialog-confirm-buttons {
+	text-align: right;
+}
+.kitjs-dialog-confirm-buttons a {
+	background-color: whiteSmoke;
+	border: 1px solid #DEDEDE;
+	border-top: 1px solid #EEE;
+	border-left: 1px solid #EEE;
+	cursor: pointer;
+	font-size: 100%;
+	line-height: 130%;
+	color: #ccc;
+	font-weight: bold;
+	cursor: pointer;
+	padding: 0 10px;
+	margin-left: 10px;
+	opacity: 0.7;
+	-webkit-transition: all 300ms ease-out 0ms;
+	-moz-transition: all 300ms ease-out 0ms;
+	transition: all 300ms ease-out 0ms;
 	display: inline-block;
-	text-decoration: none;
+	*display: inline;
+	*zoom: 1;
+}
+.kitjs-dialog-confirm-buttons a.confirm-yes {
+	background: url(../../../img/tick.png) no-repeat 10px 2px;
+	background-color: whiteSmoke;
+	padding: 0px 10px 0 30px;
+	cursor: pointer;
+	color: #529214;
+}
+.kitjs-dialog-confirm-buttons a.confirm-yes:hover {
+	background-color: #E6EFC2;
+	border: 1px solid #C6D880;
+	color: #529214;
+}
+.kitjs-dialog-confirm-buttons a.confirm-yes:active {
+	background-color: #529214;
+	border-color: #529214;
+	color: #fff;
+}
+.kitjs-dialog-confirm-buttons a.confirm-no {
+	background: url(../../../img/cross.png) no-repeat 10px 2px;
+	background-color: whiteSmoke;
+	padding: 0px 10px 0 30px;
+	cursor: pointer;
+	color: #D12F19;
+}
+.kitjs-dialog-confirm-buttons a.confirm-no:hover {
+	background-color: #FBE3E4;
+	border: 1px solid #FBC2C4;
+	color: #D12F19;
+}
+.kitjs-dialog-confirm-buttons a.confirm-no:active {
+	background-color: #D12F19;
+	border: 1px solid #D12F19;
+	color: white;
+}
+.kitjs-dialog-confirm-buttons a.confirm-cancel:hover {
+	background-color: #DFF4FF;
+	border: 1px solid #C2E1EF;
+	color: #369;
+}
+.kitjs-dialog-confirm-buttons a.confirm-cancel:active {
+	background-color: #6299C5;
+	border: 1px solid #6299C5;
+	color: white;
 }

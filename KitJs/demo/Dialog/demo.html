@@ -10,7 +10,8 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']); (function() {
+			_gaq.push(['_trackPageview']);
+			(function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -32,9 +33,19 @@
 		<!--widget-->
 		<script src="../../src/js/widget/Mask/mask.js"></script>
 		<script src="../../src/js/widget/Dialog/dialog.js"></script>
+		<script src="../../src/js/widget/Dialog/yesOrNo.js"></script>
 		<link rel="stylesheet" href="../../src/css/widget/Dialog/dialog.css" />
+		<link rel="stylesheet" href="../../src/css/button.css" />
 	</head>
 	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>对话框</h1>
+		<button class="kitjs-form-button" id="J_show">
+			显示dialog
+		</button>
+		<button class="kitjs-form-button" id="J_des">
+			销毁dialog
+		</button>
 		<script>
 			/*
 			 define('', ['suger', 'widget/Mask/mask', 'widget/Dialog/dialog'], function($) {
@@ -44,9 +55,31 @@
 			 });
 			 */
 			$kit.$(function($) {
-				var d = new $kit.ui.Dialog();
-				d.init();
-				d.center();
+				$('#J_show').on('click', function() {
+					if(window.d) {
+						window.d.show();
+					} else {
+						window.d = new $kit.ui.Dialog.YesOrNo({
+							title : '标题栏可以拖拽',
+							useMask : false, //true使用蒙版，false不使用蒙版
+							yesThen : function() {
+								alert('我点了yes');
+							},
+							noThen : function() {
+								alert('我点了no');
+							},
+							cancelThen : function() {
+								alert('我点了取消');
+								d.destroy();
+							}
+						}).init();
+						window.d.center();
+					}
+				});
+				$('#J_des').on('click', function() {
+					window.d.destroy();
+					window.d = null;
+				});
 			});
 
 		</script>

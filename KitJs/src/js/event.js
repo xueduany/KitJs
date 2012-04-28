@@ -431,7 +431,9 @@ $kit.merge($Kit.Event.prototype,
  * @type $Kit.Event
  */
 $kit.event = new $Kit.Event();
-$kit.ev = $kit.event.ev;
+$kit.ev = function() {
+	$kit.event.ev.apply($kit.event, arguments);
+};
 $kit.evExtra = function() {
 	return $Kit.Event.prototype.evExtra.apply($kit.event, arguments);
 };

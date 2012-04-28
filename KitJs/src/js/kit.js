@@ -820,18 +820,18 @@ $Kit.prototype = {
 		var me = this, defaultConfig = {
 			root : document.body
 		}
-		me.merge(config, defaultConfig);
+		me.mergeIf(config, defaultConfig);
 		if(me.isEmpty(config.node)) {
 			config.node = config.root;
 		}
 		if($kit.isFn(config.fn)) {
-			config.fn.apply(o, [o, config.root])
+			config.fn.apply(config.node, [config.node, config.root])
 		} else {
 			return;
 		}
 		for(var i = 0; i < config.node.childNodes.length; i++) {
 			var o = config.node.childNodes[i];
-			me.traversal(me.merge(config, {
+			me.traversal(me.join(config, {
 				node : o
 			}));
 		}
@@ -1263,12 +1263,12 @@ $Kit.prototype = {
 					}
 					if(evQueue.length == 0) {
 						delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
-						rm(config.el, config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
+						rmEv(config.el, config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
 						delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev];
 					}
 				} else {
 					delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT][config.ev];
-					rm(config.el, config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
+					rmEv(config.el, config.ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev]);
 					delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][config.ev];
 				}
 			} else {
@@ -1276,7 +1276,7 @@ $Kit.prototype = {
 					return;
 				}
 				for(var _ev in config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT]) {
-					rm(config.el, _ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][_ev]);
+					rmEv(config.el, _ev, config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION][_ev]);
 				}
 				delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_EVENT];
 				delete config.el[me.CONSTANTS.KIT_EVENT_REGISTER][me.CONSTANTS.KIT_EVENT_REGISTER_FUNCTION];
