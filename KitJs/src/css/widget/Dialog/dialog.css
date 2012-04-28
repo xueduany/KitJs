@@ -2,20 +2,114 @@
 	display: inline-block;
 	*display: inline;
 	*zoom: 1;
-	padding: 10px;
 	border-radius: 10px;
-	border: 1px solid #ccc;
-	box-shadow: 0 0 10px rgba(0,0,0,0.5);
-	position: fixed;
+	padding: 10px;
+	background-color: rgba(200,200,200,0.5);
+	position: absolute;
 	top: 40px;
 	left: 40px;
 	z-index: 999999;
+	min-width: 200px;
+	box-shadow: 0 0 5px rgba(200,200,200,0.5);
+}
+.kitjs-dialog-title {
+	padding: 5px;
+	cursor: move;
+	height: 30px;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(200,200,200,0.5);
+	border-bottom: 0;
 	background-color: #fff;
 }
 .kitjs-dialog-panel {
+	padding: 5px;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(200,200,200,0.5);
+	border-top: 0;
+	min-height: 200px;
+	background-color: #fff;
+}
+a.kitjs-dialog-close-btn {
+	position: absolute;
+	right: 17px;
+	top: 14px;
+	z-index: 9999;
+	height: 20px;
+	width: 20px;
+	border: 2px solid #fff;
+	cursor: pointer;
+	border-radius: 20px;
+	font-size: 10px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 20px;
+	background-color: #ccc;
+	color: #fff;
+	font-family: arail;
+	text-decoration: none;
+	font-weight: bold;
+	font-style: normal;
+	opacity: 0.5;
+	overflow: hidden;
+	-webkit-transition: all 300ms ease-in 0ms;
+}
+a.kitjs-dialog-close-btn:hover {
+	opacity: 1;
+	background-color: #000;
+}
+
+a.button {
+	font-family: 'PT Sans', arial, serif;
+	color:#ffffff;
+	text-align:center;
+	font-size:24px;
+	font-weight:bold;
+	padding:10px;
+	
+	text-shadow: /* Simulating Text Stroke */
+        -1px -1px 0 #000, 
+        1px -1px 0 #000, 
+        -1px 1px 0 #000, 
+        1px 1px 0 #000;
+	
+	border: 1px solid rgba(0,0,0,0.5);
+	border-bottom: 3px solid rgba(0,0,0,0.5);
+	
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	
+	background: rgba(0,0,0,0.25);
+
+    -o-box-shadow: 
+        0 2px 8px rgba(0,0,0,0.5),
+        inset 0 1px rgba(255,255,255,0.3),
+        inset 0 10px rgba(255,255,255,0.2),
+        inset 0 10px 20px rgba(255,255,255,0.25),
+        inset 0 -15px 30px rgba(0,0,0,0.3);
+
+    -webkit-box-shadow: 
+        0 2px 8px rgba(0,0,0,0.5),
+        inset 0 1px rgba(255,255,255,0.3),
+        inset 0 10px rgba(255,255,255,0.2),
+        inset 0 10px 20px rgba(255,255,255,0.25),
+        inset 0 -15px 30px rgba(0,0,0,0.3);
+
+    -moz-box-shadow:
+        0 2px 8px rgba(0,0,0,0.5),
+        inset 0 1px rgba(255,255,255,0.3),
+        inset 0 10px rgba(255,255,255,0.2),
+        inset 0 10px 20px rgba(255,255,255,0.25),
+        inset 0 -15px 30px rgba(0,0,0,0.3);
+	
+	box-shadow: 
+        0 2px 8px rgba(0,0,0,0.5), /* Exterior Shadow */
+        inset 0 1px rgba(255,255,255,0.3), /* Top light Line */
+        inset 0 10px rgba(255,255,255,0.2), /* Top Light Shadow */
+        inset 0 10px 20px rgba(255,255,255,0.25), /* Sides Light Shadow */
+        inset 0 -15px 30px rgba(0,0,0,0.3); /* Dark Background */
+
+	margin: 40px;
 	display: inline-block;
-	*display: inline;
-	*zoom: 1;
-	min-width: 100px;
-	min-height: 100px;
+	text-decoration: none;
 }

@@ -1646,7 +1646,7 @@ $k = $kit.$ = function() {
  * @return global.html#$kit.$el
  */
 if(window['define']) {
-	define(['math', 'anim', 'array', 'dom', 'io', 'json', 'selector'], function() {
+	define('suger', ['math', 'anim', 'array', 'dom', 'io', 'json', 'selector', 'event'], function() {
 		return $kit.$;
 	});
 }

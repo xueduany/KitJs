@@ -18,16 +18,20 @@ $kit.merge($kit.ui.Dialog,
 		template : {
 			html : [//
 			'<div class="${dialogCls}">', //
+			'<div class="${dialogTitleCls}"></div>', //
 			'<div class="${dialogPanelCls}">', //
 			'</div>', //
-			'<s class="${closeBtnClss}"></s>', //
+			'<a class="${closeBtnCls}">╳</a>', //
 			'</div>'//
 			].join(''),
 			dialogCls : 'kitjs-dialog',
+			dialogTitleCls : 'kitjs-dialog-title',
 			dialogPanelCls : 'kitjs-dialog-panel',
 			closeBtnCls : 'kitjs-dialog-close-btn'
 		},
-		useMask : false
+		useMask : false,
+		draggable : true,
+		title : 'Dialog'
 	}
 });
 $kit.merge($kit.ui.Dialog.prototype,
@@ -39,9 +43,16 @@ $kit.merge($kit.ui.Dialog.prototype,
 		var me = this;
 		me.wrapper = $kit.newHTML($kit.tpl(me.config.template.html,me.config.template)).childNodes[0];
 		document.body.appendChild(me.wrapper);
-		me.panel = $kit.el('div.'+me.config.template.dialogPanelCls)[0];
+		me.title = $kit.el8cls(me.config.template.dialogTitleCls, me.wrapper);
+		me.panel = $kit.el8cls(me.config.template.dialogPanelCls, me.wrapper);
+		if(me.title && me.config.title) {
+			me.title.innerHTML = me.config.title;
+		}
 		if(me.config.useMask) {
 			me.mask = new $kit.ui.Mask();
+		}
+		if(me.config.draggable) {
+			$kit.event.draggable(me.title);
 		}
 	},
 	center : function() {
@@ -50,6 +61,6 @@ $kit.merge($kit.ui.Dialog.prototype,
 		$kit.css(me.wrapper, {
 			top : pos.top + 'px',
 			left : pos.left + 'px'
-		})
+		});
 	}
 });

@@ -2,6 +2,7 @@
  * 事件扩展，加载该js之后，$kit.ev事件既可以支持全浏览器拖拽
  * @class $Kit.Event
  * @requires kit.js
+ * @requires dom.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/event.js">Source code</a>
  */
 $Kit.Event = function() {
@@ -25,6 +26,20 @@ $Kit.Event = function() {
 	/*$kit.ev = function() {
 	 $kit.event.ev.apply($kit.event, arguments);
 	 }*/
+	this.eventExtraInfoFnArray = [];
+	this.registExtraEventInfo(function() {
+		return $Kit.prototype.evExtra.apply($kit, arguments);
+	});
+	this.registExtraEventInfo(function() {
+		return {
+			dragElement : this.dragElement
+		};
+	});
+	this.registExtraEventInfo(function() {
+		return {
+			dragStartEventInfo : this.dragStartEventInfo
+		};
+	});
 }
 $kit.merge($Kit.Event.prototype,
 /**
@@ -126,6 +141,7 @@ $kit.merge($Kit.Event.prototype,
 				//使用IE自带的drag事件，考虑到HTML5的普及，直接使用现成的
 				if(me._isDragEv(ev) && el._flag_kitjs_drag_regist != true) {
 					el._flag_kitjs_drag_regist = true;
+					el.style.cursor = 'move';
 					$kit.attr(el, 'draggable', 'true');
 					if($kit.isIE()) {
 						me._ev({
@@ -145,6 +161,13 @@ $kit.merge($Kit.Event.prototype,
 								var el = e.currentTarget;
 								//e.dataTransfer.effectAllowed = "all";
 								me.dragElement = e.currentTarget;
+								me.dragStartEventInfo = {
+									clientX : e.clientX,
+									clientY : e.clientY,
+									offsetTarget : e.target.offsetParent,
+									offsetTargetOffset : $kit.offset(e.target.offsetParent),
+									offsetTargetClientOffset : $kit.dom.clientOffset(e.target.offsetParent)
+								}
 								e.dataTransfer.setData("text", e.currentTarget.innerHTML);
 								//e.dataTransfer.setDragImage(e.target, 0, 0);
 								if(el._kitjs_dd_start != true) {
@@ -198,6 +221,7 @@ $kit.merge($Kit.Event.prototype,
 							ev : 'dragend',
 							fn : function(e) {
 								me.dragElement = null;
+								me.dragStartEventInfo = null;
 								var el = e.currentTarget;
 								el._kitjs_dd_mousedown = false;
 								el._kitjs_dd_drag = false;
@@ -223,6 +247,13 @@ $kit.merge($Kit.Event.prototype,
 								//e.dataTransfer.effectAllowed = "all";
 								me.dragElement = e.currentTarget;
 								e.dataTransfer.setData("text", e.currentTarget.innerHTML);
+								me.dragStartEventInfo = {
+									clientX : e.clientX,
+									clientY : e.clientY,
+									offsetTarget : e.target.offsetParent,
+									offsetTargetOffset : $kit.offset(e.target.offsetParent),
+									offsetTargetClientOffset : $kit.dom.clientOffset(e.target.offsetParent)
+								}
 							}
 						});
 						me._ev({
@@ -331,10 +362,68 @@ $kit.merge($Kit.Event.prototype,
 			return true;
 		}
 		return false;
+	},
+	//event增强end
+	draggable : function(el) {
+		var me = this;
+		me.ev({
+			el : el,
+			ev : 'drag',
+			fn : function(e, cfg) {
+				if(e.dragStartEventInfo && e.dragStartEventInfo.offsetTarget != document.body) {
+					var position = $kit.css(e.dragStartEventInfo.offsetTarget, 'position');
+					if(position && position.toLowerCase() == 'fixed') {
+						$kit.css(e.dragStartEventInfo.offsetTarget, {
+							top : e.dragStartEventInfo.offsetTargetClientOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
+							left : e.dragStartEventInfo.offsetTargetClientOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
+						});
+					} else if(position && position.toLowerCase() == 'absolute') {
+						$kit.css(e.dragStartEventInfo.offsetTarget, {
+							top : e.dragStartEventInfo.offsetTargetOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
+							left : e.dragStartEventInfo.offsetTargetOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
+						});
+					}
+				}
+			},
+			scope : el
+		});
+		me.ev({
+			el : el,
+			ev : 'dragend',
+			fn : function(e, cfg) {
+				if(e.dragStartEventInfo && e.dragStartEventInfo.offsetTarget != document.body) {
+					var position = $kit.css(e.dragStartEventInfo.offsetTarget, 'position');
+					if(position && position.toLowerCase() == 'fixed') {
+						$kit.css(e.dragStartEventInfo.offsetTarget, {
+							top : e.dragStartEventInfo.offsetTargetClientOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
+							left : e.dragStartEventInfo.offsetTargetClientOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
+						});
+					} else if(position && position.toLowerCase() == 'absolute') {
+						$kit.css(e.dragStartEventInfo.offsetTarget, {
+							top : e.dragStartEventInfo.offsetTargetOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
+							left : e.dragStartEventInfo.offsetTargetOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
+						});
+					}
+				}
+			},
+			scope : el
+		});
+	},
+	evExtra : function(ev) {
+		var me = this;
+		var re = {};
+		for(var i = 0; i < $kit.event.eventExtraInfoFnArray.length; i++) {
+			if($kit.isFn(me.eventExtraInfoFnArray[i])) {
+				$kit.merge(re, me.eventExtraInfoFnArray[i].call(me, ev));
+			} else {
+				$kit.merge(re, me.eventExtraInfoFnArray[i]);
+			}
+		}
+		return re;
+	},
+	registExtraEventInfo : function(fn) {
+		this.eventExtraInfoFnArray.push(fn);
 	}
-	/**
-	 * event增强end
-	 */
 });
 /**
  * $Kit.Event的实例，直接通过这个实例访问$Kit.Event所有方法
@@ -342,3 +431,7 @@ $kit.merge($Kit.Event.prototype,
  * @type $Kit.Event
  */
 $kit.event = new $Kit.Event();
+$kit.ev = $kit.event.ev;
+$kit.evExtra = function() {
+	return $Kit.Event.prototype.evExtra.apply($kit.event, arguments);
+};

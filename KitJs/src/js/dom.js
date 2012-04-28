@@ -395,7 +395,7 @@ $kit.merge($Kit.Dom.prototype,
 	 */
 	position : function(el) {
 		var me = this;
-		if(me.isEmpty(el)) {
+		if($kit.isEmpty(el)) {
 			return;
 		}
 		var top = el.offsetTop, //
@@ -427,7 +427,7 @@ $kit.merge($Kit.Dom.prototype,
 	 */
 	clientOffset : function(el) {
 		var me = this;
-		if(me.isEmpty(el)) {
+		if($kit.isEmpty(el)) {
 			return;
 		}
 		var offset = $kit.offset(el);
