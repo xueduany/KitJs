@@ -70,7 +70,7 @@ $kit.merge($Kit.Event.prototype,
 	KEYCODE_DELETE : 46,
 	//
 	KEYCODE_PAGEUP : 33,
-	KEYCODE_PAGEDOWN : 34,
+	KEYCODE_PAGEDOWN : 34
 },
 /**
  * @lends $Kit.Event.prototype
@@ -430,6 +430,7 @@ $kit.merge($Kit.Event.prototype,
  * @global
  * @type $Kit.Event
  */
+
 $kit.event = new $Kit.Event();
 $kit.ev = function() {
 	$kit.event.ev.apply($kit.event, arguments);
