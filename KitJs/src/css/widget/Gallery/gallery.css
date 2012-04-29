@@ -17,7 +17,7 @@
 }
 .kitjs-gallery {
 	position: relative;
-	width: 930px;
+	width: 936px;
 	height: 174px;
 	overflow: hidden;
 }
@@ -25,13 +25,11 @@
 	float: left;
 	font-size: 0;
 	padding: 4px;
-	border: 1px solid transparent;
+	border: 2px solid transparent;
 	opacity: 1;
 	-webkit-transition: all 500ms ease-out 0ms;
 	-moz-transition: all 500ms ease-out 0ms;
 	transition: all 500ms ease-out 0ms;
-	box-shadow: 0px 10px 20px rgba(0,0,0,0.3)
-	
 }
 .kitjs-gallery-wrapper li img {
 	border: 0;
@@ -39,7 +37,7 @@
 	margin: 0;
 }
 li.kitjs-gallery-item-selected {
-	border-color: #ccc;
+	border-color: #000;
 }
 li.kitjs-gallery-item-previous {
 	
