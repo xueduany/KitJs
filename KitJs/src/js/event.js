@@ -378,40 +378,49 @@ $kit.merge($Kit.Event.prototype,
 			el : el,
 			ev : 'drag',
 			fn : function(e, cfg) {
-				//e.dataTransfer.setDragImage(null, 0, 0);设置拖拽图片
+				//e.dataTransfer.setDragImage(e.target, 0, 0);//设置拖拽图片
 				if(e.dragStartEventInfo && e.dragStartEventInfo.offsetTarget != document.body) {
 					var position = $kit.css(e.dragStartEventInfo.offsetTarget, 'position');
 					var distanceX = 0, distanceY = 0;
+					/*
+					 if(e.clientX == 0 && e.screenX > 0) {
+					 distanceX = e.screenX - e.dragStartEventInfo.screenX;
+					 } else if(e.clientX == 0 && e.screenX == 0 && e.layerX > 0) {
+					 distanceX = e.layerX - e.dragStartEventInfo.layerX;
+					 } else {
+					 distanceX = e.clientX - e.dragStartEventInfo.clientX;
+					 }
+					 if(e.clientY == 0 && e.screenY > 0) {
+					 distanceY = e.screenY - e.dragStartEventInfo.screenY;
+					 } else if(e.clientY == 0 && e.screenY == 0 && e.layerY > 0) {
+					 distanceY = e.layerY - e.dragStartEventInfo.layerY;
+					 } else {
+					 distanceY = e.clientY - e.dragStartEventInfo.clientY;
+					 }*/
 					if(e.clientX == 0 && e.screenX > 0) {
 						distanceX = e.screenX - e.dragStartEventInfo.screenX;
-					} else if(e.clientX == 0 && e.screenX == 0 && e.layerX > 0) {
-						distanceX = e.layerX - e.dragStartEventInfo.layerX;
-					} else {
+					} else if(e.clientX > 0) {
 						distanceX = e.clientX - e.dragStartEventInfo.clientX;
 					}
 					if(e.clientY == 0 && e.screenY > 0) {
 						distanceY = e.screenY - e.dragStartEventInfo.screenY;
-					} else if(e.clientY == 0 && e.screenY == 0 && e.layerY > 0) {
-						distanceY = e.layerY - e.dragStartEventInfo.layerY;
-					} else {
+					} else if(e.clientY > 0) {
 						distanceY = e.clientY - e.dragStartEventInfo.clientY;
 					}
-					// console.log(distanceX);
-					// console.log(e.layerX);
-					// console.log(e.dragStartEventInfo.layerX);
-					// console.log('========')
-					if(position && position.toLowerCase() == 'fixed') {
-						var pos = {
-							top : e.dragStartEventInfo.offsetTargetClientOffset.top + distanceY + 'px',
-							left : e.dragStartEventInfo.offsetTargetClientOffset.left + distanceX + 'px'
-						};
-						$kit.css(e.dragStartEventInfo.offsetTarget, pos);
-					} else if(position && position.toLowerCase() == 'absolute') {
-						var pos = {
-							top : e.dragStartEventInfo.offsetTargetOffset.top + distanceY + 'px',
-							left : e.dragStartEventInfo.offsetTargetOffset.left + distanceX + 'px'
-						};
-						$kit.css(e.dragStartEventInfo.offsetTarget, pos);
+					if(distanceY != 0 || distanceX != 0) {
+						if(position && position.toLowerCase() == 'fixed') {
+							var pos = {
+								top : e.dragStartEventInfo.offsetTargetClientOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetClientOffset.left + distanceX + 'px'
+							};
+							$kit.css(e.dragStartEventInfo.offsetTarget, pos);
+						} else if(position && position.toLowerCase() == 'absolute') {
+							var pos = {
+								top : e.dragStartEventInfo.offsetTargetOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetOffset.left + distanceX + 'px'
+							};
+							$kit.css(e.dragStartEventInfo.offsetTarget, pos);
+						}
 					}
 				}
 			},
@@ -434,16 +443,18 @@ $kit.merge($Kit.Event.prototype,
 					} else {
 						distanceY = e.clientY - e.dragStartEventInfo.clientY;
 					}
-					if(position && position.toLowerCase() == 'fixed') {
-						$kit.css(e.dragStartEventInfo.offsetTarget, {
-							top : e.dragStartEventInfo.offsetTargetClientOffset.top + distanceY + 'px',
-							left : e.dragStartEventInfo.offsetTargetClientOffset.left + distanceX + 'px'
-						});
-					} else if(position && position.toLowerCase() == 'absolute') {
-						$kit.css(e.dragStartEventInfo.offsetTarget, {
-							top : e.dragStartEventInfo.offsetTargetOffset.top + distanceY + 'px',
-							left : e.dragStartEventInfo.offsetTargetOffset.left + distanceX + 'px'
-						});
+					if(distanceY != 0 || distanceX != 0) {
+						if(position && position.toLowerCase() == 'fixed') {
+							$kit.css(e.dragStartEventInfo.offsetTarget, {
+								top : e.dragStartEventInfo.offsetTargetClientOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetClientOffset.left + distanceX + 'px'
+							});
+						} else if(position && position.toLowerCase() == 'absolute') {
+							$kit.css(e.dragStartEventInfo.offsetTarget, {
+								top : e.dragStartEventInfo.offsetTargetOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetOffset.left + distanceX + 'px'
+							});
+						}
 					}
 				}
 			},
