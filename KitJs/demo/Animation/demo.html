@@ -11,8 +11,7 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']);
-			(function() {
+			_gaq.push(['_trackPageview']); (function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -23,6 +22,8 @@
 
 		</script>
 		<script src="../../src/js/anim.js"></script>
+		<script src="../../src/js/selector.js"></script>
+		<script src="../../src/js/array.js"></script>
 		<style>
 			.test1 {
 				border: #ccc;
@@ -40,31 +41,37 @@
 				1234567890-=
 			</div>
 			<script>
-				$kit.anim.motion({
-					el : ".test1",
-					from : {
-						"-webkit-transform" : "translateX(100px) scale(1)"
-					},
-					to : {
-						"-webkit-transform" : "translateX(400px) scale(3)"
-					},
-					then : function() {
-						$kit.anim.motion({
-							el : ".test1",
-							from : {
-								"-webkit-transform" : "translateY(0px) scale(1)"
-							},
-							to : {
-								"-webkit-transform" : "translateY(400px) scale(3)"
-							},
-							then : function() {
-								$kit.log("end!");
-							}
-						});
-					}
-				});
-
+				/*$kit.anim.motion({
+				 el : ".test1",
+				 from : {
+				 "-webkit-transform" : "translateX(100px) scale(1)"
+				 },
+				 to : {
+				 "-webkit-transform" : "translateX(400px) scale(3)"
+				 },
+				 then : function() {
+				 $kit.anim.motion({
+				 el : ".test1",
+				 from : {
+				 "-webkit-transform" : "translateY(0px) scale(1)"
+				 },
+				 to : {
+				 "-webkit-transform" : "translateY(400px) scale(3)"
+				 },
+				 then : function() {
+				 $kit.log("end!");
+				 }
+				 });
+				 }
+				 });
+				 */
 			</script>
+			<button onclick="$kit.anim.fadeIn('.test1')">
+				淡入
+			</button>
+			<button onclick="$kit.anim.fadeOut('.test1')">
+				淡出
+			</button>
 		</div>
 	</body>
 </html>

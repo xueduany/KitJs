@@ -20,6 +20,7 @@
 			})();
 
 		</script>
+		<script src="../../src/js/dom.js"></script>
 		<script src="../../src/js/event.js"></script>
 		<link rel="stylesheet" href="../../css.css" />
 		<link rel="stylesheet" href="demo.css" />
@@ -64,16 +65,8 @@
 								return true;
 							}
 						});
-						$kit.insEl({
-							pos : 'after',
-							where : e.currentTarget,
-							what : e.dragElement
-						});
-						$kit.insEl({
-							pos : 'before',
-							where : originPosNextEl,
-							what : e.currentTarget
-						});
+						var a = $kit.el('li', $kit.el('.puzzle')[0]);
+						$kit.dom.switchPos(e.currentTarget, e.dragElement);
 					}
 				});
 			});

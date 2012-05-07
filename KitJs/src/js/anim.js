@@ -41,6 +41,18 @@ $kit.merge($Kit.Anim.prototype,
 		$kit.mergeIf(config, defaultConfig);
 		if(!$kit.isEmpty(config.el)) {
 			config.hold = 0;
+			//config.el
+			if($kit.isStr(config.el)) {
+				var elArray = config.el.split(config.elSplitRegExp);
+				var configEl = [];
+				$kit.each(elArray, function(o) {
+					$kit.array.ad(configEl, $kit.selector.el(o), {
+						ifExisted : true
+					});
+				});
+				config.el = configEl;
+			}
+			//
 			var f1 = false, timeoutStr;
 			if($kit.isStr(config.timeout)) {
 				timeoutStr = config.timeout;
@@ -51,24 +63,28 @@ $kit.merge($Kit.Anim.prototype,
 			}
 			// 重置初始样式
 			for(var p in config.from) {
-				me.setStyle({
-					el : config.el,
-					styleName : p,
-					styleValue : config.from[p],
-					exceptStyleArray : config.exceptStyleArray,
-					elSplitRegExp : config.elSplitRegExp
+				$kit.each(($kit.isNode(config.el) ? [config.el] : config.el), function(node) {
+					me.setStyle({
+						el : node,
+						styleName : p,
+						styleValue : config.from[p],
+						exceptStyleArray : config.exceptStyleArray,
+						elSplitRegExp : config.elSplitRegExp
+					});
 				});
 			}
 			config.timeout = setInterval(function() {
 				config.hold += config.timeSeg;
 				if(config.hold >= config.duration) {
 					for(var p in config.to) {
-						me.setStyle({
-							el : config.el,
-							styleName : p,
-							styleValue : config.to[p],
-							exceptStyleArray : config.exceptStyleArray,
-							elSplitRegExp : config.elSplitRegExp
+						$kit.each(($kit.isNode(config.el) ? [config.el] : config.el), function(node) {
+							me.setStyle({
+								el : node,
+								styleName : p,
+								styleValue : config.to[p],
+								exceptStyleArray : config.exceptStyleArray,
+								elSplitRegExp : config.elSplitRegExp
+							});
 						});
 					}
 					clearInterval(config.timeout);
@@ -78,27 +94,32 @@ $kit.merge($Kit.Anim.prototype,
 					}
 				} else {
 					for(var p in config.to) {
-						if(!( p in config.from)) {
-							continue;
-						}
-						var sty = me.identifyCssValue(config.from[p]), sty1 = me.identifyCssValue(config.to[p]), reSty = "";
-						if(sty == null || sty1 == null) {
-							continue;
-						}
-						for(var i = 0; i < sty1.length; i++) {
-							if(i > 0) {
-								reSty += " ";
+						$kit.each(($kit.isNode(config.el) ? [config.el] : config.el), function(node) {
+							var reSty = "", sty, sty1;
+							if(config.from == null || !( p in config.from)) {
+								sty = me.identifyCssValue($kit.css(node, p));
+							} else {
+								sty = me.identifyCssValue(config.from[p]);
 							}
-							var o = sty1[i];
-							o.value = me.fx(config.fx)(config.hold, (sty == null ? 0 : sty[i].value), (sty == null ? sty1[i].value : (sty1[i].value - sty[i].value)), config.duration)
-							reSty += o.prefix + o.value + o.unit + o.postfix;
-						}
-						me.setStyle({
-							el : config.el,
-							styleName : p,
-							styleValue : reSty,
-							exceptStyleArray : config.exceptStyleArray,
-							elSplitRegExp : config.elSplitRegExp
+							sty1 = me.identifyCssValue(config.to[p]);
+							if(sty == null || sty1 == null) {
+								return;
+							}
+							for(var i = 0; i < sty1.length; i++) {
+								if(i > 0) {
+									reSty += " ";
+								}
+								var o = sty1[i];
+								o.value = me.fx(config.fx)(config.hold, (sty == null ? 0 : sty[i].value), (sty == null ? sty1[i].value : (sty1[i].value - sty[i].value)), config.duration)
+								reSty += o.prefix + o.value + o.unit + o.postfix;
+							}
+							me.setStyle({
+								el : node,
+								styleName : p,
+								styleValue : reSty,
+								exceptStyleArray : config.exceptStyleArray,
+								elSplitRegExp : config.elSplitRegExp
+							});
 						});
 					}
 				}
@@ -144,7 +165,7 @@ $kit.merge($Kit.Anim.prototype,
 	setStyle : function() {
 		if(arguments.length == 1 && $kit.isObj(arguments[0])) {
 			var config = arguments[0];
-			var elArray, //
+			var//
 			styleName = config.styleName, //
 			styleValue = config.styleValue, //
 			elSplitRegExp = /\s+/ || config.elSplitRegExp, //
@@ -603,6 +624,57 @@ $kit.merge($Kit.Anim.prototype,
 			return type;
 		}
 		return me.Fx.swing;
+	},
+	fade : function(type, el, duration, fx, callback) {
+		var me = this;
+		if(duration) {
+			if(duration.toLowerCase() == 'fast') {
+				duration = 200;
+			} else if(duration.toLowerCase() == 'slow') {
+				duration = 600;
+			}
+			if(fx) {
+				if(callback) {
+
+				} else {
+					callback = fx;
+					fx = me.Fx.easeInQuad;
+				}
+			} else {
+				fx = me.Fx.easeInQuad;
+				if($kit.isFn(duration)) {
+					callback = duration;
+					duration = 300;
+				}
+			}
+		} else {
+			duration = 300;
+			fx = me.Fx.easeInQuad;
+		}
+		var to;
+		if(type == 'in') {
+			to = {
+				opacity : 1
+			}
+		} else {
+			to = {
+				opacity : 0
+			}
+		}
+		var config = {
+			duration : duration,
+			el : el,
+			to : to,
+			fx : fx,
+			then : callback
+		}
+		return me.motion(config);
+	},
+	fadeIn : function(el, duration, fx, callback) {
+		return this.fade('in', el, duration, fx, callback);
+	},
+	fadeOut : function(el, duration, fx, callback) {
+		return this.fade('out', el, duration, fx, callback);
 	}
 });
 /**

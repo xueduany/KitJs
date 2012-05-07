@@ -81,7 +81,7 @@ $Kit.Array.prototype =
 				me.ad(ary, add[i], setting);
 			}
 		} else {
-			if(setting.ifExisted) {
+			if(setting.ifExisted && ary.length > 0) {
 				for(var i = 0; i < ary.length; i++) {
 					var o = ary[i];
 					if(o == add//

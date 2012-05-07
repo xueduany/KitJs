@@ -70,7 +70,7 @@ $kit.merge($Kit.prototype, {
 					}
 				}
 				try {
-					re = isNaN(parseFloat(re)) ? re : parseFloat(re);
+					re = isNaN(parseFloat(re)) ? 1 : parseFloat(re);
 				} catch(e) {
 				}
 				return re;

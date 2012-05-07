@@ -517,6 +517,31 @@ $kit.merge($Kit.Dom.prototype,
 			middleTop : viewport.clientHeight / 2 + viewport.scrollTop,
 			middleLeft : viewport.clientWidth / 2 + viewport.scrollLeft
 		}
+	},
+	/**
+	 * 交换两个element的位置
+	 */
+	switchPos : function(origin, target) {
+		var targetPos;
+		if(target.previousSibling) {
+			targetPos = {
+				pos : 'after',
+				where : target.previousSibling
+			}
+		} else {
+			targetPos = {
+				pos : 'last',
+				where : target.parentNode
+			}
+		}
+		$kit.insEl({
+			pos : 'after',
+			where : origin,
+			what : target
+		});
+		$kit.insEl($kit.merge({
+			what : origin
+		}, targetPos));
 	}
 });
 /**
