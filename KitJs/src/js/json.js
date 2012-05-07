@@ -1,64 +1,64 @@
 /* @ignore
- Referrence:
+Referrence:
 
- See http://www.JSON.org/js.html
+See http://www.JSON.org/js.html
 
- Example:
+Example:
 
- text = $kit.json.stringify(['e', {pluribus: 'unum'}]);
- // text is '["e",{"pluribus":"unum"}]'
+text = $kit.json.stringify(['e', {pluribus: 'unum'}]);
+// text is '["e",{"pluribus":"unum"}]'
 
- text = $kit.json.stringify(['e', {pluribus: 'unum'}], null, '\t');
- // text is '[\n\t"e",\n\t{\n\t\t"pluribus": "unum"\n\t}\n]'
+text = $kit.json.stringify(['e', {pluribus: 'unum'}], null, '\t');
+// text is '[\n\t"e",\n\t{\n\t\t"pluribus": "unum"\n\t}\n]'
 
- text = $kit.json.stringify([new Date()], function (key, value) {
- return this[key] instanceof Date ?
- 'Date(' + this[key] + ')' : value;
- });
- // text is '["Date(---current time---)"]'
+text = $kit.json.stringify([new Date()], function (key, value) {
+return this[key] instanceof Date ?
+'Date(' + this[key] + ')' : value;
+});
+// text is '["Date(---current time---)"]'
 
- $kit.json.parse(text, reviver)
- This method parses a JSON text to produce an object or array.
- It can throw a SyntaxError exception.
+$kit.json.parse(text, reviver)
+This method parses a JSON text to produce an object or array.
+It can throw a SyntaxError exception.
 
- The optional reviver parameter is a function that can filter and
- transform the results. It receives each of the keys and values,
- and its return value is used instead of the original value.
- If it returns what it received, then the structure is not modified.
- If it returns undefined then the member is deleted.
+The optional reviver parameter is a function that can filter and
+transform the results. It receives each of the keys and values,
+and its return value is used instead of the original value.
+If it returns what it received, then the structure is not modified.
+If it returns undefined then the member is deleted.
 
- Example:
+Example:
 
- // Parse the text. Values that look like ISO date strings will
- // be converted to Date objects.
+// Parse the text. Values that look like ISO date strings will
+// be converted to Date objects.
 
- myData = $kit.json.parse(text, function (key, value) {
- var a;
- if (typeof value === 'string') {
- a =
- /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
- if (a) {
- return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
- +a[5], +a[6]));
- }
- }
- return value;
- });
+myData = $kit.json.parse(text, function (key, value) {
+var a;
+if (typeof value === 'string') {
+a =
+/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
+if (a) {
+return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
++a[5], +a[6]));
+}
+}
+return value;
+});
 
- myData = $kit.json.parse('["Date(09/09/2001)"]', function (key, value) {
- var d;
- if (typeof value === 'string' &&
- value.slice(0, 5) === 'Date(' &&
- value.slice(-1) === ')') {
- d = new Date(value.slice(5, -1));
- if (d) {
- return d;
- }
- }
- return value;
- });
+myData = $kit.json.parse('["Date(09/09/2001)"]', function (key, value) {
+var d;
+if (typeof value === 'string' &&
+value.slice(0, 5) === 'Date(' &&
+value.slice(-1) === ')') {
+d = new Date(value.slice(5, -1));
+if (d) {
+return d;
+}
+}
+return value;
+});
 
- **/
+**/
 
 // Create a JSON object only if one does not already exist. We create the
 // methods in a closure to avoid creating global variables.
@@ -273,8 +273,9 @@ $Kit.JSON = function() {
 	}
 	this.parse = function(text) {
 		try {
-			eval('var reJSONObject=' + text);
-			return reJSONObject;
+			//eval('var reJSONObject=' + text);
+			//return reJSONObject;
+			return new Function('var reJSONObject=' + text + ';return reJSONObject;')();
 		} catch(e) {
 			throw new SyntaxError('JSON.parse');
 		}

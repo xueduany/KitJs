@@ -10,8 +10,7 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']);
-			(function() {
+			_gaq.push(['_trackPageview']); (function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -70,7 +69,6 @@
 							},
 							cancelThen : function() {
 								alert('我点了取消');
-								d.destroy();
 							}
 						}).init();
 						window.d.center();
@@ -80,6 +78,21 @@
 					window.d.destroy();
 					window.d = null;
 				});
+				//
+				window.d = new $kit.ui.Dialog.YesOrNo({
+					title : '标题栏可以拖拽',
+					useMask : false, //true使用蒙版，false不使用蒙版
+					yesThen : function() {
+						alert('我点了yes');
+					},
+					noThen : function() {
+						alert('我点了no');
+					},
+					cancelThen : function() {
+						alert('我点了取消');
+					}
+				}).init();
+				window.d.center();
 			});
 
 		</script>

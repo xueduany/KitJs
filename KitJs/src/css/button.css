@@ -14,6 +14,7 @@
 	border-radius: 1em;/*圆角*/
 	-webkit-transition: all 300ms ease-in 0;/*渐变动画 */
 	background-image: -webkit-gradient(linear, left top, left 25, from(#fdfdfd), to(#eee));
+	background-image: -moz-linear-gradient(top, #fdfdfd 0, #eee 50%);
 	box-shadow: 0 1px 4px rgba(0,0,0,.3)
 	text-shadow: 0 1px 0 white;
 }
@@ -24,11 +25,13 @@
 	border: 1px solid #808080;
 	background-color: #fdfdfd;
 	background-image: -webkit-gradient(linear, left top, left 25, from(#eee), to(#fdfdfd));
+	background-image: -moz-linear-gradient(top, #eee 0, #fdfdfd 50%);
 }
 .kitjs-form-button.selected {
 	border: 1px solid #144F71;
 	background-color: #2567AB;
 	color: #fff;
 	background-image: -webkit-gradient(linear, left top, left 25, from(#5F9CC5), to(#396B9E));
+	background-image: -moz-linear-gradient(top, #5F9CC5 0, #396B9E 50%);
 	text-shadow: 0 -1px 1px #145072;
 }

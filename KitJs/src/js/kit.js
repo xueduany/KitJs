@@ -1051,6 +1051,18 @@ $Kit.prototype = {
 	// -----------------------------------event-----------------------------------
 	/**
 	 * kit事件注册方法
+	 * kitjs的事件对象event拥有以下属性
+	 * target: 当前事件触发元素
+	 * currentTarget：注册该事件的元素
+	 * relatedTarget: 事件触发相关的元素，当事件在两个元素之间发生时候，这个有值，兼容了toElement,fromElement
+	 * offsetX/Y: 事件相当于target的x,y
+	 * clientX/Y: 事件相当于viewport的x,y
+	 * pageX/Y: 事件相当于doc的
+	 * firstFingerClientX/Y: 移动设备的touchmove
+	 * firstFingerPageX/Y: 移动设备的touchmove
+	 * stopNow(): 立即停止所有
+	 * stopDefault(): 停止默认事件触发
+	 * stopGoOn(): 停止冒泡
 	 * @param {Object} config
 	 * @param {Selector|Element|NodeList} config.el 触发事件的元素，等于event.currentTarget
 	 * @param {String} config.ev 事件type，如click
@@ -1325,9 +1337,13 @@ $Kit.prototype = {
 		var me = this;
 		var pageX = ev.pageX || ev.clientX + me.viewport().scrollLeft;
 		var pageY = ev.pageY || ev.clientY + me.viewport().scrollTop;
+		var offsetX = ev.offsetY || ev.layerX;
+		var offsetY = ev.offsetY || ev.layerY;
 		return me.merge({
 			pageX : pageX,
-			pageY : pageY
+			pageY : pageY,
+			offsetX : offsetX,
+			offsetY : offsetY
 		}, me.evPos(ev))
 	},
 	/**

@@ -10,6 +10,7 @@
 	left: 40px;
 	z-index: 999999;
 	min-width: 300px;
+	_width: 300px;
 	box-shadow: 0 0 5px rgba(200,200,200,0.5);
 }
 .kitjs-dialog-title {
@@ -42,11 +43,12 @@ a.kitjs-dialog-close-btn {
 	border-radius: 20px;
 	font-size: 10px;
 	text-align: center;
-	vertical-align: middle;
+	vertical-align: baseline;
 	line-height: 20px;
+	text-indent: -1px;
 	background-color: #ccc;
 	color: #fff;
-	font-family: arail;
+	font-family: black;
 	text-decoration: none;
 	font-weight: bold;
 	font-style: normal;

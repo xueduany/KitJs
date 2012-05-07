@@ -70,7 +70,7 @@ $kit.merge($Kit.Event.prototype,
 	KEYCODE_DELETE : 46,
 	//
 	KEYCODE_PAGEUP : 33,
-	KEYCODE_PAGEDOWN : 34,
+	KEYCODE_PAGEDOWN : 34
 },
 /**
  * @lends $Kit.Event.prototype
@@ -144,6 +144,7 @@ $kit.merge($Kit.Event.prototype,
 					el.style.cursor = 'move';
 					$kit.attr(el, 'draggable', 'true');
 					if($kit.isIE()) {
+						//如果是IE
 						me._ev({
 							el : el,
 							ev : 'mousedown',
@@ -239,17 +240,24 @@ $kit.merge($Kit.Event.prototype,
 						el._kitjs_dd_drag = false;
 						el._kitjs_dd_mousedown = true;
 					} else {
+						//非IE
 						me._ev({
 							el : el,
 							ev : 'dragstart',
 							fn : function(e) {
 								var el = e.currentTarget;
+								//e.dataTransfer.dropEffect = 'move';
 								//e.dataTransfer.effectAllowed = "all";
+								//e.dataTransfer.setDragImage(ev.target, 0, 0);
 								me.dragElement = e.currentTarget;
 								e.dataTransfer.setData("text", e.currentTarget.innerHTML);
 								me.dragStartEventInfo = {
 									clientX : e.clientX,
 									clientY : e.clientY,
+									screenX : e.screenX,
+									screenY : e.screenY,
+									layerX : e.layerX,
+									layerY : e.layerY,
 									offsetTarget : e.target.offsetParent,
 									offsetTargetOffset : $kit.offset(e.target.offsetParent),
 									offsetTargetClientOffset : $kit.dom.clientOffset(e.target.offsetParent)
@@ -370,18 +378,49 @@ $kit.merge($Kit.Event.prototype,
 			el : el,
 			ev : 'drag',
 			fn : function(e, cfg) {
+				//e.dataTransfer.setDragImage(e.target, 0, 0);//设置拖拽图片
 				if(e.dragStartEventInfo && e.dragStartEventInfo.offsetTarget != document.body) {
 					var position = $kit.css(e.dragStartEventInfo.offsetTarget, 'position');
-					if(position && position.toLowerCase() == 'fixed') {
-						$kit.css(e.dragStartEventInfo.offsetTarget, {
-							top : e.dragStartEventInfo.offsetTargetClientOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
-							left : e.dragStartEventInfo.offsetTargetClientOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
-						});
-					} else if(position && position.toLowerCase() == 'absolute') {
-						$kit.css(e.dragStartEventInfo.offsetTarget, {
-							top : e.dragStartEventInfo.offsetTargetOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
-							left : e.dragStartEventInfo.offsetTargetOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
-						});
+					var distanceX = 0, distanceY = 0;
+					/*
+					 if(e.clientX == 0 && e.screenX > 0) {
+					 distanceX = e.screenX - e.dragStartEventInfo.screenX;
+					 } else if(e.clientX == 0 && e.screenX == 0 && e.layerX > 0) {
+					 distanceX = e.layerX - e.dragStartEventInfo.layerX;
+					 } else {
+					 distanceX = e.clientX - e.dragStartEventInfo.clientX;
+					 }
+					 if(e.clientY == 0 && e.screenY > 0) {
+					 distanceY = e.screenY - e.dragStartEventInfo.screenY;
+					 } else if(e.clientY == 0 && e.screenY == 0 && e.layerY > 0) {
+					 distanceY = e.layerY - e.dragStartEventInfo.layerY;
+					 } else {
+					 distanceY = e.clientY - e.dragStartEventInfo.clientY;
+					 }*/
+					if(e.clientX == 0 && e.screenX > 0) {
+						distanceX = e.screenX - e.dragStartEventInfo.screenX;
+					} else if(e.clientX > 0) {
+						distanceX = e.clientX - e.dragStartEventInfo.clientX;
+					}
+					if(e.clientY == 0 && e.screenY > 0) {
+						distanceY = e.screenY - e.dragStartEventInfo.screenY;
+					} else if(e.clientY > 0) {
+						distanceY = e.clientY - e.dragStartEventInfo.clientY;
+					}
+					if(distanceY != 0 || distanceX != 0) {
+						if(position && position.toLowerCase() == 'fixed') {
+							var pos = {
+								top : e.dragStartEventInfo.offsetTargetClientOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetClientOffset.left + distanceX + 'px'
+							};
+							$kit.css(e.dragStartEventInfo.offsetTarget, pos);
+						} else if(position && position.toLowerCase() == 'absolute') {
+							var pos = {
+								top : e.dragStartEventInfo.offsetTargetOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetOffset.left + distanceX + 'px'
+							};
+							$kit.css(e.dragStartEventInfo.offsetTarget, pos);
+						}
 					}
 				}
 			},
@@ -393,16 +432,29 @@ $kit.merge($Kit.Event.prototype,
 			fn : function(e, cfg) {
 				if(e.dragStartEventInfo && e.dragStartEventInfo.offsetTarget != document.body) {
 					var position = $kit.css(e.dragStartEventInfo.offsetTarget, 'position');
-					if(position && position.toLowerCase() == 'fixed') {
-						$kit.css(e.dragStartEventInfo.offsetTarget, {
-							top : e.dragStartEventInfo.offsetTargetClientOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
-							left : e.dragStartEventInfo.offsetTargetClientOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
-						});
-					} else if(position && position.toLowerCase() == 'absolute') {
-						$kit.css(e.dragStartEventInfo.offsetTarget, {
-							top : e.dragStartEventInfo.offsetTargetOffset.top + e.clientY - e.dragStartEventInfo.clientY + 'px',
-							left : e.dragStartEventInfo.offsetTargetOffset.left + e.clientX - e.dragStartEventInfo.clientX + 'px'
-						});
+					var distanceX = 0, distanceY = 0;
+					if(e.clientX == 0 && e.screenX > 0) {
+						distanceX = e.screenX - e.dragStartEventInfo.screenX;
+					} else {
+						distanceX = e.clientX - e.dragStartEventInfo.clientX;
+					}
+					if(e.clientY == 0 && e.screenY > 0) {
+						distanceY = e.screenY - e.dragStartEventInfo.screenY;
+					} else {
+						distanceY = e.clientY - e.dragStartEventInfo.clientY;
+					}
+					if(distanceY != 0 || distanceX != 0) {
+						if(position && position.toLowerCase() == 'fixed') {
+							$kit.css(e.dragStartEventInfo.offsetTarget, {
+								top : e.dragStartEventInfo.offsetTargetClientOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetClientOffset.left + distanceX + 'px'
+							});
+						} else if(position && position.toLowerCase() == 'absolute') {
+							$kit.css(e.dragStartEventInfo.offsetTarget, {
+								top : e.dragStartEventInfo.offsetTargetOffset.top + distanceY + 'px',
+								left : e.dragStartEventInfo.offsetTargetOffset.left + distanceX + 'px'
+							});
+						}
 					}
 				}
 			},
@@ -430,6 +482,7 @@ $kit.merge($Kit.Event.prototype,
  * @global
  * @type $Kit.Event
  */
+
 $kit.event = new $Kit.Event();
 $kit.ev = function() {
 	$kit.event.ev.apply($kit.event, arguments);
