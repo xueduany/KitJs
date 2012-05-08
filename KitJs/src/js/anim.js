@@ -670,11 +670,45 @@ $kit.merge($Kit.Anim.prototype,
 		}
 		return me.motion(config);
 	},
+	/**
+	 * 渐隐
+	 * @param {Element}
+	 * @param {Number} [duration]
+	 * @param {Function} [fx]
+	 * @param {Function} [callback]
+	 */
 	fadeIn : function(el, duration, fx, callback) {
 		return this.fade('in', el, duration, fx, callback);
 	},
+	/**
+	 * 渐显
+	 * @param {Element}
+	 * @param {Number} [duration]
+	 * @param {Function} [fx]
+	 * @param {Function} [callback]
+	 */
 	fadeOut : function(el, duration, fx, callback) {
 		return this.fade('out', el, duration, fx, callback);
+	},
+	/**
+	 * 滑下
+	 * @param {Element}
+	 * @param {Number} [duration]
+	 * @param {Function} [fx]
+	 * @param {Function} [callback]
+	 */
+	slideDown : function(el, duration, fx, callback) {
+
+	},
+	/**
+	 * 滑上
+	 * @param {Element}
+	 * @param {Number} [duration]
+	 * @param {Function} [fx]
+	 * @param {Function} [callback]
+	 */
+	slideUp : function(el, duration, fx, callback) {
+
 	}
 });
 /**

@@ -149,8 +149,17 @@ $kit.merge($kit.ui.DatePicker.prototype,
 				me.date = config.date[0];
 				me.selectedDateAry = config.date;
 			} else if($kit.isStr(config.date)) {
-				me.date = $kit.date.parseDate(config.date, me.format, me.language);
-				me.selectedDateAry = [me.date];
+				if(config.date.indexOf(config.dateStringSeparator) > -1) {
+					var dateStrAry = config.date.split(config.dateStringSeparator);
+					me.date = $kit.date.parseDate(dateStrAry[0], me.format, me.language);
+					me.selectedDateAry = [];
+					$kit.each(dateStrAry, function(o) {
+						me.selectedDateAry.push($kit.date.parseDate(o, me.format, me.language));
+					});
+				} else {
+					me.date = $kit.date.parseDate(config.date, me.format, me.language);
+					me.selectedDateAry = [me.date];
+				}
 			}
 		} else {
 			me.date = $kit.date.dateNow();
@@ -284,6 +293,7 @@ $kit.merge($kit.ui.DatePicker.prototype,
 	},
 	/**
 	 * 设值
+	 * @private
 	 */
 	setValue : function(remove) {
 		remove = remove;
