@@ -11,7 +11,8 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']); (function() {
+			_gaq.push(['_trackPageview']);
+			(function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -24,6 +25,7 @@
 		<script src="../../src/js/anim.js"></script>
 		<script src="../../src/js/selector.js"></script>
 		<script src="../../src/js/array.js"></script>
+		<script src="../../src/js/math.js"></script>
 		<style>
 			.test1 {
 				border: #ccc;
@@ -65,6 +67,16 @@
 				 }
 				 });
 				 */
+				$kit.anim.motion({
+					el : ".test1",
+					from : {
+						'background-color' : 'rgba(0,0,0,0.1)'
+					},
+					to : {
+						'background-color' : 'rgba(0,0,0,0.9)'
+					}
+				});
+
 			</script>
 			<button onclick="$kit.anim.fadeIn('.test1')">
 				淡入

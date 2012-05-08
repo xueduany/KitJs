@@ -76,8 +76,12 @@ $kit.merge($Kit.Anim.prototype,
 			config.timeout = setInterval(function() {
 				config.hold += config.timeSeg;
 				if(config.hold >= config.duration) {
+					clearInterval(config.timeout);
+					config.timeout = null;
 					for(var p in config.to) {
 						$kit.each(($kit.isNode(config.el) ? [config.el] : config.el), function(node) {
+							console.log(config.to[p]);
+							console.log(p);
 							me.setStyle({
 								el : node,
 								styleName : p,
@@ -87,8 +91,6 @@ $kit.merge($Kit.Anim.prototype,
 							});
 						});
 					}
-					clearInterval(config.timeout);
-					config.timeout = null;
 					if($kit.isFn(config.then)) {
 						config.then.call(config.scope, config);
 					}
@@ -110,9 +112,63 @@ $kit.merge($Kit.Anim.prototype,
 									reSty += " ";
 								}
 								var o = sty1[i];
-								o.value = me.fx(config.fx)(config.hold, (sty == null ? 0 : sty[i].value), (sty == null ? sty1[i].value : (sty1[i].value - sty[i].value)), config.duration)
-								reSty += o.prefix + o.value + o.unit + o.postfix;
+								var changeValue;
+								if(o.value.indexOf('#') == 0) {//rgb
+									if(sty[i].value.length == 4) {
+										sty[i].value = sty[i].value.substring(0, 1) + sty[i].value.substring(1, 2)//
+										+ sty[i].value.substring(1, 2) + sty[i].value.substring(1, 2)//
+										+ sty[i].value.substring(2, 3) + sty[i].value.substring(2, 3)//
+										+ sty[i].value.substring(3, 4) + sty[i].value.substring(3, 4);
+									}
+									if(sty1[i].value.length == 4) {
+										sty1[i].value = sty1[i].value.substring(0, 1) + sty1[i].value.substring(1, 2)//
+										+ sty1[i].value.substring(1, 2) + sty1[i].value.substring(1, 2)//
+										+ sty1[i].value.substring(2, 3) + sty1[i].value.substring(2, 3)//
+										+ sty1[i].value.substring(3, 4) + sty1[i].value.substring(3, 4);
+									}
+									var rgbFrom = {
+										r : 0,
+										g : 0,
+										b : 0
+									}
+									if(sty != null) {
+										rgbFrom = {
+											r : parseFloat($kit.math.convert(sty[i].value.substring(1, 2), 16, 10)),
+											g : parseFloat($kit.math.convert(sty[i].value.substring(3, 4), 16, 10)),
+											b : parseFloat($kit.math.convert(sty[i].value.substring(5, 6), 16, 10))
+										}
+									}
+									var rgbTo = {
+										r : parseFloat($kit.math.convert(sty1[i].value.substring(1, 3), 16, 10)),
+										g : parseFloat($kit.math.convert(sty1[i].value.substring(3, 5), 16, 10)),
+										b : parseFloat($kit.math.convert(sty1[i].value.substring(5, 7), 16, 10))
+									}
+									var rgb = {
+										r : me.fx(config.fx)(config.hold, rgbFrom.r, rgbTo.r - rgbFrom.r, config.duration),
+										g : me.fx(config.fx)(config.hold, rgbFrom.g, rgbTo.g - rgbFrom.g, config.duration),
+										b : me.fx(config.fx)(config.hold, rgbFrom.b, rgbTo.b - rgbFrom.b, config.duration)
+									}
+									changeValue = '#' + $kit.math.padZero($kit.math.convert(rgb.r, 10, 16), 2) + //
+									$kit.math.padZero($kit.math.convert(rgb.g, 10, 16), 2) + //
+									$kit.math.padZero($kit.math.convert(rgb.b, 10, 16), 2);
+								} else {
+									var t = config.hold;
+									var b = sty == null ? 0 : parseFloat(sty[i].value);
+									var c = sty == null ? parseFloat(sty1[i].value) : parseFloat(sty1[i].value) - parseFloat(sty[i].value);
+									var d = config.duration;
+									changeValue = me.fx(config.fx)(t, b, c, d);
+								}
+								reSty += o.prefix + changeValue + o.unit + o.postfix;
 							}
+							var reSty1 = new String(reSty).toString();
+							$kit.each(reSty.match(/rgba\s*\((\d+\.?\d*\s*,?)+\s*\)/ig), function(o) {
+								var o1 = new String(o).toString();
+								$kit.each(o.match(/(\d+\.?\d*)/g), function(p, i, ary) {
+									o1 = o1.replace(p, parseFloat(p) > 1 ? Math.round(p) : p);
+								});
+								reSty1 = reSty1.replace(o, o1);
+							});
+							reSty = reSty1;
 							me.setStyle({
 								el : node,
 								styleName : p,
@@ -139,15 +195,15 @@ $kit.merge($Kit.Anim.prototype,
 		var me = this;
 		if( typeof (cssStr) != "undefined") {
 			cssStr = cssStr.toString();
-			var a1 = cssStr.match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/ig);
+			var a1 = cssStr.match(/([a-z\(,\s]*)([+\-#]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/ig);
 			if(a1 != null) {
 				var reSty = [];
 				for(var i = 0; i < a1.length; i++) {
-					var a = a1[i].match(/([a-z\(]*)([+-]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/i);
+					var a = a1[i].match(/([a-z\(,\s]*)([+\-#]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/i);
 					var sty = {
 						style : a[0],
 						prefix : a[1],
-						value : parseFloat(a[2]),
+						value : a[2],
 						unit : a[3],
 						postfix : a[4]
 					}
