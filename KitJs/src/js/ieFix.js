@@ -52,8 +52,9 @@ $kit.merge($Kit.prototype, {
 							el.filters.item("alpha").opacity = attr[l] * 100;
 						} catch(e) {
 							try {
-								el.style.filter = 'alpha(opacity=' + attr[l] * 100 + ')';
-							} catch(e) {
+								el.style.filter = 'alpha(opacity="' + attr[l] * 100 + '")';
+							} catch(e1) {
+								alert(e1);
 							}
 						}
 					} else {
@@ -82,8 +83,9 @@ $kit.merge($Kit.prototype, {
 					el.filters.item("alpha").opacity = value * 100;
 				} catch(e) {
 					try {
-						el.style.filter = 'alpha(opacity=' + value * 100 + ')';
-					} catch(e) {
+						el.style.filter = 'alpha(opacity="' + value * 100 + '")';
+					} catch(e1) {
+						alert(e1);
 					}
 				}
 			} else {

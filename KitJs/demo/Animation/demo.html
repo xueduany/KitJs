@@ -26,12 +26,12 @@
 		<script src="../../src/js/selector.js"></script>
 		<script src="../../src/js/array.js"></script>
 		<script src="../../src/js/math.js"></script>
+		<script src="../../src/js/dom.js"></script>
 		<style>
 			.test1 {
 				border: #ccc;
 				background-color: #aaa;
-				width: 100px;
-				height: 20px;
+				*zoom: 1;
 			}
 		</style>
 	</head>
@@ -40,49 +40,71 @@
 		<div>
 			<h1>动画，为了解决有时候andriod的transition不支持几个属性复合之后的变化，所以使用js动态设置代替</h1>
 			<div class="test1">
-				1234567890-=
+				1)  ease-in/ease-out function
+				ease-in/ease-out函数
+				1.
+				So this paper presents a new way, introducing Bezier curve as taxing path, and then utilizing advanced ease-in/ease-out function to control aircrafts to move following the curve with constant acceleration.
+				为此本文提出一种采用Bezier曲线为航空器滑行路径,再利用改进型ease-in/ease-out函数控制航空器沿此曲线作匀变速运动,最后在视景仿真系统中实现了航空器沿Bezier曲线运动,没有出现抖动的现象。
 			</div>
 			<script>
-				/*$kit.anim.motion({
-				 el : ".test1",
-				 from : {
-				 "-webkit-transform" : "translateX(100px) scale(1)"
-				 },
-				 to : {
-				 "-webkit-transform" : "translateX(400px) scale(3)"
-				 },
-				 then : function() {
-				 $kit.anim.motion({
-				 el : ".test1",
-				 from : {
-				 "-webkit-transform" : "translateY(0px) scale(1)"
-				 },
-				 to : {
-				 "-webkit-transform" : "translateY(400px) scale(3)"
-				 },
-				 then : function() {
-				 $kit.log("end!");
-				 }
-				 });
-				 }
-				 });
-				 */
-				$kit.anim.motion({
-					el : ".test1",
-					from : {
-						'background-color' : 'rgba(0,0,0,0.1)'
-					},
-					to : {
-						'background-color' : 'rgba(0,0,0,0.9)'
-					}
-				});
-
+				function a1() {
+					$kit.anim.motion({
+						duration : 3000,
+						el : ".test1",
+						from : {
+							'background-color' : 'rgba(0,0,0,1)',
+							'color' : '#ffffff',
+							'-webkit-transform' : 'translateY(0px) translateX(0px) scale(3)'
+						},
+						to : {
+							'background-color' : 'rgba(255,255,255,0.5)',
+							'color' : '#000000',
+							'-webkit-transform' : 'translateY(100px) translateX(100px) scale(1)'
+						},
+						then : function() {
+							$kit.anim.motion({
+								duration : 3000,
+								el : ".test1",
+								from : {
+									'background-color' : 'rgba(255,255,255,0.5)',
+									'color' : '#000000',
+									'-webkit-transform' : 'translateY(100px) translateX(100px) scale(1)'
+								},
+								to : {
+									'background-color' : 'rgba(0,0,0,1)',
+									'color' : '#00c700',
+									'-webkit-transform' : 'translateY(0px) translateX(0px) scale(3)'
+								},
+								then : function() {
+									$kit.css($kit.el('.test1')[0], {
+										position : 'static',
+										'-webkit-transform' : 'scale(1)',
+										'background-color': '#ccc',
+										color: 'inherit' 
+									})
+								}
+							});
+						}
+					});
+				}
 			</script>
+			<br/>
+			<br/>
+			<br/>
 			<button onclick="$kit.anim.fadeIn('.test1')">
 				淡入
 			</button>
 			<button onclick="$kit.anim.fadeOut('.test1')">
 				淡出
+			</button>
+			<button onclick="$kit.anim.slideUp('.test1')">
+				划上
+			</button>
+			<button onclick="$kit.anim.slideDown('.test1')">
+				划下
+			</button>
+			<button onclick="a1()">
+				自定义动画
 			</button>
 		</div>
 	</body>

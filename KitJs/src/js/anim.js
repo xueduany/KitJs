@@ -2,10 +2,15 @@
  * javascript animation 动画扩展
  * @class $Kit.Animation
  * @requires kit.js
+ * @requires array.js
+ * @requires selector.js
+ * @requires math.js
+ * @requires dom.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/anim.js">Source code</a>
  */
 $Kit.Animation = $Kit.Anim = function(config) {
-	//
+	//保存动画句柄
+	this.handleMap = {};
 }
 $kit.merge($Kit.Anim.prototype,
 /**
@@ -56,9 +61,9 @@ $kit.merge($Kit.Anim.prototype,
 			var f1 = false, timeoutStr;
 			if($kit.isStr(config.timeout)) {
 				timeoutStr = config.timeout;
-				clearInterval(window[config.timeout]);
+				clearInterval(me.handleMap[config.timeout]);
 				f1 = true;
-			} else {
+			} else if($kit.isNum(config.timemout)) {
 				clearInterval(config.timeout);
 			}
 			// 重置初始样式
@@ -78,10 +83,9 @@ $kit.merge($Kit.Anim.prototype,
 				if(config.hold >= config.duration) {
 					clearInterval(config.timeout);
 					config.timeout = null;
+					delete me.handleMap[config.timeout];
 					for(var p in config.to) {
 						$kit.each(($kit.isNode(config.el) ? [config.el] : config.el), function(node) {
-							console.log(config.to[p]);
-							console.log(p);
 							me.setStyle({
 								el : node,
 								styleName : p,
@@ -104,7 +108,7 @@ $kit.merge($Kit.Anim.prototype,
 								sty = me.identifyCssValue(config.from[p]);
 							}
 							sty1 = me.identifyCssValue(config.to[p]);
-							if(sty == null || sty1 == null) {
+							if(sty == null || sty1 == null || sty.length != sty1.length) {
 								return;
 							}
 							for(var i = 0; i < sty1.length; i++) {
@@ -160,9 +164,9 @@ $kit.merge($Kit.Anim.prototype,
 								}
 								reSty += o.prefix + changeValue + o.unit + o.postfix;
 							}
-							var reSty1 = new String(reSty).toString();
-							$kit.each(reSty.match(/rgba\s*\((\d+\.?\d*\s*,?)+\s*\)/ig), function(o) {
-								var o1 = new String(o).toString();
+							var reSty1 = reSty;
+							$kit.each(reSty.match(/rgba?\s*\((\d+\.?\d*\s*,?)+\s*\)/ig), function(o) {
+								var o1 = o;
 								$kit.each(o.match(/(\d+\.?\d*)/g), function(p, i, ary) {
 									o1 = o1.replace(p, parseFloat(p) > 1 ? Math.round(p) : p);
 								});
@@ -181,7 +185,7 @@ $kit.merge($Kit.Anim.prototype,
 				}
 			}, config.timeSeg);
 			if(f1) {
-				window[timeoutStr] = config.timeout
+				me.handleMap[timeoutStr] = config.timeout;
 			}
 			return config;
 		}
@@ -195,11 +199,11 @@ $kit.merge($Kit.Anim.prototype,
 		var me = this;
 		if( typeof (cssStr) != "undefined") {
 			cssStr = cssStr.toString();
-			var a1 = cssStr.match(/([a-z\(,\s]*)([+\-#]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/ig);
+			var a1 = cssStr.match(/([a-z\(,\s]*)([+\-]?\d+\.?\d*|#[\da-f]{6}|#[\da-f]{3})([a-z|%]*)([a-z\)]*)/ig);
 			if(a1 != null) {
 				var reSty = [];
 				for(var i = 0; i < a1.length; i++) {
-					var a = a1[i].match(/([a-z\(,\s]*)([+\-#]?\d+\.?\d*)([a-z|%]*)([a-z\)]*)/i);
+					var a = a1[i].match(/([a-z\(,\s]*)([+\-]?\d+\.?\d*|#[\da-f]{6}|#[\da-f]{3})([a-z|%]*)([a-z\)]*)/i);
 					var sty = {
 						style : a[0],
 						prefix : a[1],
@@ -242,13 +246,15 @@ $kit.merge($Kit.Anim.prototype,
 						} else if(styleName.toLowerCase() == 'scrollleft' && el == document.body) {
 							scrollTo(styleValue, $kit.viewport().scrollTop);
 						} else {
-							el[styleName] = styleValue;
+							try {
+								$kit.css(el, styleName, styleValue);
+							} catch(e) {
+							}
 						}
 					} else {
-						if(styleName.toLowerCase() == 'opacity' && $kit.isIE()) {
-							el.style.filter = 'alpha(opacity=' + styleValue * 100 + ')';
-						} else {
-							el.style[styleName] = styleValue;
+						try {
+							$kit.css(el, styleName, styleValue);
+						} catch(e) {
 						}
 					}
 				} else if($kit.isNodeList(el)) {
@@ -259,13 +265,15 @@ $kit.merge($Kit.Anim.prototype,
 							} else if(styleName.toLowerCase() == 'scrollleft' && el[j] == document.body) {
 								scrollTo(styleValue, $kit.viewport().scrollTop);
 							} else {
-								el[j][styleName] = styleValue;
+								try {
+									$kit.css(el[j], styleName, styleValue);
+								} catch(e) {
+								}
 							}
 						} else {
-							if(styleName.toLowerCase() == 'opacity' && $kit.isIE()) {
-								el[j].style.filter = 'alpha(opacity=' + styleValue * 100 + ')';
-							} else {
-								el[j].style[styleName] = styleValue;
+							try {
+								$kit.css(el[j], styleName, styleValue);
+							} catch(e) {
 							}
 						}
 					}
@@ -681,51 +689,6 @@ $kit.merge($Kit.Anim.prototype,
 		}
 		return me.Fx.swing;
 	},
-	fade : function(type, el, duration, fx, callback) {
-		var me = this;
-		if(duration) {
-			if(duration.toLowerCase() == 'fast') {
-				duration = 200;
-			} else if(duration.toLowerCase() == 'slow') {
-				duration = 600;
-			}
-			if(fx) {
-				if(callback) {
-
-				} else {
-					callback = fx;
-					fx = me.Fx.easeInQuad;
-				}
-			} else {
-				fx = me.Fx.easeInQuad;
-				if($kit.isFn(duration)) {
-					callback = duration;
-					duration = 300;
-				}
-			}
-		} else {
-			duration = 300;
-			fx = me.Fx.easeInQuad;
-		}
-		var to;
-		if(type == 'in') {
-			to = {
-				opacity : 1
-			}
-		} else {
-			to = {
-				opacity : 0
-			}
-		}
-		var config = {
-			duration : duration,
-			el : el,
-			to : to,
-			fx : fx,
-			then : callback
-		}
-		return me.motion(config);
-	},
 	/**
 	 * 渐隐
 	 * @param {Element}
@@ -734,7 +697,55 @@ $kit.merge($Kit.Anim.prototype,
 	 * @param {Function} [callback]
 	 */
 	fadeIn : function(el, duration, fx, callback) {
-		return this.fade('in', el, duration, fx, callback);
+		var me = this;
+		if(!$kit.isNode(el)) {
+			var _el = $kit.$el(el);
+			if(_el.length == 1) {
+				el = _el[0];
+			} else {
+				return;
+			}
+		}
+		if(el['kitjs-anim-fade-timeout']) {
+			clearInterval(el['kitjs-anim-fade-timeout']);
+		}
+		if(duration) {
+			if(duration.toLowerCase && duration.toLowerCase() == 'fast') {
+				duration = 200;
+			} else if(duration.toLowerCase && duration.toLowerCase() == 'slow') {
+				duration = 600;
+			}
+			if(fx) {
+				if(callback) {
+
+				} else {
+					callback = fx;
+					fx = me.Fx.easeOutQuad;
+				}
+			} else {
+				fx = me.Fx.swing;
+				if($kit.isFn(duration)) {
+					callback = duration;
+					duration = 300;
+				}
+			}
+		} else {
+			duration = 300;
+			fx = me.Fx.easeOutQuad;
+		}
+		var to = {
+			opacity : 1
+		}
+		var config = {
+			duration : duration,
+			el : el,
+			to : to,
+			fx : fx,
+			then : callback
+		}
+		var _config = me.motion(config);
+		el['kitjs-anim-fade-timeout'] = _config.timeout;
+		//return _config;
 	},
 	/**
 	 * 渐显
@@ -744,7 +755,55 @@ $kit.merge($Kit.Anim.prototype,
 	 * @param {Function} [callback]
 	 */
 	fadeOut : function(el, duration, fx, callback) {
-		return this.fade('out', el, duration, fx, callback);
+		var me = this;
+		if(!$kit.isNode(el)) {
+			var _el = $kit.$el(el);
+			if(_el.length == 1) {
+				el = _el[0];
+			} else {
+				return;
+			}
+		}
+		if(el['kitjs-anim-fade-timeout']) {
+			clearInterval(el['kitjs-anim-fade-timeout']);
+		}
+		if(duration) {
+			if(duration.toLowerCase && duration.toLowerCase() == 'fast') {
+				duration = 200;
+			} else if(duration.toLowerCase && duration.toLowerCase() == 'slow') {
+				duration = 600;
+			}
+			if(fx) {
+				if(callback) {
+
+				} else {
+					callback = fx;
+					fx = me.Fx.easeOutQuad;
+				}
+			} else {
+				fx = me.Fx.swing;
+				if($kit.isFn(duration)) {
+					callback = duration;
+					duration = 300;
+				}
+			}
+		} else {
+			duration = 300;
+			fx = me.Fx.easeOutQuad;
+		}
+		var to = {
+			opacity : 0
+		}
+		var config = {
+			duration : duration,
+			el : el,
+			to : to,
+			fx : fx,
+			then : callback
+		}
+		var _config = me.motion(config);
+		el['kitjs-anim-fade-timeout'] = _config.timeout;
+		//return _config;
 	},
 	/**
 	 * 滑下
@@ -754,7 +813,57 @@ $kit.merge($Kit.Anim.prototype,
 	 * @param {Function} [callback]
 	 */
 	slideDown : function(el, duration, fx, callback) {
-
+		var me = this;
+		if(!$kit.isNode(el)) {
+			var _el = $kit.$el(el);
+			if(_el.length == 1) {
+				el = _el[0];
+			} else {
+				return;
+			}
+		}
+		if(el['kitjs-anim-slide-timeout']) {
+			clearInterval(el['kitjs-anim-slide-timeout']);
+		}
+		var wrapper = el['kitjs-anim-wrapper']
+		if(wrapper) {
+			var hold = 0;
+			var timeSeg = 17;
+			var begin = wrapper['kitjs-anim-el'].offsetHeight;
+			var beginWrapper = wrapper.offsetHeight;
+			var beginTop = $kit.css(el, 'top');
+			duration = $kit.isNum(duration) ? duration : 300;
+			fx = $kit.isFn(fx) ? fx : me.Fx.easeOutQuad;
+			if(hold == 0) {
+				$kit.css(el, {
+					position : 'absolute',
+					top : 0,
+					left : 0
+				});
+			}
+			el['kitjs-anim-slide-timeout'] = setInterval(function() {
+				if(hold >= duration) {
+					clearInterval(el['kitjs-anim-slide-timeout']);
+					el['kitjs-anim-slide-timeout'] = null;
+					$kit.css(wrapper, {
+						height : begin
+					});
+					$kit.css(el, {
+						top : 0
+					});
+				} else {
+					$kit.css(wrapper, {
+						height : fx(hold, beginWrapper, begin - beginWrapper, duration) + 'px'
+					});
+					$kit.css(el, {
+						top : fx(hold, beginTop, -beginTop, duration) + 'px'
+					});
+				}
+				hold += timeSeg;
+			}, timeSeg);
+		} else {
+			//
+		}
 	},
 	/**
 	 * 滑上
@@ -764,7 +873,63 @@ $kit.merge($Kit.Anim.prototype,
 	 * @param {Function} [callback]
 	 */
 	slideUp : function(el, duration, fx, callback) {
-
+		var me = this;
+		if(!$kit.isNode(el)) {
+			var _el = $kit.$el(el);
+			if(_el.length == 1) {
+				el = _el[0];
+			} else {
+				return;
+			}
+		}
+		if(el['kitjs-anim-slide-timeout']) {
+			clearInterval(el['kitjs-anim-slide-timeout']);
+		}
+		var wrapper = el['kitjs-anim-wrapper']
+		if(wrapper) {
+			//
+			wrapper['kitjs-anim-el'] = el;
+		} else {
+			wrapper = $kit.dom.wrap(el, '<div class="kitjs-anim-wrapper" style="overflow:hidden;position:relative;display:block;"></div>');
+			el['kitjs-anim-wrapper'] = wrapper;
+			wrapper['kitjs-anim-el'] = el;
+			$kit.css(wrapper, {
+				height : el.offsetHeight + 'px',
+				width : el.offsetWidth + 'px'
+			});
+		}
+		var hold = 0;
+		var timeSeg = 17;
+		var begin = wrapper.offsetHeight;
+		duration = $kit.isNum(duration) ? duration : 500;
+		fx = $kit.isFn(fx) ? fx : me.Fx.easeOutQuad;
+		if(hold == 0) {
+			$kit.css(el, {
+				position : 'absolute',
+				top : 0,
+				left : 0
+			});
+		}
+		el['kitjs-anim-slide-timeout'] = setInterval(function() {
+			if(hold >= duration) {
+				clearInterval(el['kitjs-anim-slide-timeout']);
+				el['kitjs-anim-slide-timeout'] = null;
+				$kit.css(wrapper, {
+					height : 0
+				});
+				$kit.css(el, {
+					top : -begin
+				});
+			} else {
+				$kit.css(wrapper, {
+					height : fx(hold, begin, 0 - begin, duration) + 'px'
+				});
+				$kit.css(el, {
+					top : fx(hold, 0, 0 - begin, duration) + 'px'
+				});
+			}
+			hold += timeSeg;
+		}, timeSeg);
 	}
 });
 /**

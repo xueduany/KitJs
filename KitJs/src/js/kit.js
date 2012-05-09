@@ -1513,7 +1513,7 @@ $Kit.prototype = {
 	 */
 	only : function() {
 		var rnd = Math.random(10000);
-		return rnd.toString().substr(2, 10);
+		return new Date().getTime().toString() + '_' + rnd.toString().substr(2, 10);
 	},
 	/**
 	 * generate unique DOM id

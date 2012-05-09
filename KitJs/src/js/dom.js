@@ -335,6 +335,7 @@ $kit.merge($Kit.Dom.prototype,
 			pos : 'before'
 		});
 		html.appendChild(node);
+		return html;
 	},
 	/**
 	 * 序列化form元素
