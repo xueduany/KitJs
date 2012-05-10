@@ -465,7 +465,16 @@ $Kit.prototype = {
 			}
 		} else {
 			if(value == null) {
-				el.removeAttribute(attr);
+				el[attr] = null;
+				if(el.removeAttribute) {
+					el.removeAttribute(attr);
+				} else {
+					el.setAttribute(attr, null);
+				}
+				try {
+					delete el[attr];
+				} catch(e) {
+				}
 			} else {
 				el.setAttribute(attr, value);
 			}

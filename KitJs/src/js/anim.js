@@ -877,7 +877,7 @@ $kit.merge($Kit.Anim.prototype,
 			el['kitjs-anim-slide-timeout'] = setInterval(function() {
 				if(hold >= duration) {
 					clearInterval(el['kitjs-anim-slide-timeout']);
-					el['kitjs-anim-slide-timeout'] = null;
+					//el['kitjs-anim-slide-timeout'] = null;
 					$kit.css(wrapper, {
 						height : begin
 					});
@@ -885,7 +885,9 @@ $kit.merge($Kit.Anim.prototype,
 						top : 0,
 						position : 'static'
 					});
-					el['kitjs-anim-wrapper'] = null;
+					//el['kitjs-anim-wrapper'] = null;
+					$kit.attr(wrapper, 'kitjs-anim-el', null);
+					$kit.attr(el, 'kitjs-anim-wrapper', null);
 					$kit.rpEl(wrapper, el);
 					callback && callback();
 				} else {
@@ -965,7 +967,8 @@ $kit.merge($Kit.Anim.prototype,
 		el['kitjs-anim-slide-timeout'] = setInterval(function() {
 			if(hold >= duration) {
 				clearInterval(el['kitjs-anim-slide-timeout']);
-				el['kitjs-anim-slide-timeout'] = null;
+				//el['kitjs-anim-slide-timeout'] = null;
+				$kit.attr(el, 'kitjs-anim-slide-timeout', null);
 				$kit.css(wrapper, {
 					height : 0
 				});
