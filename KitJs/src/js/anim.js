@@ -30,8 +30,9 @@ $kit.merge($Kit.Anim.prototype,
 	 * @param {Function} [config.fx] 动画算法，可以通过$kit.anim.fx(type)的方式取得动画算法，也可以直接$kit.anim.Fx.easeInQuad的方式取得算法
 	 * @param {Function} [config.then] 动画结束后的匿名方法
 	 * @param {Object} [config.scope] config.then方法的this指针
-	 * @timeout {Number|String} [config.timeout] 因为动画是用setInterval实现的，所有一个timeout句柄，你可以用指定的timeout的句柄数字，也可以用一个String标记
-	 * 在$kit.anim.handleMap[timeout]会保存的anim的timeout句柄数字
+	 * @param {Number|String} [config.timeout] 因为动画是用setInterval实现的，所有一个timeout句柄，你可以用指定的timeout的句柄数字，也可以用一个String标记
+	 * 在$kit.anim.handleMap[timeout]会保存的anim的timeout句柄数字，下一次的motion方法也传入timeout，即可实现终止上一次的动画继续进行，进行新的动画，也可以使用
+	 * clearInterval终止当前进行的动画
 	 * @see <a href="http://xueduany.github.com/KitJs/KitJs/demo/Animation/demo.html">动画样例</a>
 	 */
 	motion : function(config) {
