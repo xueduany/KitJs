@@ -111,7 +111,7 @@ $kit.merge($Kit.Anim.prototype,
 							var reSty = "", sty, sty1;
 							if(config.from == null || !( p in config.from)) {
 								var _from = $kit.cssStr(node, p);
-								if(_from.indexOf('rgb') == '0' && config.to[p].indexOf('#') == 0) {
+								if(_from.toString().indexOf('rgb') == '0' && config.to[p].toString().indexOf('#') == 0) {
 									var re = '#';
 									$kit.each(_from.match(/\d+/g), function(d, i) {
 										if(i == 3) {

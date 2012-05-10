@@ -100,10 +100,15 @@ $kit.merge($Kit.prototype, {
 		}
 		attr = me._camelCssName(attr);
 		var re = el.currentStyle[attr];
-		if(attr.toLowerCase() == 'opacity' && el.filters.length) {
-			try {
-				re = el.filters.item("alpha").opacity / 100;
-			} catch(e) {
+		if(attr.toLowerCase() == 'opacity') {
+			if(el.filters.length) {
+				try {
+					re = el.filters.item("alpha").opacity / 100;
+				} catch(e) {
+					re = 1;
+				}
+			} else {
+				re = 1;
 			}
 		}
 		return re;
