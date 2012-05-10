@@ -103,7 +103,18 @@ $kit.merge($Kit.Anim.prototype,
 						$kit.each(($kit.isNode(config.el) ? [config.el] : config.el), function(node) {
 							var reSty = "", sty, sty1;
 							if(config.from == null || !( p in config.from)) {
-								sty = me.identifyCssValue($kit.css(node, p));
+								var _from = $kit.cssStr(node, p);
+								if(_from.indexOf('rgb') == '0' && config.to[p].indexOf('#') == 0) {
+									var re = '#';
+									$kit.each(_from.match(/\d+/g), function(d, i) {
+										if(i == 3) {
+											return false;
+										}
+										re += $kit.math.padZero($kit.math.convert(d, 10, 16), (config.to[p].length - 1) / 3);
+									});
+									_from = re;
+								}
+								sty = me.identifyCssValue(_from);
 							} else {
 								sty = me.identifyCssValue(config.from[p]);
 							}
@@ -137,9 +148,9 @@ $kit.merge($Kit.Anim.prototype,
 									}
 									if(sty != null) {
 										rgbFrom = {
-											r : parseFloat($kit.math.convert(sty[i].value.substring(1, 2), 16, 10)),
-											g : parseFloat($kit.math.convert(sty[i].value.substring(3, 4), 16, 10)),
-											b : parseFloat($kit.math.convert(sty[i].value.substring(5, 6), 16, 10))
+											r : parseFloat($kit.math.convert(sty[i].value.substring(1, 3), 16, 10)),
+											g : parseFloat($kit.math.convert(sty[i].value.substring(3, 5), 16, 10)),
+											b : parseFloat($kit.math.convert(sty[i].value.substring(5, 7), 16, 10))
 										}
 									}
 									var rgbTo = {
@@ -682,7 +693,7 @@ $kit.merge($Kit.Anim.prototype,
 	 */
 	fx : function(type) {
 		var me = this;
-		if($kit.isStr(type) && $kit.has(me.Fx, type)) {
+		if($kit.isStr(type) && me.Fx[type]) {
 			return me.Fx[type];
 		} else if($kit.isFn(type)) {
 			return type;

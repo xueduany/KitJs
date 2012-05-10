@@ -11,8 +11,7 @@
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-30210234-1']);
-			_gaq.push(['_trackPageview']);
-			(function() {
+			_gaq.push(['_trackPageview']); (function() {
 				var ga = document.createElement('script');
 				ga.type = 'text/javascript';
 				ga.async = true;
@@ -51,9 +50,10 @@
 					$kit.anim.motion({
 						duration : 3000,
 						el : ".test1",
+						fx : $kit.anim.fx('swing'),
 						from : {
 							'background-color' : 'rgba(0,0,0,1)',
-							'color' : '#ffffff',
+							'color' : '#00c700',
 							'-webkit-transform' : 'translateY(0px) translateX(0px) scale(3)'
 						},
 						to : {
@@ -64,12 +64,8 @@
 						then : function() {
 							$kit.anim.motion({
 								duration : 3000,
+								fx : $kit.anim.fx('swing'),
 								el : ".test1",
-								from : {
-									'background-color' : 'rgba(255,255,255,0.5)',
-									'color' : '#000000',
-									'-webkit-transform' : 'translateY(100px) translateX(100px) scale(1)'
-								},
 								to : {
 									'background-color' : 'rgba(0,0,0,1)',
 									'color' : '#00c700',
@@ -79,8 +75,7 @@
 									$kit.css($kit.el('.test1')[0], {
 										position : 'static',
 										'-webkit-transform' : 'scale(1)',
-										'background-color': '#ccc',
-										color: 'inherit' 
+										'background-color' : '#ccc'
 									})
 								}
 							});

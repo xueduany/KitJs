@@ -93,6 +93,21 @@ $kit.merge($Kit.prototype, {
 			}
 		}
 	},
+	cssStr : function(el, attr) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		attr = me._camelCssName(attr);
+		var re = el.currentStyle[attr];
+		if(attr.toLowerCase() == 'opacity' && el.filters.length) {
+			try {
+				re = el.filters.item("alpha").opacity / 100;
+			} catch(e) {
+			}
+		}
+		return re;
+	},
 	_camelCssName : function(str) {
 		var firstLetter = str.substr(0, 1);
 		var mainStr = str.substr(1);

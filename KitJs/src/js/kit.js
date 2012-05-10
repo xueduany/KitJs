@@ -502,6 +502,19 @@ $Kit.prototype = {
 		}
 	},
 	/**
+	 * 获取Element的cssStr
+	 * @param {Element}
+	 * @param {String}
+	 */
+	cssStr : function(el, attr) {
+		var me = this;
+		if(me.isEmpty(el)) {
+			return;
+		}
+		var re = el.style[attr] || getComputedStyle(el, null)[attr];
+		return re;
+	},
+	/**
 	 * 取值 div等取innerHTML textarea等form元素取value
 	 * @param {Element}
 	 * @return {String}
