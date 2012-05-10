@@ -840,6 +840,21 @@ $kit.merge($Kit.Anim.prototype,
 				return;
 			}
 		}
+		if(arguments.length == 3) {
+			if($kit.isNode(el) && $kit.isFn(duration) && $kit.isFn(fx) && callback == null) {
+				callback = fx;
+				fx = duration;
+				duration = 300;
+			} else if($kit.isNode(el) && $kit.isNum(duration) && $kit.isFn(fx) && callback == null) {
+				callback = fx;
+				fx = me.Fx.easeOutQuad;
+				duration = duration;
+			}
+		} else if(arguments.length == 2 && $kit.isNode(el) && $kit.isFn(duration)) {
+			callback = duration;
+			duration = 300;
+			fx = me.Fx.easeOutQuad;
+		}
 		if(el['kitjs-anim-slide-timeout']) {
 			clearInterval(el['kitjs-anim-slide-timeout']);
 		}
@@ -867,8 +882,12 @@ $kit.merge($Kit.Anim.prototype,
 						height : begin
 					});
 					$kit.css(el, {
-						top : 0
+						top : 0,
+						position : 'static'
 					});
+					el['kitjs-anim-wrapper'] = null;
+					$kit.rpEl(wrapper, el);
+					callback && callback();
 				} else {
 					$kit.css(wrapper, {
 						height : fx(hold, beginWrapper, begin - beginWrapper, duration) + 'px'
@@ -899,6 +918,21 @@ $kit.merge($Kit.Anim.prototype,
 			} else {
 				return;
 			}
+		}
+		if(arguments.length == 3) {
+			if($kit.isNode(el) && $kit.isFn(duration) && $kit.isFn(fx) && callback == null) {
+				callback = fx;
+				fx = duration;
+				duration = 300;
+			} else if($kit.isNode(el) && $kit.isNum(duration) && $kit.isFn(fx) && callback == null) {
+				callback = fx;
+				fx = me.Fx.easeOutQuad;
+				duration = duration;
+			}
+		} else if(arguments.length == 2 && $kit.isNode(el) && $kit.isFn(duration)) {
+			callback = duration;
+			duration = 300;
+			fx = me.Fx.easeOutQuad;
 		}
 		if(el['kitjs-anim-slide-timeout']) {
 			clearInterval(el['kitjs-anim-slide-timeout']);
@@ -938,6 +972,7 @@ $kit.merge($Kit.Anim.prototype,
 				$kit.css(el, {
 					top : -begin
 				});
+				callback && callback();
 			} else {
 				$kit.css(wrapper, {
 					height : fx(hold, begin, 0 - begin, duration) + 'px'
