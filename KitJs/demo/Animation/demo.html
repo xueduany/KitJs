@@ -53,13 +53,18 @@
 						fx : $kit.anim.fx('swing'),
 						from : {
 							'background-color' : 'rgba(0,0,0,1)',
-							'color' : '#00c700',
-							'-webkit-transform' : 'translateY(0px) translateX(0px) scale(3)'
+							'color' : 'rgba(0,199,0,1)',
+							'*color' : '#00c700',
+							'_color' : '#ffc700',
+							'-webkit-transform' : 'translateY(0px) translateX(0px) scale(3)',
+							'-moz-transform' : 'translateY(0px) translateX(0px) scale(3)'
 						},
 						to : {
 							'background-color' : 'rgba(255,255,255,0.5)',
-							'color' : '#000000',
-							'-webkit-transform' : 'translateY(100px) translateX(100px) scale(1)'
+							'color' : 'rgba(0,0,0,0.1)',
+							'*color' : '#000000',
+							'-webkit-transform' : 'translateY(100px) translateX(100px) scale(1)',
+							'-moz-transform' : 'translateY(100px) translateX(100px) scale(1)'
 						},
 						then : function() {
 							$kit.anim.motion({
@@ -68,13 +73,17 @@
 								el : ".test1",
 								to : {
 									'background-color' : 'rgba(0,0,0,1)',
-									'color' : '#00c700',
-									'-webkit-transform' : 'translateY(0px) translateX(0px) scale(3)'
+									'color' : 'rgba(0,199,0,1)',
+									'*color' : '#00c700',
+									'_color' : '#ffc700',
+									'-webkit-transform' : 'translateY(0px) translateX(0px) scale(3)',
+									'-moz-transform' : 'translateY(0px) translateX(0px) scale(3)'
 								},
 								then : function() {
 									$kit.css($kit.el('.test1')[0], {
 										position : 'static',
 										'-webkit-transform' : 'scale(1)',
+										'-moz-transform' : 'scale(1)',
 										'background-color' : '#ccc'
 									})
 								}
@@ -84,6 +93,11 @@
 				}
 			</script>
 			<br/>
+			<br/>
+			<br/>
+			<button onclick="a1()">
+				自定义动画
+			</button>
 			<br/>
 			<br/>
 			<button onclick="$kit.anim.fadeIn('.test1')">
@@ -98,9 +112,7 @@
 			<button onclick="$kit.anim.slideDown('.test1')">
 				划下
 			</button>
-			<button onclick="a1()">
-				自定义动画
-			</button>
+			
 		</div>
 	</body>
 </html>

@@ -54,7 +54,7 @@ $kit.merge($Kit.prototype, {
 							try {
 								el.style.filter = 'alpha(opacity="' + attr[l] * 100 + '")';
 							} catch(e1) {
-								alert(e1);
+								//alert(e1);
 							}
 						}
 					} else {
@@ -85,7 +85,7 @@ $kit.merge($Kit.prototype, {
 					try {
 						el.style.filter = 'alpha(opacity="' + value * 100 + '")';
 					} catch(e1) {
-						alert(e1);
+						//alert(e1);
 					}
 				}
 			} else {
@@ -114,6 +114,14 @@ $kit.merge($Kit.prototype, {
 		return re;
 	},
 	_camelCssName : function(str) {
+		/**
+		 * Css Hack支持
+		 */
+		if(this._IEVer() <= 6 && str.indexOf('_') == 0) {
+			str = str.substring(1, str.length);
+		} else if(str.indexOf('+') == 0 || str.indexOf('*') == 0) {
+			str = str.substring(1, str.length);
+		}
 		var firstLetter = str.substr(0, 1);
 		var mainStr = str.substr(1);
 		var a = mainStr.split('-');
@@ -121,6 +129,9 @@ $kit.merge($Kit.prototype, {
 			a[i] = a[i].substr(0, 1).toUpperCase() + a[i].substr(1);
 		}
 		return firstLetter.toLowerCase() + a.join('');
+	},
+	_IEVer : function() {
+		return navigator.userAgent.match(/MSIE (\d+)\.?\d*/)[1];
 	},
 	rpEl : function(element, html) {
 		var me = this;

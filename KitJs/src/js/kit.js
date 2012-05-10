@@ -486,10 +486,20 @@ $Kit.prototype = {
 		if(value == null) {
 			if(me.isObj(attr)) {
 				for(var l in attr) {
-					el.style[l] = attr[l];
+					if(l.indexOf('-moz-') == 0) {
+						var l1 = '';
+						$kit.each(l.split('-'), function(o) {
+							if(o.length) {
+								l1 += o.substring(0, 1).toUpperCase() + o.substring(1, o.length);
+							}
+						});
+						el.style[l1] = attr[l];
+					} else {
+						el.style[l] = attr[l];
+					}
 				}
 			} else {
-				var re = getComputedStyle(el, null)[attr];
+				var re = getComputedStyle(el, null)[this._camelCssName(attr)];
 				try {
 					re = isNaN(parseFloat(re)) ? re : parseFloat(re);
 				} catch(e) {
@@ -498,7 +508,17 @@ $Kit.prototype = {
 				return re;
 			}
 		} else {
-			el.style[attr] = value;
+			if(attr.indexOf('-moz-') == 0) {
+				var attr1 = '';
+				$kit.each(attr.split('-'), function(o) {
+					if(o.length) {
+						attr1 += o.substring(0, 1).toUpperCase() + o.substring(1, o.length);
+					}
+				});
+				el.style[attr1] = value;
+			} else {
+				el.style[attr] = value;
+			}
 		}
 	},
 	/**
@@ -511,8 +531,28 @@ $Kit.prototype = {
 		if(me.isEmpty(el)) {
 			return;
 		}
+		if(attr.indexOf('-moz-') == 0) {
+			var attr1 = '';
+			$kit.each(attr.split('-'), function(o) {
+				if(o.length) {
+					attr1 += o.substring(0, 1).toUpperCase() + o.substring(1, o.length);
+				}
+			});
+			attr = attr1;
+		} else {
+			attr = this._camelCssName(attr);
+		}
 		var re = el.style[attr] || getComputedStyle(el, null)[attr];
 		return re;
+	},
+	_camelCssName : function(str) {
+		var firstLetter = str.substr(0, 1);
+		var mainStr = str.substr(1);
+		var a = mainStr.split('-');
+		for(var i = 1; i < a.length; i++) {
+			a[i] = a[i].substr(0, 1).toUpperCase() + a[i].substr(1);
+		}
+		return firstLetter.toLowerCase() + a.join('');
 	},
 	/**
 	 * 取值 div等取innerHTML textarea等form元素取value
