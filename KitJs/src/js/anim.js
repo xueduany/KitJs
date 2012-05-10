@@ -20,12 +20,18 @@ $kit.merge($Kit.Anim.prototype,
 	/**
 	 * 动画
 	 * @param {Object} config
-	 * @param {Integer} config.timeSeg 默认值17，单位毫秒
-	 * @param {Integer} config.duration 默认值1000，单位毫秒
+	 * @param {Integer} [config.timeSeg] 默认值17，单位毫秒
+	 * @param {Integer} [config.duration] 默认值1000，单位毫秒
 	 * @param {Element|NodeList|Selector} config.el 需要进行动画的元素，或者元素数组
-	 * @param {RegExp} config.elSplitRegExp 参数config.el可以为selector的字符，多个selector字符可以用config.elSplitRegExp合并成一个字符
-	 * @param {Object} config.from 动画开始第一帧的元素初始Css样式，如{opacity:0,display:'none'}，
+	 * @param {RegExp} [config.elSplitRegExp] 参数config.el可以为selector的字符，多个selector字符可以用config.elSplitRegExp合并成一个字符
+	 * @param {Object} [config.from] 动画开始第一帧的元素初始Css样式，如{opacity:0,display:'none'}，
 	 * 其中key为cssStyleName，value为cssStyleValue，这里支持Css3的样式属性如{'-webkit-transform':'scale(1) translateX(1000px)'},也是可以支持的。
+	 * @param {Object} config.to 动画最后一帧的元素Css样式
+	 * @param {Function} [config.fx] 动画算法，可以通过$kit.anim.fx(type)的方式取得动画算法，也可以直接$kit.anim.Fx.easeInQuad的方式取得算法
+	 * @param {Function} [config.then] 动画结束后的匿名方法
+	 * @param {Object} [config.scope] config.then方法的this指针
+	 * @timeout {Number|String} [config.timeout] 因为动画是用setInterval实现的，所有一个timeout句柄，你可以用指定的timeout的句柄数字，也可以用一个String标记
+	 * 在$kit.anim.handleMap[timeout]会保存的anim的timeout句柄数字
 	 * @see <a href="http://xueduany.github.com/KitJs/KitJs/demo/Animation/demo.html">动画样例</a>
 	 */
 	motion : function(config) {
