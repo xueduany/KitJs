@@ -374,6 +374,10 @@ $kit.merge($Kit.Event.prototype,
 	//event增强end
 	draggable : function(el) {
 		var me = this;
+		if(el['kitjs-draggable']) {
+			return;
+		}
+		el['kitjs-draggable'] = true;
 		me.ev({
 			el : el,
 			ev : 'drag',
@@ -484,9 +488,9 @@ $kit.merge($Kit.Event.prototype,
  */
 
 $kit.event = new $Kit.Event();
-$kit.ev = function() {
+/*$kit.ev = function() {
 	$kit.event.ev.apply($kit.event, arguments);
-};
+};*/
 $kit.evExtra = function() {
 	return $Kit.Event.prototype.evExtra.apply($kit.event, arguments);
 };

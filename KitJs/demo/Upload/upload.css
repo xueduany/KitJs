@@ -1,0 +1,115 @@
+.kitjs-uploader {
+	position: relative;
+	width: 100%;
+}
+.kitjs-upload-button {
+	display: block; /* or inline-block */
+	width: 105px;
+	text-align: center;
+	color: #fff;
+	-webkit-appearance: none;
+	border: 1px solid #ddd;
+	outline: none;
+	color: #111;
+	text-shadow: 0 1px 1px #fff;
+	cursor: pointer;
+	border: 1px solid #ccc;
+	font-size: 14px;
+	font-family: 'Arial-Black';
+	padding: 0.5em 1em;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);/*去除android高亮框*/
+	background-color: #eee;
+	border-radius: 1em;/*圆角*/
+	-webkit-transition: all 300ms ease-in 0;/*渐变动画 */
+	background-image: -webkit-gradient(linear, left top, left 25, from(#fdfdfd), to(#eee));
+	background-image: -moz-linear-gradient(top, #fdfdfd 0, #eee 50%);
+	box-shadow: 0 1px 4px rgba(0,0,0,.3)
+	text-shadow: 0 1px 0 white;
+}
+.kitjs-upload-image-button {
+	display:block; /* or inline-block */
+    width: 100%;
+    height: 100%;
+    text-align:center;    
+}
+.kitjs-upload-image-button input {
+	font-size: 999px !important;
+}
+.kitjs-upload-button.kitjs-upload-button-hover {
+	border: 1px solid #808080;
+}
+.kitjs-upload-button.kitjs-upload-button:active {
+	border: 1px solid #808080;
+	background-color: #fdfdfd;
+	background-image: -webkit-gradient(linear, left top, left 25, from(#eee), to(#fdfdfd));
+	background-image: -moz-linear-gradient(top, #eee 0, #fdfdfd 50%);
+}
+.kitjs-upload-button.kitjs-upload-button-focus {
+	outline: 1px dotted black;
+}
+.kitjs-upload-drop-area {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 2px dashed orange;
+	min-height: 70px;
+	background-color: #fff;
+	z-index: 2;
+	text-align: center;
+}
+.kitjs-upload-drop-area span {
+	display: block;
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	margin-top: -8px;
+	font-size: 16px;
+}
+.kitjs-upload-drop-area-active {
+	background: orange;
+	color: #fff;
+}
+.kitjs-upload-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.kitjs-upload-list li {
+	margin: 0;
+	padding: 0;
+	line-height: 20px;
+	height: 20px;
+	font-size: 12px;
+}
+.kitjs-upload-file, .kitjs-upload-spinner, .kitjs-upload-size, .kitjs-upload-cancel, .kitjs-upload-failed-text {
+	margin-right: 7px;
+}
+.kitjs-upload-file {
+}
+.kitjs-upload-spinner {
+	display: inline-block;
+	background: url("loading.gif");
+	width: 15px;
+	height: 15px;
+	vertical-align: text-bottom;
+}
+.kitjs-upload-size, .kitjs-upload-cancel {
+	font-size: 11px;
+}
+.kitjs-upload-cancel {
+	color: #000;
+}
+.kitjs-upload-failed-text {
+	display: none;
+}
+.kitjs-upload-fail .kitjs-upload-failed-text {
+	display: inline;
+}
+.kitjs-image-uploader {
+	border: 1px dashed #000;
+	width: 100%;
+	height: 100%;
+	zoom: 1;
+}

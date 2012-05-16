@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/array.js"></script>
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/widget/Upload/upload.js"></script>
+		<link rel="stylesheet" href="upload.css" >
+		<style>
+			#file-uploader-demo1 {
+				width: 300px;
+				height: 100px;
+				display: block;
+			}
+			#photo-uploader-demo1 {
+				width: 100px;
+				height: 100px;
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="file-uploader-demo1">
+			<noscript>
+				<p>
+					Please enable JavaScript to use file uploader.
+				</p>
+				<!-- or put a simple form for upload here -->
+			</noscript>
+		</div>
+		<script>
+			var uploader = new $kit.ui.Upload.FileUploader({
+				element : document.getElementById('file-uploader-demo1'),
+				action : 'up.php'
+			});
+
+		</script>
+		<div id="photo-uploader-demo1">
+			<noscript>
+				<p>
+					Please enable JavaScript to use file uploader.
+				</p>
+				<!-- or put a simple form for upload here -->
+			</noscript>
+		</div>
+		<script>
+			var uploader = new $kit.ui.Upload.ImageUploader({
+				element : document.getElementById('photo-uploader-demo1'),
+				action : 'up.php',
+				allowedExtensions : ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
+				onSubmit : function(id, fileName) {
+					
+				},
+				onComplete : function(id, fileName, responseJSON) {
+					// var photo = $kit.el(".photo-field")[0];
+					// if(responseJSON.success != true) {
+						// return;
+					// }
+					// $kit.rmEl($kit.el(".tips", photo));
+					// $kit.rmEl($kit.el(".img-preview", photo));
+					// photo.appendChild($kit.newHTML('<div class="img-preview"><img src="' + responseJSON.url + '"/></div>'));
+					// $kit.el("@photoFile")[0].value = responseJSON.serverfile;
+				},
+				accept : 'image/*'
+			});
+		</script>
+	</body>
+</html>
