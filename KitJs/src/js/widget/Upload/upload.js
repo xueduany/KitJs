@@ -1172,8 +1172,8 @@ $kit.ui.Upload.ImageUploader = function(o) {
 
 		template : ['<div class="kitjs-image-uploader">', //
 		'<div class="kitjs-upload-drop-area"><span>把文件拖到这里开始上传!</span></div>', //
-		'<div class="kitjs-upload-image-button">上传文件</div>', //
-		'<div class="kitjs-upload-image-preview"></div>', //
+		'<div class="kitjs-upload-image-button"></div>', //
+		'<div class="kitjs-upload-image-preview"><div class="box">上传图片</div></div>', //
 		'<ul class="kitjs-upload-list"></ul>', //
 		'</div>'].join(''),
 
@@ -1221,4 +1221,23 @@ $kit.ui.Upload.ImageUploader = function(o) {
 	this._bindCancelEvent();
 	this._setupDragDrop();
 };
-$kit.merge($kit.ui.Upload.ImageUploader.prototype, $kit.ui.Upload.FileUploader.prototype);
+$kit.ui.Upload.ImageUploader.prototype = {
+	_onComplete : function(id, fileName, result) {
+		var imgPreview = $kit.el8cls('kitjs-upload-image-preview', this._element).childNodes[0];
+		imgPreview.innerHTML = '';
+		imgPreview.innerHTML = '<img src="' + result.url + '">';
+		$kit.ui.Upload.FileUploaderBasic.prototype._onComplete.apply(this, arguments);
+
+		// mark completed
+		var item = this._getItemByFileId(id);
+		$kit.rmEl(this._find(item, 'cancel'));
+		$kit.rmEl(this._find(item, 'spinner'));
+
+		if(result.success) {
+			$kit.adCls(item, this._classes.success);
+		} else {
+			$kit.adCls(item, this._classes.fail);
+		}
+	}
+}
+$kit.mergeIf($kit.ui.Upload.ImageUploader.prototype, $kit.ui.Upload.FileUploader.prototype);
