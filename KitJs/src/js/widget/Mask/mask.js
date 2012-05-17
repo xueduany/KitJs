@@ -1,9 +1,9 @@
 /**
  * 半透明的遮罩
  * @class $kit.ui.Mask
- * @required kit.js
- * @required ieFix.js
- * @required dom.js
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Mask/mask.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Mask/demo.html">Demo</a><br/>

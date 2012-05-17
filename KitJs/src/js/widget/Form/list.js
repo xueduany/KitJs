@@ -2,9 +2,9 @@
  * 鼠标键盘操作的列表，常用于input的下拉
  * @class $kit.ui.Form.List
  * @extends $kit.ui.Form
- * @required kit.js
- * @required ieFix.js
- * @required dom.js
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/list.js">Source code</a>
  */
 $kit.ui.Form.List = function(config) {

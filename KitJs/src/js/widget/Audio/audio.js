@@ -2,8 +2,8 @@
  * 兼容各浏览器(包括IE)的HTML Audio控件，支持自定义事件，以及API操作
  * @class $kit.ui.Audio
  * @param {Object} config 组件配置
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Audio/kit.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Audio/demo.html">Demo</a><br/>

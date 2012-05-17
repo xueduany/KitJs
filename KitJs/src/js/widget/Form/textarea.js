@@ -2,8 +2,8 @@
  * kitjs form textarea，包含自适应高度
  * @class $kit.ui.Form.TextArea
  * @extends $kit.ui.Form
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/textarea.js">Source code</a>
  */
 $kit.ui.Form.TextArea = function(config) {

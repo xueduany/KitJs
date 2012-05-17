@@ -1,8 +1,8 @@
 /**
  * 侧边栏滑块
  * @class $kit.ui.SlideBar
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/SlideBar/slidebar.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/SlideBar/demo.html">Demo</a><br/>

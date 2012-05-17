@@ -1,8 +1,8 @@
 /*
  * tabPanel
  * @class $kit.ui.TabPanel
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/TabPanel/tabpanel.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/TabPanel/demo.html">Demo</a><br/>

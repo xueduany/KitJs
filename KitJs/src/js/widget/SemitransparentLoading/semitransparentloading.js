@@ -1,9 +1,9 @@
 /**
  * 半透明的loading
  * @class $kit.ui.SemitransparentLoading
- * @required kit.js
- * @required ieFix.js
- * @required dom.js
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/SemitransparentLoading/semitransparentloading.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Loading/demo.html">Demo</a><br/>

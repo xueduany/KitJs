@@ -2,8 +2,8 @@
  * combobox
  * @class $kit.ui.Form.ComboBox
  * @extends $kit.ui.Form
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/combobox.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Combobox/combobox.html">Demo</a><br/>

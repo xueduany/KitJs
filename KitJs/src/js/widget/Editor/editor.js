@@ -1,8 +1,8 @@
 /**
  * 基本编辑器
  * @class $kit.ui.Editor
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Editor/editor.js">Source code</a>
  */
 $kit.ui.Editor = function(config) {

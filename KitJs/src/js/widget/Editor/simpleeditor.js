@@ -2,9 +2,9 @@
  * 简单编辑器
  * @class $kit.ui.Editor.SimpleEditor
  * @extends $kit.ui.Editor
- * @required kit.js
- * @required ieFix.js
- * @required dom.js
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Editor/simpleeditor.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/SimpleEditor/demo.html">Demo</a><br/>

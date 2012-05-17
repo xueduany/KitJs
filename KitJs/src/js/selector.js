@@ -1262,7 +1262,7 @@
 	/**
 	 * 内嵌Sizzle最新版选择器，单独分离成一个Selector类，方便整合代码
 	 * @class $Kit.Selector
-	 * @required kit.js
+	 * @requires kit.js
 	 * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/selector.js">Source code</a>
 	 */
 	$Kit.Selector = function() {

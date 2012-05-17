@@ -321,6 +321,10 @@ $kit.ui.Upload.FileUploaderBasic.prototype = {
 /**
  * 文件上传组件
  * @class $kit.ui.Upload.FileUploader
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
+ * @requires array.js
  * @param {Object} config 组件配置
  * @param {Element} config.element 初始化哪一块div为上传组件
  * @param {String} config.action 接收上传文件的后台API接口地址
@@ -1191,6 +1195,10 @@ $kit.merge($kit.ui.Upload.UploadHandlerXhr.prototype, {
 /**
  * 图片预览上传组件
  * @class $kit.ui.Upload.ImageUploader
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
+ * @requires array.js
  * @param {Object} config 组件配置
  * @param {Element} config.element 初始化哪一块div为上传组件
  * @param {String} config.action 接收上传文件的后台API接口地址

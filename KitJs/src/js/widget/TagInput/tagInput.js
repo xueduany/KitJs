@@ -2,9 +2,9 @@
  * Tag系统
  * 模仿stackOverFlow的表单提交tag系统
  * @class $kit.ui.TagInput
- * @required kit.js
- * @required ieFix.js
- * @required array.js
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires array.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/TagInput/tagInput.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/TagInput/demo.html">Demo</a><br/>

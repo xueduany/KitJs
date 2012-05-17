@@ -1,10 +1,10 @@
 /**
  * 功能强大的日历（中文，支持多选，划动多选，多语言支持，API操作，自定义事件，界面定制等等）
  * @class $kit.ui.DatePicker
- * @required kit.js
- * @required ieFix.js
- * @required dom.js
- * @required array.js
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
+ * @requires array.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/DatePicker/datepicker.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/DatePicker/demo.html">Demo</a><br/>

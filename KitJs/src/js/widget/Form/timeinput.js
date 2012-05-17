@@ -1,8 +1,8 @@
 /**
  * 时间输入框
  * @class $kit.ui.Form.TimeInput
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/timeinput.js">Source code</a>
  */
 $kit.ui.Form.TimeInput = function(config) {

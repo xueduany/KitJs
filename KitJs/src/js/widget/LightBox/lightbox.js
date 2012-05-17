@@ -1,11 +1,11 @@
 /**
  * 图片预览，点击图片，从图片位置打开一个视窗，居中，显示图片全图
  * @class $kit.ui.LightBox
- * @required kit.js
- * @required ieFix.js
- * @required dom.js
- * @required widget/Mask/mask.js
- * @required widget/SemitransparentLoading/semitransparentloading.js
+ * @requires kit.js
+ * @requires ieFix.js
+ * @requires dom.js
+ * @requires widget/Mask/mask.js
+ * @requires widget/SemitransparentLoading/semitransparentloading.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/LightBox/lightbox.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Lightbox-Gallery/demo.html">Demo</a><br/>

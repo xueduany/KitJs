@@ -1,8 +1,8 @@
 /**
  * 相册效果
  * @class $kit.ui.Gallery
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Gallery/gallery.js">Source code</a>
  * @example
  * <a href="http://xueduany.github.com/KitJs/KitJs/demo/Gallery/demo.html">Demo</a><br/>

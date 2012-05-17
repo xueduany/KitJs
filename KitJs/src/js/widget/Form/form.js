@@ -1,8 +1,8 @@
 /**
  * fom组件
  * @class $kit.ui.Form
- * @required kit.js
- * @required ieFix.js
+ * @requires kit.js
+ * @requires ieFix.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Form/form.js">Source code</a>
  */
 $kit.ui.Form = function(config) {
