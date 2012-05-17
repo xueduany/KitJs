@@ -1,0 +1,26 @@
+#kitjs-float-tips {
+	width: 300px;
+	height: 40px;
+	line-height: 40px;
+	background: #2C6FCE;
+	color: white;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -150px;
+	margin-top: -20px;
+	z-index: 99999;
+	text-align: center;
+	vertical-align: middle;
+	box-shadow: 0 0 10px #2c6fce;
+}
+#kitjs-float-tips s {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	top: 12px;
+	left: 12px;
+	margin-right: 10px;
+	background: url(http://xueduany.github.com/Ciku/img/media/loading.gif);
+}
