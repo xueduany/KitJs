@@ -9,64 +9,91 @@
 		<script src="http://xueduany.github.com/KitJs/KitJs/src/js/array.js"></script>
 		<script src="http://xueduany.github.com/KitJs/KitJs/src/js/dom.js"></script>
 		<script src="http://xueduany.github.com/KitJs/KitJs/src/js/widget/Upload/upload.js"></script>
+		<!--<script src="../../src/js/widget/Upload/upload.js"></script>-->
 		<link rel="stylesheet" href="http://xueduany.github.com/KitJs/KitJs/demo/Upload/upload.css" >
+		<!--<link rel="stylesheet" href="upload.css">-->
 		<style>
 			#file-uploader-demo1 {
-				width: 300px;
-				height: 100px;
+				min-width: 300px;
+				min-height: 100px;
 				display: block;
 			}
 			#photo-uploader-demo1 {
-				width: 100px;
-				height: 100px;
+				min-width: 100px;
 				display: block;
 			}
 		</style>
-	</head>
-	<body>
-		<div id="file-uploader-demo1">
-			<noscript>
-				<p>
-					Please enable JavaScript to use file uploader.
-				</p>
-				<!-- or put a simple form for upload here -->
-			</noscript>
-		</div>
-		<script>
-			var uploader = new $kit.ui.Upload.FileUploader({
-				element : document.getElementById('file-uploader-demo1'),
-				action : 'up.php'
-			});
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
 
 		</script>
-		<div id="photo-uploader-demo1">
-			<noscript>
-				<p>
-					Please enable JavaScript to use file uploader.
-				</p>
-				<!-- or put a simple form for upload here -->
-			</noscript>
-		</div>
-		<script>
-			var uploader = new $kit.ui.Upload.ImageUploader({
-				element : document.getElementById('photo-uploader-demo1'),
-				action : 'up.php',
-				allowedExtensions : ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
-				onSubmit : function(id, fileName) {
-					
-				},
-				onComplete : function(id, fileName, responseJSON) {
-					// var photo = $kit.el(".photo-field")[0];
-					// if(responseJSON.success != true) {
-						// return;
-					// }
-					// $kit.rmEl($kit.el(".tips", photo));
-					// $kit.rmEl($kit.el(".img-preview", photo));
-					// photo.appendChild($kit.newHTML('<div class="img-preview"><img src="' + responseJSON.url + '"/></div>'));
-					// $kit.el("@photoFile")[0].value = responseJSON.serverfile;
-				},
-				accept : 'image/*'
-			});
-		</script>
+		<link rel="stylesheet" href="http://xueduany.github.com/KitJs/KitJs/css.css" />
+	</head>
+	<body>
+		<a href="http://xueduany.github.com/KitJs/KitJs/index.html" class="backhome">返回首页</a>
+		<h1>KitJs异步上传组件</h1>
+		<ul>
+			<li>文件拖拽异步上传，高级浏览器支持</li>
+			<li>高级浏览器支持上传进度显示，loading图片可以自己在Css里面修改</li>
+			<li>IE使用iframe的form提交，无进度条显示</li>
+			<li>*注意,别使用中文文件名上传，或者你自己改写下后端的文件名逻辑</li>
+			<li>--------------------------------------------------------------------------------------</li>
+			<li>后端源代码见https://github.com/xueduany/KitJs/blob/master/KitJs/demo/Upload/up.php</li>
+			<li>前端源代码见https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Upload/upload.js</li>
+			<li>--------------------------------------------------------------------------------------</li>
+			<li>文件上传（Chrome支持拖拽文件上传）</li>
+				<br/>
+				<div id="file-uploader-demo1">
+					<noscript>
+						<p>
+							Please enable JavaScript to use file uploader.
+						</p>
+						<!-- or put a simple form for upload here -->
+					</noscript>
+				</div>
+				<script>
+					var uploader = new $kit.ui.Upload.FileUploader({
+						element : document.getElementById('file-uploader-demo1'),
+						action : 'up.php'
+					});
+		
+				</script>
+			</li>
+			<li>图片上传预览（Chrome支持拖拽图片上传）</li>
+				<br/>
+				<div id="photo-uploader-demo1">
+					<noscript>
+						<p>
+							Please enable JavaScript to use file uploader.
+						</p>
+						<!-- or put a simple form for upload here -->
+					</noscript>
+				</div>
+				<script>
+					var uploader = new $kit.ui.Upload.ImageUploader({
+						element : document.getElementById('photo-uploader-demo1'),
+						action : 'up.php',
+						allowedExtensions : ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
+						onSubmit : function(id, fileName) {
+							//
+						},
+						onComplete : function(id, fileName, responseJSON) {
+							//
+						},
+						accept : 'image/*'
+					});
+				</script>
+			</li>
+		</ul>
 	</body>
 </html>

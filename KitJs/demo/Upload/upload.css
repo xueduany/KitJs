@@ -110,8 +110,8 @@
 }
 .kitjs-image-uploader {
 	position: relative;
-	width: 100%;
-	height: 100%;
+	width: 100px;
+	height: 100px;
 	zoom: 1;
 }
 .kitjs-upload-image-preview {

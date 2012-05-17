@@ -325,9 +325,15 @@ $kit.ui.Upload.FileUploaderBasic.prototype = {
  * @param {Element} config.element 初始化哪一块div为上传组件
  * @param {String} config.action 接收上传文件的后台API接口地址
  * @param {[String]} [config.allowedExtensions] 允许上传的文件扩展名，如allowedExtensions : ['txt','exe'],
+ * @param {Number} [config.sizeLimit] 最大上传文件大小，sizeLimit: 0, // max size
+ * @param {Number} [config.minSizeLimit] 最小上传文件大小，minSizeLimit: 0, // min size
  * @param {Function} [config.onSubmit] 提交时事件，传入两个参数function(id, fileName)
  * @param {Function} [config.onComplete] 上传完毕事件，传入三个参数function(id, fileName, responseJSON)
- * @param {Accept} [config.accept] input file接受上传的文件类型筛选，可能部分浏览器支持不好 
+ * @param {Function} [config.onProgress] 上传过程事件，传入三个参数function(id, fileName, loaded, total){}
+ * @param {Function} [config.onCancel] 取消事件，function(id, fileName){}
+ * @param {Accept} [config.accept] input file接受上传的文件类型筛选，可能部分浏览器支持不好
+ * @param {Map} [config.message] 自定义错误信息，see $kit.ui.Upload.FileUploaderBasic for content
+ * @param {Function} [config.showMessage] 报错方法，showMessage: function(message){ alert(message); }
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Upload/upload.js">Source code</a>
  */
 $kit.ui.Upload.FileUploader = function(o) {
@@ -420,14 +426,20 @@ $kit.merge($kit.ui.Upload.FileUploader.prototype, {
 			onLeaveNotDescendants : function(e) {
 				clearInterval(_intervalClearDropArea);
 				_intervalClearDropArea = setInterval(function() {
-					dropArea.style.display = 'none';
+					$kit.each($kit.els8cls(self._options.classes['drop']), function(o) {
+						o.style.display = 'none';
+					});
+					//dropArea.style.display = 'none';
 				}, 300);
 				$kit.rmCls(dropArea, self._classes.dropActive);
 			},
 			onDrop : function(e) {
 				clearInterval(_intervalClearDropArea);
 				_intervalClearDropArea = setInterval(function() {
-					dropArea.style.display = 'none';
+					//dropArea.style.display = 'none';
+					$kit.each($kit.els8cls(self._options.classes['drop']), function(o) {
+						o.style.display = 'none';
+					});
 				}, 300);
 				$kit.rmCls(dropArea, self._classes.dropActive);
 				self._uploadFileList(e.dataTransfer.files);
@@ -1183,9 +1195,15 @@ $kit.merge($kit.ui.Upload.UploadHandlerXhr.prototype, {
  * @param {Element} config.element 初始化哪一块div为上传组件
  * @param {String} config.action 接收上传文件的后台API接口地址
  * @param {[String]} [config.allowedExtensions] 允许上传的文件扩展名，如allowedExtensions : ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
+ * @param {Number} [config.sizeLimit] 最大上传文件大小，sizeLimit: 0, // max size
+ * @param {Number} [config.minSizeLimit] 最小上传文件大小，minSizeLimit: 0, // min size
  * @param {Function} [config.onSubmit] 提交时事件，传入两个参数function(id, fileName)
  * @param {Function} [config.onComplete] 上传完毕事件，传入三个参数function(id, fileName, responseJSON)
- * @param {Accept} [config.accept] input file接受上传的文件类型筛选，可能部分浏览器支持不好 
+ * @param {Function} [config.onProgress] 上传过程事件，传入三个参数function(id, fileName, loaded, total){}
+ * @param {Function} [config.onCancel] 取消事件，function(id, fileName){}
+ * @param {Accept} [config.accept] input file接受上传的文件类型筛选，可能部分浏览器支持不好
+ * @param {Map} [config.message] 自定义错误信息，see $kit.ui.Upload.FileUploaderBasic for content
+ * @param {Function} [config.showMessage] 报错方法，showMessage: function(message){ alert(message); }
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Upload/upload.js">Source code</a>
  */
 $kit.ui.Upload.ImageUploader = function(o) {
