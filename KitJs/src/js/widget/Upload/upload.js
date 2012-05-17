@@ -320,7 +320,7 @@ $kit.ui.Upload.FileUploaderBasic.prototype = {
 //
 /**
  * 文件上传组件
- * @class $kit.ui.Upload.ImageUploader
+ * @class $kit.ui.Upload.FileUploader
  * @param {Object} config 组件配置
  * @param {Element} config.element 初始化哪一块div为上传组件
  * @param {String} config.action 接收上传文件的后台API接口地址
@@ -348,7 +348,7 @@ $kit.ui.Upload.FileUploader = function(o) {
 
 		template : ['<div class="kitjs-uploader">', //
 		'<div class="kitjs-upload-drop-area"><span>把文件拖到这里开始上传!</span></div>', //
-		'<div class="kitjs-upload-button">上传文件</div>', //
+		'<div class="kitjs-upload-button"><div class="tips">上传文件</div></div>', //
 		'<ul class="kitjs-upload-list"></ul>', //
 		'</div>'].join(''),
 
