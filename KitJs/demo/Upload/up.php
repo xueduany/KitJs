@@ -151,7 +151,7 @@ class FileUploader {
 		}
 
 		if ($this -> file -> save($uploadDirectory . $filename . '.' . $ext)) {
-			return array('success' => true , 'url' => 'http://192.168.72.95/KitJs/KitJs/demo/Upload/Uploads/'.$filename.'.'.$ext);
+			return array('success' => true , 'url' => 'http://server-ip/KitJs/KitJs/demo/Upload/Uploads/'.$filename.'.'.$ext);
 		} else {
 			return array('error' => 'Could not save uploaded file.' . 'The upload was cancelled, or server error encountered');
 		}
