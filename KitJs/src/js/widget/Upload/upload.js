@@ -14,7 +14,9 @@
 //
 // Helper functions
 //
-
+/**
+ * @namespace $kit.ui.Upload
+ */
 $kit.ui.Upload = {};
 
 $kit.ui.Upload.getUniqueId = (function() {
@@ -316,6 +318,18 @@ $kit.ui.Upload.FileUploaderBasic.prototype = {
 // Class that creates upload widget with drag-and-drop and file list
 // @inherits $kit.ui.Upload.FileUploaderBasic
 //
+/**
+ * 文件上传组件
+ * @class $kit.ui.Upload.ImageUploader
+ * @param {Object} config 组件配置
+ * @param {Element} config.element 初始化哪一块div为上传组件
+ * @param {String} config.action 接收上传文件的后台API接口地址
+ * @param {[String]} [config.allowedExtensions] 允许上传的文件扩展名，如allowedExtensions : ['txt','exe'],
+ * @param {Function} [config.onSubmit] 提交时事件，传入两个参数function(id, fileName)
+ * @param {Function} [config.onComplete] 上传完毕事件，传入三个参数function(id, fileName, responseJSON)
+ * @param {Accept} [config.accept] input file接受上传的文件类型筛选，可能部分浏览器支持不好 
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Upload/upload.js">Source code</a>
+ */
 $kit.ui.Upload.FileUploader = function(o) {
 	// call parent constructor
 	$kit.ui.Upload.FileUploaderBasic.apply(this, arguments);
@@ -369,6 +383,9 @@ $kit.ui.Upload.FileUploader = function(o) {
 	this._classes = this._options.classes;
 
 	this._button = this._createUploadButton(this._find(this._element, 'button'));
+	if(this._options.accept) {
+		$kit.attr(this._button._input, 'accept', this._options.accept);
+	}
 
 	this._bindCancelEvent();
 	this._setupDragDrop();
@@ -1159,7 +1176,18 @@ $kit.merge($kit.ui.Upload.UploadHandlerXhr.prototype, {
 		}
 	}
 });
-
+/**
+ * 图片预览上传组件
+ * @class $kit.ui.Upload.ImageUploader
+ * @param {Object} config 组件配置
+ * @param {Element} config.element 初始化哪一块div为上传组件
+ * @param {String} config.action 接收上传文件的后台API接口地址
+ * @param {[String]} [config.allowedExtensions] 允许上传的文件扩展名，如allowedExtensions : ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
+ * @param {Function} [config.onSubmit] 提交时事件，传入两个参数function(id, fileName)
+ * @param {Function} [config.onComplete] 上传完毕事件，传入三个参数function(id, fileName, responseJSON)
+ * @param {Accept} [config.accept] input file接受上传的文件类型筛选，可能部分浏览器支持不好 
+ * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/widget/Upload/upload.js">Source code</a>
+ */
 $kit.ui.Upload.ImageUploader = function(o) {
 	// call parent constructor
 	$kit.ui.Upload.FileUploaderBasic.apply(this, arguments);
@@ -1223,9 +1251,30 @@ $kit.ui.Upload.ImageUploader = function(o) {
 };
 $kit.ui.Upload.ImageUploader.prototype = {
 	_onComplete : function(id, fileName, result) {
-		var imgPreview = $kit.el8cls('kitjs-upload-image-preview', this._element).childNodes[0];
-		imgPreview.innerHTML = '';
-		imgPreview.innerHTML = '<img src="' + result.url + '">';
+		var imgPreview = $kit.el8cls('box', $kit.el8cls('kitjs-upload-image-preview', this._element));
+		var maxWidth = imgPreview.offsetWidth;
+		var maxHeight = imgPreview.offsetHeight;
+		var img = new Image();
+		var width = 0;
+		var height = 0;
+		img.onload = function() {
+			width = img.width;
+			height = img.height;
+			if(width > maxWidth) {
+				width = maxWidth;
+				height = img.height / img.width * maxWidth;
+			}
+			if(height > maxHeight) {
+				width = img.width / img.height * maxHeight;
+				height = maxHeight;
+			}
+			imgPreview.style.fontSize = 0;
+			imgPreview.innerHTML = '';
+			imgPreview.innerHTML = '<img src="' + result.url + '" style="width:0;height:100%"><img width="' + width + '" height="' + height + '" src="' + result.url + '">';
+			img = null;
+		}
+		img.src = result.url;
+
 		$kit.ui.Upload.FileUploaderBasic.prototype._onComplete.apply(this, arguments);
 
 		// mark completed
