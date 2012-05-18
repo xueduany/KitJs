@@ -259,10 +259,18 @@ $kit.merge($Kit.Anim.prototype,
 				var el = $kit.el(elArray[k]);
 				if($kit.isNode(el)) {
 					if($kit.inAry(exceptStyleArray, styleName)) {
-						if(styleName.toLowerCase() == 'scrolltop' && el == document.body) {
-							scrollTo($kit.viewport().scrollLeft, styleValue);
-						} else if(styleName.toLowerCase() == 'scrollleft' && el == document.body) {
-							scrollTo(styleValue, $kit.viewport().scrollTop);
+						if(styleName.toLowerCase() == 'scrolltop') {
+							if(el == document.body) {
+								scrollTo($kit.viewport().scrollLeft, styleValue);
+							} else {
+								el.scrollTop = styleValue;
+							}
+						} else if(styleName.toLowerCase() == 'scrollleft') {
+							if(el == document.body) {
+								scrollTo(styleValue, $kit.viewport().scrollTop);
+							} else {
+								el.scrollLeft = styleValue;
+							}
 						} else {
 							try {
 								$kit.css(el, styleName, styleValue);
@@ -278,10 +286,18 @@ $kit.merge($Kit.Anim.prototype,
 				} else if($kit.isNodeList(el)) {
 					for(var j = 0; j < el.length; j++) {
 						if($kit.inAry(exceptStyleArray, styleName)) {
-							if(styleName.toLowerCase() == 'scrolltop' && el[j] == document.body) {
-								scrollTo($kit.viewport().scrollLeft, styleValue);
-							} else if(styleName.toLowerCase() == 'scrollleft' && el[j] == document.body) {
-								scrollTo(styleValue, $kit.viewport().scrollTop);
+							if(styleName.toLowerCase() == 'scrolltop') {
+								if(el[j] == document.body) {
+									scrollTo($kit.viewport().scrollLeft, styleValue);
+								} else {
+									el[j].scrollTop = styleValue;
+								}
+							} else if(styleName.toLowerCase() == 'scrollleft') {
+								if(el[j] == document.body) {
+									scrollTo(styleValue, $kit.viewport().scrollTop);
+								} else {
+									el[j].scrollLeft = styleValue;
+								}
 							} else {
 								try {
 									$kit.css(el[j], styleName, styleValue);
