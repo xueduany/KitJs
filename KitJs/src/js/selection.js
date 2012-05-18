@@ -122,6 +122,23 @@ $kit.merge($Kit.Selection.prototype,
 		if(window.getSelection) {
 			return this.getRange().startContainer;
 		}
+	},
+	getStartContainer : function(range) {
+		if(range.startContainer) {
+			return range.startContainer;
+		} else {
+			var range1 = range.duplicate();
+			range1.collapse(true);
+			var parentNodeList = range1.parentElement().childNodes;
+			var re;
+			var range2 = document.body.createTextRange();
+			for(var i = 0; i < parentNodeList.length; i++) {
+				var o = parentNodeList[i];
+				if(o.nodeType == 1) {
+					range2.moveToElementText(o);
+				}
+			}
+		}
 	}
 });
 /**
