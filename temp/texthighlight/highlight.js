@@ -62,8 +62,7 @@ function highLightSelection(color) {
 		if(range.text.length) {
 			var startEl = ie_getStartRangeEl();
 			var endEl = ie_getEndRangeEl();
-			var selTxt = hpath(startEl) + '|' + ie_getStartPos(startEl) + '|' + hpath(endEl) + '|' + ie_getEndPos(endEl) + '|' + color;
-			console.log(selTxt);
+			var selTxt = hpath(startEl) + '|' + (ie_getStartPos(startEl) + 1) + '|' + hpath(endEl) + '|' + (ie_getEndPos(endEl) + 1) + '|' + color;
 			document.designMode = 'on';
 			document.execCommand('backcolor', false, color);
 			document.designMode = 'off';
@@ -74,10 +73,10 @@ function highLightSelection(color) {
 }
 
 function ie_getStartRangeEl() {
-	var range = document.selection.createRange();
-	var range1 = range.duplicate();
+	var range1 = document.selection.createRange().duplicate();
+	range1.collapse(true);
 	var range2 = document.body.createTextRange();
-	var parent = range.parentElement();
+	var parent = range1.parentElement();
 	var re;
 	var i;
 	for( i = 0; i < parent.childNodes.length; i++) {
@@ -96,17 +95,16 @@ function ie_getStartRangeEl() {
 	if(re == null && parent.childNodes[i - 1].nodeType == 3 || parent.childNodes[i - 1].nodeType == 4) {
 		re = parent.childNodes[i - 1];
 	}
-	range = null;
 	range1 = null;
 	range2 = null;
 	return re;
 }
 
 function ie_getEndRangeEl() {
-	var range = document.selection.createRange();
-	var range1 = range.duplicate();
+	var range1 = document.selection.createRange().duplicate();
+	range1.collapse(false);
 	var range2 = document.body.createTextRange();
-	var parent = range.parentElement();
+	var parent = range1.parentElement();
 	var re;
 	var i;
 	for( i = 0; i < parent.childNodes.length; i++) {
@@ -125,48 +123,84 @@ function ie_getEndRangeEl() {
 	if(re == null && parent.childNodes[i - 1].nodeType == 3 || parent.childNodes[i - 1].nodeType == 4) {
 		re = parent.childNodes[i - 1];
 	}
-	range = null;
 	range1 = null;
 	range2 = null;
 	return re;
 }
 
 function ie_getStartPos(node) {
-	var range = document.selection.createRange().duplicate();
-	if(range.text.length == 0) {
-		return;
-	}
-	var re = 0;
+	var range1 = document.selection.createRange().duplicate();
+	range1.collapse(true);
+	var re = -1;
+	var range2;
 	if(node.previousSibling) {
-		var range1 = document.body.createTextRange();
+		range2 = document.body.createTextRange()
 		if(node.previousSibling.nodeType == 1) {
-			range1.moveToElementText(node.previousSibling);
+			range2.moveToElementText(node.previousSibling);
+			while(range2.compareEndPoints('EndToStart', range1) < 0) {
+				range1.moveStart("character", -1);
+				re++;
+			}
 		} else {
-			range1.moveToElementText(node);
+			range2.moveToElementText(node);
+			while(range2.compareEndPoints('StartToStart', range1) < 0) {
+				range1.moveStart("character", -1);
+				re++;
+			}
 		}
 	} else {
-		var textLength = (node.innerText || node.nodeValue).length;
-		var oldSelectionParent = range.parentElement();
-		do {
-			range.moveEnd("character", 1);
-		} while(range.parentElement()==oldSelectionParent);
-		range.moveEnd("character", -1);
-		return (textLength - range.text.length);
+		var oldSelectionParent = range1.parentElement();
+		range2 = range1.duplicate();
+		while(range2.parentElement() == oldSelectionParent) {
+			range2.moveStart("character", -1);
+			re++;
+		}
+		re--;
 	}
+	range1 = null;
+	range2 = null;
+	return re;
 }
 
 function ie_getEndPos(node) {
-	var range = document.selection.createRange().duplicate();
-	if(range.text.length == 0) {
-		return;
+	var range1 = document.selection.createRange().duplicate();
+	range1.collapse(false);
+	var re = -1;
+	var range2;
+	if(node.nextSibling) {
+		range2 = document.body.createTextRange();
+		if(node.nextSibling.nodeType == 1) {
+			range2.moveToElementText(node.nextSibling);
+			while(range2.compareEndPoints('StartToEnd', range1) > 0) {
+				range1.moveEnd("character", 1);
+				re++;
+			}
+			re++;
+		} else {
+			range2.moveToElementText(node);
+			while(range2.compareEndPoints('EndToEnd', range1) > 0) {
+				range1.moveEnd("character", 1);
+				re++;
+			}
+			re++;
+		}
+	} else {
+		var oldSelectionParent = range1.parentElement();
+		range2 = range1.duplicate();
+		while(range2.parentElement() == oldSelectionParent) {
+			range2.moveEnd("character", 1);
+			re++;
+		}
+		re++;
 	}
-	var textLength = (node.innerText || node.nodeValue).length;
-	var oldSelectionParent = range.parentElement();
-	do {
-		range.moveStart("character", 1);
-	} while(range.parentElement()==oldSelectionParent);
-	range.moveStart("character", -1);
-	return (textLength - range.text.length);
+	range1 = null;
+	range2 = null;
+	if(node.nodeType == 1) {
+		re = node.innerHTML.length - re;
+	} else {
+		re = node.nodeValue.length - re;
+	}
+	return re;
 }
 
 function hpath(node, currentPath) {
