@@ -831,7 +831,6 @@ $kit.merge($kit.ui.Audio.prototype,
 		}, 300);
 	},
 	adjustProgressIconPos : function(time) {
-		console.log(time);
 		var player = this.config.playerTemplate, //
 		scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
 		progress = $kit.el8cls(player.progressCls, this.wrapper);
