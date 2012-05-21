@@ -44,6 +44,21 @@ function restoreHighLight(selectionDetailsList) {
 	document.designMode = 'off';
 }
 
+function getXpathStringFromBookMark(bookmark) {
+	var range = document.body.createTextRange();
+	range.moveToBookmark(bookmark);
+	if(range.text.length) {
+		var startEl = ie_getStartRangeEl();
+		var endEl = ie_getEndRangeEl();
+		var selTxt = hpath(startEl) + '|' + (ie_getStartPos(startEl) + 1) + '|' + hpath(endEl) + '|' + (ie_getEndPos(endEl) + 1) + '|' + color;
+		// document.designMode = 'on';
+		// document.execCommand('backcolor', false, color);
+		// document.designMode = 'off';
+		//selection.removeAllRanges();
+		return selTxt;
+	}
+}
+
 function highLightSelection(color) {
 	if( typeof window.getSelection != 'undefined') {
 		var selection = window.getSelection();
@@ -73,89 +88,107 @@ function highLightSelection(color) {
 }
 
 function ie_getStartRangeEl() {
-	var range1 = document.selection.createRange().duplicate();
-	range1.collapse(true);
-	var range2 = document.body.createTextRange();
-	var parent = range1.parentElement();
-	var re;
-	var i;
-	for( i = 0; i < parent.childNodes.length; i++) {
-		var c = parent.childNodes[i];
-		if(c.nodeType == 1) {
-			range2.moveToElementText(c);
-			var comparisonStart = range2.compareEndPoints('StartToStart', range1);
-			var comparisonEnd = range2.compareEndPoints('EndToStart', range1);
-			if(comparisonStart > 0 && (parent.childNodes[i - 1].nodeType == 3 || parent.childNodes[i - 1].nodeType == 4)) {
-				re = parent.childNodes[i - 1];
-			} else if(!comparisonStart || comparisonEnd == 1 && comparisonStart == -1) {
-				re = parent.childNodes[i];
+	var range = document.selection.createRange().duplicate();
+	if(range.startContainer) {
+		return range.startContainer;
+	} else {
+		var range1 = range.duplicate();
+		range1.collapse(true);
+		var parentNodeList = range1.parentElement().childNodes;
+		var re;
+		var range2 = document.body.createTextRange();
+		for(var i = 0; i < parentNodeList.length; i++) {
+			var o = parentNodeList[i];
+			if(o.nodeType == 1) {
+				range2.moveToElementText(o);
+				if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
+					re = o;
+					break;
+				} else if(range1.compareEndPoints('StartToStart', range2) < 0 && (o.previousSibling.nodeType == 3 || o.previousSibling.nodeType == 4)) {
+					re = o.previousSibling;
+					break;
+				}
+			}
+			if(i == parentNodeList.length - 1) {
+				re = o;
 			}
 		}
+		range1 = null;
+		range2 = null;
+		range.startContainer = re;
+		return re;
 	}
-	if(re == null && parent.childNodes[i - 1].nodeType == 3 || parent.childNodes[i - 1].nodeType == 4) {
-		re = parent.childNodes[i - 1];
-	}
-	range1 = null;
-	range2 = null;
-	return re;
 }
 
 function ie_getEndRangeEl() {
-	var range1 = document.selection.createRange().duplicate();
-	range1.collapse(false);
-	var range2 = document.body.createTextRange();
-	var parent = range1.parentElement();
-	var re;
-	var i;
-	for( i = 0; i < parent.childNodes.length; i++) {
-		var c = parent.childNodes[i];
-		if(c.nodeType == 1) {
-			range2.moveToElementText(c);
-			var comparisonStart = range2.compareEndPoints('StartToEnd', range1);
-			var comparisonEnd = range2.compareEndPoints('EndToEnd', range1);
-			if(comparisonStart > 0 && (parent.childNodes[i - 1].nodeType == 3 || parent.childNodes[i - 1].nodeType == 4)) {
-				re = parent.childNodes[i - 1];
-			} else if(!comparisonStart || comparisonEnd == 1 && comparisonStart == -1) {
-				re = parent.childNodes[i];
+	var range = document.selection.createRange().duplicate();
+	if(range.endContainer) {
+		return range.endContainer;
+	} else {
+		var range1 = range.duplicate();
+		range1.collapse(false);
+		var parentNodeList = range1.parentElement().childNodes;
+		var re;
+		var range2 = document.body.createTextRange();
+		for(var i = 0; i < parentNodeList.length; i++) {
+			var o = parentNodeList[i];
+			if(o.nodeType == 1) {
+				range2.moveToElementText(o);
+				if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
+					re = o;
+					break;
+				} else if(range1.compareEndPoints('EndToEnd', range2) < 0 && (o.previousSibling.nodeType == 3 || o.previousSibling.nodeType == 4)) {
+					re = o.previousSibling;
+					break;
+				}
+			}
+			if(i == parentNodeList.length - 1) {
+				re = o;
 			}
 		}
+		range1 = null;
+		range2 = null;
+		range.endContainer = re;
+		return re;
 	}
-	if(re == null && parent.childNodes[i - 1].nodeType == 3 || parent.childNodes[i - 1].nodeType == 4) {
-		re = parent.childNodes[i - 1];
-	}
-	range1 = null;
-	range2 = null;
-	return re;
 }
 
 function ie_getStartPos(node) {
-	var range1 = document.selection.createRange().duplicate();
+	var range = document.selection.createRange().duplicate();
+	var range1 = range.duplicate();
 	range1.collapse(true);
 	var re = -1;
 	var range2;
+	if(node == null) {
+		node = this.getStartContainer(range);
+	}
 	if(node.previousSibling) {
-		range2 = document.body.createTextRange()
+		range2 = document.body.createTextRange();
 		if(node.previousSibling.nodeType == 1) {
 			range2.moveToElementText(node.previousSibling);
 			while(range2.compareEndPoints('EndToStart', range1) < 0) {
-				range1.moveStart("character", -1);
 				re++;
+				if(range1.moveStart("character", -1) == 0) {
+					break;
+				}
 			}
 		} else {
 			range2.moveToElementText(node);
-			while(range2.compareEndPoints('StartToStart', range1) < 0) {
-				range1.moveStart("character", -1);
+			while(range2.compareEndPoints('StartToStart', range1) <= 0) {
 				re++;
+				if(range1.moveStart("character", -1) == 0) {
+					break;
+				}
 			}
 		}
 	} else {
-		var oldSelectionParent = range1.parentElement();
 		range2 = range1.duplicate();
-		while(range2.parentElement() == oldSelectionParent) {
-			range2.moveStart("character", -1);
+		while(range2.parentElement() == range1.parentElement()) {
 			re++;
+			if(range2.moveStart("character", -1) == 0) {
+				break;
+			}
 		}
-		re--;
 	}
 	range1 = null;
 	range2 = null;
@@ -163,43 +196,44 @@ function ie_getStartPos(node) {
 }
 
 function ie_getEndPos(node) {
-	var range1 = document.selection.createRange().duplicate();
+	var range = document.selection.createRange().duplicate();
+	var range1 = range.duplicate();
 	range1.collapse(false);
 	var re = -1;
 	var range2;
-	if(node.nextSibling) {
+	if(node == null) {
+		node = this.getEndContainer(range);
+	}
+	if(node.previousSibling) {
 		range2 = document.body.createTextRange();
-		if(node.nextSibling.nodeType == 1) {
-			range2.moveToElementText(node.nextSibling);
-			while(range2.compareEndPoints('StartToEnd', range1) > 0) {
-				range1.moveEnd("character", 1);
+		if(node.previousSibling.nodeType == 1) {
+			range2.moveToElementText(node.previousSibling);
+			while(range2.compareEndPoints('EndToStart', range1) < 0) {
 				re++;
+				if(range1.moveStart("character", -1) == 0) {
+					break;
+				}
 			}
-			re++;
 		} else {
 			range2.moveToElementText(node);
-			while(range2.compareEndPoints('EndToEnd', range1) > 0) {
-				range1.moveEnd("character", 1);
+			while(range2.compareEndPoints('StartToStart', range1) <= 0) {
 				re++;
+				if(range1.moveStart("character", -1) == 0) {
+					break;
+				}
 			}
-			re++;
 		}
 	} else {
-		var oldSelectionParent = range1.parentElement();
 		range2 = range1.duplicate();
-		while(range2.parentElement() == oldSelectionParent) {
-			range2.moveEnd("character", 1);
+		while(range2.parentElement() == range1.parentElement()) {
 			re++;
+			if(range2.moveStart("character", -1) == 0) {
+				break;
+			}
 		}
-		re++;
 	}
 	range1 = null;
 	range2 = null;
-	if(node.nodeType == 1) {
-		re = node.innerHTML.length - re;
-	} else {
-		re = node.nodeValue.length - re;
-	}
 	return re;
 }
 

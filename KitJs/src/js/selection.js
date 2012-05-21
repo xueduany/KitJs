@@ -115,14 +115,10 @@ $kit.merge($Kit.Selection.prototype,
 		return range.htmlText
 	},
 	/**
-	 * 未完成
-	 * @inner
+	 * 获取range的开始元素
+	 * @param {Range}
+	 * @return {Node}
 	 */
-	getBegin : function() {
-		if(window.getSelection) {
-			return this.getRange().startContainer;
-		}
-	},
 	getStartContainer : function(range) {
 		if(range.startContainer) {
 			return range.startContainer;
@@ -136,8 +132,158 @@ $kit.merge($Kit.Selection.prototype,
 				var o = parentNodeList[i];
 				if(o.nodeType == 1) {
 					range2.moveToElementText(o);
+					if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
+						re = o;
+						break;
+					} else if(range1.compareEndPoints('StartToStart', range2) < 0 && (o.previousSibling.nodeType == 3 || o.previousSibling.nodeType == 4)) {
+						re = o.previousSibling;
+						break;
+					}
+				}
+				if(i == parentNodeList.length - 1) {
+					re = o;
 				}
 			}
+			range1 = null;
+			range2 = null;
+			range.startContainer = re;
+			return re;
+		}
+	},
+	/**
+	 * 获取range初始容器的偏移量
+	 * @param {Range}
+	 * @param {Node}
+	 * @return {Number}
+	 */
+	getStartOffset : function(range, node) {
+		if(range.startOffset) {
+			return range.startOffset;
+		} else {
+			var range1 = range.duplicate();
+			range1.collapse(true);
+			var re = -1;
+			var range2;
+			if(node == null) {
+				node = this.getStartContainer(range);
+			}
+			if(node.previousSibling) {
+				range2 = document.body.createTextRange();
+				if(node.previousSibling.nodeType == 1) {
+					range2.moveToElementText(node.previousSibling);
+					while(range2.compareEndPoints('EndToStart', range1) < 0) {
+						re++;
+						if(range1.moveStart("character", -1) == 0) {
+							break;
+						}
+					}
+				} else {
+					range2.moveToElementText(node);
+					while(range2.compareEndPoints('StartToStart', range1) <= 0) {
+						re++;
+						if(range1.moveStart("character", -1) == 0) {
+							break;
+						}
+					}
+				}
+			} else {
+				range2 = range1.duplicate();
+				while(range2.parentElement() == range1.parentElement()) {
+					re++;
+					if(range2.moveStart("character", -1) == 0) {
+						break;
+					}
+				}
+			}
+			range1 = null;
+			range2 = null;
+			return re;
+		}
+	},
+	/**
+	 * 获取range的结束元素
+	 * @param {Range}
+	 * @return {Node}
+	 */
+	getEndContainer : function(range) {
+		if(range.endContainer) {
+			return range.endContainer;
+		} else {
+			var range1 = range.duplicate();
+			range1.collapse(false);
+			var parentNodeList = range1.parentElement().childNodes;
+			var re;
+			var range2 = document.body.createTextRange();
+			for(var i = 0; i < parentNodeList.length; i++) {
+				var o = parentNodeList[i];
+				if(o.nodeType == 1) {
+					range2.moveToElementText(o);
+					if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
+						re = o;
+						break;
+					} else if(range1.compareEndPoints('EndToEnd', range2) < 0 && (o.previousSibling.nodeType == 3 || o.previousSibling.nodeType == 4)) {
+						re = o.previousSibling;
+						break;
+					}
+				}
+				if(i == parentNodeList.length - 1) {
+					re = o;
+				}
+			}
+			range1 = null;
+			range2 = null;
+			range.endContainer = re;
+			return re;
+		}
+	},
+	/**
+	 * 获取range结束容器的偏移量
+	 * @param {Range}
+	 * @param {Node}
+	 * @return {Number}
+	 */
+	getEndOffset : function(range, node) {
+		if(range.endOffset) {
+			return range.endOffset;
+		} else {
+			var range1 = range.duplicate();
+			range1.collapse(false);
+			var re = -1;
+			var range2;
+			if(node == null) {
+				node = this.getEndContainer(range);
+			}
+			if(node.previousSibling) {
+				range2 = document.body.createTextRange();
+				if(node.previousSibling.nodeType == 1) {
+					range2.moveToElementText(node.previousSibling);
+					while(range2.compareEndPoints('EndToStart', range1) < 0) {
+						re++;
+						if(range1.moveStart("character", -1) == 0) {
+							break;
+						}
+					}
+				} else {
+					range2.moveToElementText(node);
+					while(range2.compareEndPoints('StartToStart', range1) <= 0) {
+						re++;
+						if(range1.moveStart("character", -1) == 0) {
+							break;
+						}
+					}
+				}
+			} else {
+				range2 = range1.duplicate();
+				while(range2.parentElement() == range1.parentElement()) {
+					re++;
+					if(range2.moveStart("character", -1) == 0) {
+						break;
+					}
+				}
+			}
+			range1 = null;
+			range2 = null;
+			return re;
 		}
 	}
 });
