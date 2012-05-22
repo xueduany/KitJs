@@ -285,6 +285,50 @@ $kit.merge($Kit.Selection.prototype,
 			range2 = null;
 			return re;
 		}
+	},
+	/**
+	 *
+	 */
+	getXpath : function(range) {
+
+	},
+	hpath : function(node, currentPath) {
+		currentPath = currentPath || '';
+		if(node == document.body)
+			return '//DIV[@id=\"' + node.id + '\"]/' + currentPath;
+		switch (node.nodeType) {
+			case 3:
+			case 4:
+				if(/MSIE/.test(navigator.userAgent)) {
+					return hpath(node.parentNode, 'text()[' + (_indexOfNodeList(node, _filterNodeList(node.parentNode.childNodes, //
+					function(p) {
+						if(p.nodeType && (p.nodeType == 4 || p.nodeType == 3)) {
+							return true;
+						}
+					}//
+					)//
+					) + 1) + ']');
+				} else {
+					return hpath(node.parentNode, 'text()[' + (document.evaluate('preceding-sibling::text()', node, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength + 1) + ']');
+				}
+			case 1:
+				if(/MSIE/.test(navigator.userAgent)) {
+					return hpath(node.parentNode, node.nodeName + '[' + (_indexOfNodeList(node, _filterNodeList(node.parentNode.childNodes, //
+					function(p) {
+						if(p.nodeType && p.nodeType == 1 && p.nodeName && p.nodeName == node.nodeName) {
+							return true;
+						}
+					}//
+					)//
+					) + 1) + ']' + ( currentPath ? '/' + currentPath : ''));
+				} else {
+					return hpath(node.parentNode, node.nodeName + '[' + (document.evaluate('preceding-sibling::' + node.nodeName, node, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength + 1) + ']' + ( currentPath ? '/' + currentPath : ''));
+				}
+			case 9:
+				return '/' + currentPath;
+			default:
+				return '';
+		}
 	}
 });
 /**
