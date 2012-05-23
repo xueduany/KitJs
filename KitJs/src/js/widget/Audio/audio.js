@@ -195,6 +195,9 @@ $kit.merge($kit.ui.Audio,
 		 * 读取过程中默认回调方法
 		 */
 		loadProgress : function(percent) {
+			if(isNaN(percent)) {
+				return;
+			}
 			var player = this.config.playerTemplate, //
 			scrubber = $kit.el8cls(player.scrubberCls, this.wrapper), //
 			loaded = $kit.el8cls(player.loaderCls, this.wrapper);
@@ -570,6 +573,7 @@ $kit.merge($kit.ui.Audio.prototype,
 			audio['updatePlayhead'].call(audio, [percent])
 			audio.element.skipTo(percent);
 			audio.adjustProgressIconPos(audio.duration * percent);
+			audio.currentTime = audio.duration * percent;
 			audio.newEv('skipTo');
 		}
 		audio['skipTimeTo'] = function(time) {
@@ -579,6 +583,7 @@ $kit.merge($kit.ui.Audio.prototype,
 			audio['updatePlayhead'].call(audio, [time / audio.duration])
 			audio.element.skipTimeTo(time);
 			audio.adjustProgressIconPos(time);
+			audio.currentTime = time;
 			audio.newEv('skipTo');
 		}
 		audio['updatePlayhead'] = function(percent) {
@@ -665,6 +670,7 @@ $kit.merge($kit.ui.Audio.prototype,
 		percent = percent > 1 ? 1 : percent;
 		var time = this.duration * percent;
 		this.element.currentTime = time;
+		this.currentTime = time;
 		this.adjustProgressIconPos(time);
 		this.updatePlayhead();
 		this.newEv('skipTo');
@@ -677,6 +683,7 @@ $kit.merge($kit.ui.Audio.prototype,
 		if(time > this.duration)
 			return;
 		this.element.currentTime = time;
+		this.currentTime = time;
 		this.adjustProgressIconPos(time);
 		this.updatePlayhead();
 		this.newEv('skipTo');
