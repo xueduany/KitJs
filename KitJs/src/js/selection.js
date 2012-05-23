@@ -2,6 +2,7 @@
  * 鼠标选取热区
  * @class $Kit.Selection
  * @requires kit.js
+ * @requires array.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/selection.js">Source code</a>
  */
 $Kit.Selection = function() {
@@ -95,7 +96,10 @@ $kit.merge($Kit.Selection.prototype,
 		if(range == null) {
 			return;
 		}
-		return range.text || range.toString();
+		if('text' in range) {
+			return range.text;
+		}
+		return range.toString();
 	},
 	/**
 	 * 获得选取HTML
@@ -120,35 +124,58 @@ $kit.merge($Kit.Selection.prototype,
 	 * @return {Node}
 	 */
 	getStartContainer : function(range) {
+		range = range || this.getRange();
 		if(range.startContainer) {
 			return range.startContainer;
 		} else {
-			var range1 = range.duplicate();
-			range1.collapse(true);
-			var parentNodeList = range1.parentElement().childNodes;
-			var re;
-			var range2 = document.body.createTextRange();
-			for(var i = 0; i < parentNodeList.length; i++) {
-				var o = parentNodeList[i];
-				if(o.nodeType == 1) {
-					range2.moveToElementText(o);
-					if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
-						re = o;
-						break;
-					} else if(range1.compareEndPoints('StartToStart', range2) < 0 && (o.previousSibling.nodeType == 3 || o.previousSibling.nodeType == 4)) {
-						re = o.previousSibling;
-						break;
-					}
-				}
-				if(i == parentNodeList.length - 1) {
-					re = o;
-				}
-			}
-			range1 = null;
-			range2 = null;
+			var re = this._determineRangeNode(range, true);
 			range.startContainer = re;
 			return re;
 		}
+	},
+	_determineRangeNode : function(range, isStart) {
+		var range1 = range.duplicate();
+		range1.collapse(isStart);
+		var parent = range1.parentElement();
+		var nodes = parent.childNodes;
+		var re;
+		var range2 = document.body.createTextRange();
+		range2.moveToElementText(parent);
+		range2.collapse(true);
+		for(var i = 0; i < nodes.length; i++) {
+			var o = nodes[i];
+			if(o.nodeType == 1) {
+				range2.moveToElementText(o);
+				if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
+					re = o;
+					break;
+				}
+			} else {
+				range2.moveToElementText(parent);
+				var startOffset = 0;
+				var previousSibling = o;
+				while(previousSibling.previousSibling) {
+					previousSibling = previousSibling.previousSibling;
+					if(previousSibling.nodeType == 1) {
+						range2.moveToElementText(previousSibling);
+						range2.collapse(false);
+						break;
+					} else {
+						startOffset += previousSibling.nodeValue.length;
+					}
+				}
+				range2.moveStart('character', startOffset);
+				range2.collapse(true);
+				range2.moveEnd('character', o.nodeValue.length - 1);
+				if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
+					re = o;
+					break;
+				}
+			}
+		}
+		range1 = null;
+		range2 = null;
+		return re;
 	},
 	/**
 	 * 获取range初始容器的偏移量
@@ -157,7 +184,7 @@ $kit.merge($Kit.Selection.prototype,
 	 * @return {Number}
 	 */
 	getStartOffset : function(range, node) {
-		if(range.startOffset) {
+		if('startOffset' in range) {
 			return range.startOffset;
 		} else {
 			var range1 = range.duplicate();
@@ -173,7 +200,7 @@ $kit.merge($Kit.Selection.prototype,
 					range2.moveToElementText(node.previousSibling);
 					while(range2.compareEndPoints('EndToStart', range1) < 0) {
 						re++;
-						if(range1.moveStart("character", -1) == 0) {
+						if(range1.moveStart('character', -1) == 0) {
 							break;
 						}
 					}
@@ -181,7 +208,7 @@ $kit.merge($Kit.Selection.prototype,
 					range2.moveToElementText(node);
 					while(range2.compareEndPoints('StartToStart', range1) <= 0) {
 						re++;
-						if(range1.moveStart("character", -1) == 0) {
+						if(range1.moveStart('character', -1) == 0) {
 							break;
 						}
 					}
@@ -190,7 +217,7 @@ $kit.merge($Kit.Selection.prototype,
 				range2 = range1.duplicate();
 				while(range2.parentElement() == range1.parentElement()) {
 					re++;
-					if(range2.moveStart("character", -1) == 0) {
+					if(range2.moveStart('character', -1) == 0) {
 						break;
 					}
 				}
@@ -206,35 +233,58 @@ $kit.merge($Kit.Selection.prototype,
 	 * @return {Node}
 	 */
 	getEndContainer : function(range) {
+		range = range || this.getRange();
 		if(range.endContainer) {
 			return range.endContainer;
 		} else {
-			var range1 = range.duplicate();
-			range1.collapse(false);
-			var parentNodeList = range1.parentElement().childNodes;
-			var re;
-			var range2 = document.body.createTextRange();
-			for(var i = 0; i < parentNodeList.length; i++) {
-				var o = parentNodeList[i];
-				if(o.nodeType == 1) {
-					range2.moveToElementText(o);
-					if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
-						re = o;
-						break;
-					} else if(range1.compareEndPoints('EndToEnd', range2) < 0 && (o.previousSibling.nodeType == 3 || o.previousSibling.nodeType == 4)) {
-						re = o.previousSibling;
-						break;
-					}
-				}
-				if(i == parentNodeList.length - 1) {
-					re = o;
-				}
-			}
-			range1 = null;
-			range2 = null;
+			var re = this._determineRangeNode(range, false);
 			range.endContainer = re;
 			return re;
 		}
+	},
+	_determineRangeOffset : function(range, node, isStart) {
+		var range1 = range.duplicate();
+		range1.collapse(false);
+		var re = -1;
+		var range2;
+		if(node == null) {
+			if(isStart) {
+				node = this.getStartContainer(range);
+			} else {
+				node = this.getEndContainer(range);
+			}
+		}
+		if(node.previousSibling) {
+			range2 = document.body.createTextRange();
+			if(node.previousSibling.nodeType == 1) {
+				range2.moveToElementText(node.previousSibling);
+				while(range2.compareEndPoints('EndToStart', range1) < 0) {
+					re++;
+					if(range1.moveStart('character', -1) == 0) {
+						break;
+					}
+				}
+			} else {
+				range2.moveToElementText(node);
+				while(range2.compareEndPoints('StartToStart', range1) <= 0) {
+					re++;
+					if(range1.moveStart('character', -1) == 0) {
+						break;
+					}
+				}
+			}
+		} else {
+			range2 = range1.duplicate();
+			while(range2.parentElement() == range1.parentElement()) {
+				re++;
+				if(range2.moveStart('character', -1) == 0) {
+					break;
+				}
+			}
+		}
+		range1 = null;
+		range2 = null;
+		return re;
 	},
 	/**
 	 * 获取range结束容器的偏移量
@@ -243,7 +293,7 @@ $kit.merge($Kit.Selection.prototype,
 	 * @return {Number}
 	 */
 	getEndOffset : function(range, node) {
-		if(range.endOffset) {
+		if('endOffset' in range) {
 			return range.endOffset;
 		} else {
 			var range1 = range.duplicate();
@@ -259,7 +309,7 @@ $kit.merge($Kit.Selection.prototype,
 					range2.moveToElementText(node.previousSibling);
 					while(range2.compareEndPoints('EndToStart', range1) < 0) {
 						re++;
-						if(range1.moveStart("character", -1) == 0) {
+						if(range1.moveStart('character', -1) == 0) {
 							break;
 						}
 					}
@@ -267,7 +317,7 @@ $kit.merge($Kit.Selection.prototype,
 					range2.moveToElementText(node);
 					while(range2.compareEndPoints('StartToStart', range1) <= 0) {
 						re++;
-						if(range1.moveStart("character", -1) == 0) {
+						if(range1.moveStart('character', -1) == 0) {
 							break;
 						}
 					}
@@ -276,7 +326,7 @@ $kit.merge($Kit.Selection.prototype,
 				range2 = range1.duplicate();
 				while(range2.parentElement() == range1.parentElement()) {
 					re++;
-					if(range2.moveStart("character", -1) == 0) {
+					if(range2.moveStart('character', -1) == 0) {
 						break;
 					}
 				}
@@ -290,45 +340,245 @@ $kit.merge($Kit.Selection.prototype,
 	 *
 	 */
 	getXpath : function(range) {
-
+		var re = {
+			startContainerXpath : this.hpath(this.getStartContainer(range)),
+			startOffset : this.getStartOffset(range),
+			endContainerXpath : this.hpath(this.getEndContainer(range)),
+			endOffset : this.getEndOffset(range)
+		}
+		re.full = re.startContainerXpath + '|' + re.startOffset + '|' + re.endContainerXpath + '|' + re.endOffset;
+		return re;
 	},
 	hpath : function(node, currentPath) {
 		currentPath = currentPath || '';
-		if(node == document.body)
-			return '//DIV[@id=\"' + node.id + '\"]/' + currentPath;
+		if(node == document.body) {
+			return '//BODY/' + currentPath;
+		} else if(node['getAttribute'] && node.getAttribute('id') != null) {
+			var a = document.getElementsByTagName(node.nodeValue);
+			var count = 0;
+			var id = node.getAttribute('id');
+			for(var i = 0; i < a.length; i++) {
+				if(a[i].getAttribute('id') == id) {
+					count++;
+				}
+				if(count > 1) {
+					break;
+				}
+			}
+			if(count == 1) {
+				return '//' + node.nodeName + '[@id="' + node.id + '"]/' + currentPath;
+			}
+		}
 		switch (node.nodeType) {
 			case 3:
 			case 4:
 				if(/MSIE/.test(navigator.userAgent)) {
-					return hpath(node.parentNode, 'text()[' + (_indexOfNodeList(node, _filterNodeList(node.parentNode.childNodes, //
-					function(p) {
-						if(p.nodeType && (p.nodeType == 4 || p.nodeType == 3)) {
-							return true;
-						}
-					}//
-					)//
-					) + 1) + ']');
+					return this.hpath(node.parentNode, 'text()[' + (//
+						$kit.array.indexOf($kit.array.filter(node.parentNode.childNodes, //
+						function(p) {
+							if(p.nodeType && (p.nodeType == 4 || p.nodeType == 3)) {
+								return true;
+							}
+						}//
+						), node//
+						) + 1) + ']');
 				} else {
-					return hpath(node.parentNode, 'text()[' + (document.evaluate('preceding-sibling::text()', node, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength + 1) + ']');
+					return this.hpath(node.parentNode, 'text()[' + (document.evaluate('preceding-sibling::text()', node, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength + 1) + ']');
 				}
 			case 1:
 				if(/MSIE/.test(navigator.userAgent)) {
-					return hpath(node.parentNode, node.nodeName + '[' + (_indexOfNodeList(node, _filterNodeList(node.parentNode.childNodes, //
-					function(p) {
-						if(p.nodeType && p.nodeType == 1 && p.nodeName && p.nodeName == node.nodeName) {
-							return true;
-						}
-					}//
-					)//
-					) + 1) + ']' + ( currentPath ? '/' + currentPath : ''));
+					return this.hpath(node.parentNode, node.nodeName + '[' + (//
+						$kit.array.indexOf($kit.array.filter(node.parentNode.childNodes, //
+						function(p) {
+							if(p.nodeType && p.nodeType == 1 && p.nodeName && p.nodeName == node.nodeName) {
+								return true;
+							}
+						}//
+						), node//
+						) + 1) + ']' + ( currentPath ? '/' + currentPath : ''));
 				} else {
-					return hpath(node.parentNode, node.nodeName + '[' + (document.evaluate('preceding-sibling::' + node.nodeName, node, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength + 1) + ']' + ( currentPath ? '/' + currentPath : ''));
+					return this.hpath(node.parentNode, node.nodeName + '[' + (document.evaluate('preceding-sibling::' + node.nodeName, node, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength + 1) + ']' + ( currentPath ? '/' + currentPath : ''));
 				}
 			case 9:
 				return '/' + currentPath;
 			default:
 				return '';
 		}
+	},
+	/**
+	 * 通过xpath选择节点
+	 * @param {String}
+	 * @return {Node}
+	 */
+	selectNodeByXpath : function(xpath) {
+		if(document.evaluate) {
+			return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+		} else {
+			var deep = xpath.split(/\/{1,2}/g);
+			deep = $kit.array.delEmpty(deep);
+			var root;
+			for(var i = 0; i < deep.length; i++) {
+				if(/\w+\[\d+\]/.test(deep[i])) {
+					var a = deep[i].match(/(\w+)\[(\d+)\]/);
+					if(root == null) {
+						root = document.getElementsByTagName(a[1])[a[2] - 1];
+					} else {
+						var nodes = [];
+						var tmp = root.childNodes;
+						for(var j = 0; j < tmp.length; j++) {
+							if(tmp[j].nodeName == a[1]) {
+								nodes.push(tmp[j]);
+							}
+							if(nodes.length >= a[2]) {
+								break;
+							}
+						}
+						root = nodes[a[2] - 1];
+					}
+
+				} else if(/(\w+)\[@(\w+)='?(\w+)"?\]/.test(deep[i])) {
+					var a = deep[i].match(/(\w+)\[@(\w+)="?(\w+)"?\]/);
+					if(a[2].toLowerCase() == 'id') {
+						root = document.getElementById(a[3]);
+					} else {
+						var b = (root || document).getElementsByTagName(a[1]);
+						for(var j = 0; j < b.length; j++) {
+							if(b[j].getAttribute(a[2]) == a[3]) {
+								root = b[j];
+							}
+						}
+					}
+				} else if(/text\(\)\[(\d+)\]/.test(deep[i])) {
+					var a = deep[i].match(/text\(\)\[(\d+)\]/);
+					var textNodes = [];
+					for(var j = 0; j < root.childNodes.length; j++) {
+						var tmp = root.childNodes[j];
+						if(tmp.nodeType == 3 || tmp.nodeType == 4) {
+							textNodes.push(tmp);
+						}
+						if(textNodes.length >= a[1]) {
+							break;
+						}
+					}
+					return textNodes[a[1] - 1];
+				} else if(deep[i].toLowerCase() == 'body') {
+					root = document.body;
+				}
+			}
+			return root;
+		}
+	},
+	/**
+	 * 指定选区高亮，全浏览器兼容
+	 * @param {Map|String} config config为一个map对象，也可以接受"startContainerXpath|startOffset|endContainerXpath|endOffset"的字符串格式
+	 * @param {String} config.startContainerXpath
+	 * @param {String} config.startOffset
+	 * @param {String} config.endContainerXpath
+	 * @param {String} config.endOffset
+	 * @param {String} color
+	 */
+	highlight : function(config, color) {
+		var reText = '';
+		if($kit.isStr(config)) {
+			var a = config.split('|');
+			config = {
+				startContainerXpath : a[0],
+				startOffset : a[1],
+				endContainerXpath : a[2],
+				endOffset : a[3]
+			}
+			if(a.length > 4) {
+				color = a[4];
+			}
+		}
+		color = color || 'orange';
+		if(document.evaluate) {
+			var selection = window.getSelection();
+			selection.removeAllRanges();
+			var range = document.createRange();
+			range.setStart(this.selectNodeByXpath(config.startContainerXpath), config.startOffset);
+			range.setEnd(this.selectNodeByXpath(config.endContainerXpath), config.endOffset);
+			selection.addRange(range);
+			document.designMode = 'on';
+			document.execCommand('backcolor', false, color);
+			document.designMode = 'off';
+			reText = selection.toString();
+			range.detach();
+			selection.removeAllRanges();
+		} else {
+			var beginEl = this.selectNodeByXpath(config.startContainerXpath);
+			var beginRange = document.body.createTextRange();
+			if(beginEl.nodeType == 1) {
+				beginRange.moveToElementText(beginEl);
+			} else {
+				if(beginEl.previousSibling && beginEl.previousSibling.nodeType == 1) {
+					beginRange.moveToElementText(beginEl.previousSibling);
+					beginRange.collapse(false);
+					beginRange.moveStart('character', 1);
+				} else if(beginEl.nextSibling && beginEl.nextSibling.nodeType == 1) {
+					beginRange.moveToElementText(beginEl.nextSibling);
+					beginRange.collapse(true);
+					beginRange.moveStart('character', -beginEl.nodeValue.length);
+				} else if(beginEl.parentNode.childNodes.length == 1) {
+					beginRange.moveToElementText(beginEl.parentNode);
+				}
+			}
+			beginRange.moveStart('character', config.startOffset);
+			beginRange.collapse(true);
+			var endEl = this.selectNodeByXpath(config.endContainerXpath);
+			if(endEl != beginEl) {
+				var endRange = document.body.createTextRange();
+				//
+				if(endEl.nodeType == 1) {
+					endRange.moveToElementText(endEl);
+				} else {
+					if(endEl.previousSibling && endEl.previousSibling.nodeType == 1) {
+						endRange.moveToElementText(endEl.previousSibling);
+						endRange.collapse(false);
+						endRange.moveStart('character', 1);
+					} else if(endEl.nextSibling && endEl.nextSibling.nodeType == 1) {
+						endRange.moveToElementText(endEl.nextSibling);
+						endRange.collapse(true);
+						endRange.moveStart('character', -endEl.nodeValue.length);
+					} else if(endEl.parentNode.childNodes.length == 1) {
+						endRange.moveToElementText(endEl.parentNode);
+					}
+				}
+				//
+				endRange.moveStart('character', config.endOffset);
+				endRange.collapse(true);
+				beginRange.setEndPoint('StartToEnd', endRange);
+			} else {
+				beginRange.moveEnd('character', config.endOffset - config.startOffset);
+			}
+			beginRange.execCommand('BackColor', false, color);
+			reText = beginRange.text;
+			beginRange = null;
+			endRange = null;
+			document.selection.empty();
+		}
+		return reText;
+	},
+	/**
+	 * 根据ie的bookmark字符串获取range对象
+	 * @param {String} bookmark
+	 * @return {Range}
+	 */
+	rangeFromIEBookmark : function(bookmark) {
+		return document.body.createTextRange().moveToBookmark(bookmark);
+	},
+	/**
+	 * 清除选区高亮，全浏览器兼容
+	 * @param {Map|String} config config为一个map对象，也可以接受"startContainerXpath|startOffset|endContainerXpath|endOffset"的字符串格式
+	 * @param {String} config.startContainerXpath
+	 * @param {String} config.startOffset
+	 * @param {String} config.endContainerXpath
+	 * @param {String} config.endOffset
+	 * @param {String} color
+	 */
+	removeHighlight : function() {
+		var range = document.body.createTextRange();
+		range.execCommand('removeFormat', false);
 	}
 });
 /**
