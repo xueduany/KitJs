@@ -166,11 +166,14 @@ $kit.merge($Kit.Selection.prototype,
 				}
 				range2.moveStart('character', startOffset);
 				range2.collapse(true);
-				range2.moveEnd('character', o.nodeValue.length - 1);
+				range2.moveEnd('character', o.nodeValue.length);
 				if(range1.compareEndPoints('StartToStart', range2) >= 0 && range1.compareEndPoints('EndToEnd', range2) <= 0) {
 					re = o;
 					break;
 				}
+			}
+			if(re == null) {
+				re = nodes[nodes.length - 1];
 			}
 		}
 		range1 = null;
@@ -187,43 +190,7 @@ $kit.merge($Kit.Selection.prototype,
 		if('startOffset' in range) {
 			return range.startOffset;
 		} else {
-			var range1 = range.duplicate();
-			range1.collapse(true);
-			var re = -1;
-			var range2;
-			if(node == null) {
-				node = this.getStartContainer(range);
-			}
-			if(node.previousSibling) {
-				range2 = document.body.createTextRange();
-				if(node.previousSibling.nodeType == 1) {
-					range2.moveToElementText(node.previousSibling);
-					while(range2.compareEndPoints('EndToStart', range1) < 0) {
-						re++;
-						if(range1.moveStart('character', -1) == 0) {
-							break;
-						}
-					}
-				} else {
-					range2.moveToElementText(node);
-					while(range2.compareEndPoints('StartToStart', range1) <= 0) {
-						re++;
-						if(range1.moveStart('character', -1) == 0) {
-							break;
-						}
-					}
-				}
-			} else {
-				range2 = range1.duplicate();
-				while(range2.parentElement() == range1.parentElement()) {
-					re++;
-					if(range2.moveStart('character', -1) == 0) {
-						break;
-					}
-				}
-			}
-			range1 = null;
-			range2 = null;
+			var re = this._determineRangeOffset(range, node, true);
 			return re;
 		}
 	},
@@ -256,20 +223,40 @@ $kit.merge($Kit.Selection.prototype,
 		}
 		if(node.previousSibling) {
 			range2 = document.body.createTextRange();
-			if(node.previousSibling.nodeType == 1) {
-				range2.moveToElementText(node.previousSibling);
-				while(range2.compareEndPoints('EndToStart', range1) < 0) {
+			if(node.nodeType == 1) {
+				range2.moveToElementText(node);
+				while(range2.compareEndPoints('StartToStart', range1) <= 0) {
 					re++;
 					if(range1.moveStart('character', -1) == 0) {
 						break;
 					}
 				}
 			} else {
-				range2.moveToElementText(node);
-				while(range2.compareEndPoints('StartToStart', range1) <= 0) {
-					re++;
-					if(range1.moveStart('character', -1) == 0) {
+				var previousSibling = node;
+				var startOffset = 0;
+				while(previousSibling.previousSibling) {
+					previousSibling = previousSibling.previousSibling;
+					if(previousSibling.nodeType == 1) {
+						range2.moveToElementText(previousSibling);
+						while(range2.compareEndPoints('EndToStart', range1) < 0) {
+							re++;
+							if(range1.moveStart('character', -1) == 0) {
+								break;
+							}
+						}
+						re -= startOffset;
 						break;
+					} else {
+						startOffset += previousSibling.nodeValue.length;
+					}
+				}
+				if(node.previousSibling.nodeType == 1) {
+					range2.moveToElementText(node.previousSibling);
+					while(range2.compareEndPoints('EndToStart', range1) < 0) {
+						re++;
+						if(range1.moveStart('character', -1) == 0) {
+							break;
+						}
 					}
 				}
 			}
@@ -296,43 +283,7 @@ $kit.merge($Kit.Selection.prototype,
 		if('endOffset' in range) {
 			return range.endOffset;
 		} else {
-			var range1 = range.duplicate();
-			range1.collapse(false);
-			var re = -1;
-			var range2;
-			if(node == null) {
-				node = this.getEndContainer(range);
-			}
-			if(node.previousSibling) {
-				range2 = document.body.createTextRange();
-				if(node.previousSibling.nodeType == 1) {
-					range2.moveToElementText(node.previousSibling);
-					while(range2.compareEndPoints('EndToStart', range1) < 0) {
-						re++;
-						if(range1.moveStart('character', -1) == 0) {
-							break;
-						}
-					}
-				} else {
-					range2.moveToElementText(node);
-					while(range2.compareEndPoints('StartToStart', range1) <= 0) {
-						re++;
-						if(range1.moveStart('character', -1) == 0) {
-							break;
-						}
-					}
-				}
-			} else {
-				range2 = range1.duplicate();
-				while(range2.parentElement() == range1.parentElement()) {
-					re++;
-					if(range2.moveStart('character', -1) == 0) {
-						break;
-					}
-				}
-			}
-			range1 = null;
-			range2 = null;
+			var re = this._determineRangeOffset(range, node, false);
 			return re;
 		}
 	},
