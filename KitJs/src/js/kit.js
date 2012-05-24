@@ -560,7 +560,7 @@ $Kit.prototype = {
 		return re;
 	},
 	_camelCssName : function(str) {
-		var firstLetter = str.substr(0, 1);
+		var firstLetter = str.substring(0, 1);
 		var mainStr = str.substr(1);
 		var a = mainStr.split('-');
 		for(var i = 1; i < a.length; i++) {
