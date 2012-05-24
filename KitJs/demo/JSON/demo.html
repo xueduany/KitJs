@@ -87,5 +87,16 @@
 			});
 
 		</script>
+		<script>
+			(function() {
+				var a = 1;
+				var e = 3; (function() {
+					var a = 2; (function() {
+						new Function('alert(e)')();
+
+					})()
+				})()
+			})()
+		</script>
 	</body>
 </html>

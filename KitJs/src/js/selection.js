@@ -32,7 +32,10 @@ $kit.merge($Kit.Selection.prototype,
 	getRange : function() {
 		var selection = this.getSelection();
 		if(selection.getRangeAt) {
-			return selection.getRangeAt(0);
+			if(selection.rangeCount > 0) {
+				return selection.getRangeAt(0);
+			}
+			return null;
 		}
 		return selection.createRange();
 	},
@@ -173,7 +176,10 @@ $kit.merge($Kit.Selection.prototype,
 				}
 			}
 			if(re == null) {
-				re = nodes[nodes.length - 1];
+				range2.moveToElementText(parent);
+				if(range1.compareEndPoints('EndToEnd', range2) == 0) {
+					re = parent;
+				}
 			}
 		}
 		range1 = null;
@@ -211,7 +217,7 @@ $kit.merge($Kit.Selection.prototype,
 	},
 	_determineRangeOffset : function(range, node, isStart) {
 		var range1 = range.duplicate();
-		range1.collapse(false);
+		range1.collapse(isStart);
 		var re = -1;
 		var range2;
 		if(node == null) {
@@ -238,7 +244,7 @@ $kit.merge($Kit.Selection.prototype,
 					previousSibling = previousSibling.previousSibling;
 					if(previousSibling.nodeType == 1) {
 						range2.moveToElementText(previousSibling);
-						while(range2.compareEndPoints('EndToStart', range1) < 0) {
+						while(range2.compareEndPoints('EndToStart', range1) <= 0) {
 							re++;
 							if(range1.moveStart('character', -1) == 0) {
 								break;
@@ -250,15 +256,28 @@ $kit.merge($Kit.Selection.prototype,
 						startOffset += previousSibling.nodeValue.length;
 					}
 				}
-				if(node.previousSibling.nodeType == 1) {
-					range2.moveToElementText(node.previousSibling);
-					while(range2.compareEndPoints('EndToStart', range1) < 0) {
+				if(re == -1 && startOffset > 0) {
+					range2.moveToElementText(range1.parentElement());
+					range2.moveStart('character', startOffset);
+					var index = 0;
+					re++;
+					while(range1.compareEndPoints('StartToStart', range2) != 0 && index < node.nodeValue.length) {
+						range2.moveStart('character', 1);
+						index++;
 						re++;
-						if(range1.moveStart('character', -1) == 0) {
-							break;
-						}
 					}
 				}
+				/*
+				 if(node.previousSibling.nodeType == 1) {
+				 range2.moveToElementText(node.previousSibling);
+				 while(range2.compareEndPoints('EndToStart', range1) < 0) {
+				 re++;
+				 if(range1.moveStart('character', -1) == 0) {
+				 break;
+				 }
+				 }
+				 }
+				 */
 			}
 		} else {
 			range2 = range1.duplicate();
@@ -462,17 +481,39 @@ $kit.merge($Kit.Selection.prototype,
 			if(beginEl.nodeType == 1) {
 				beginRange.moveToElementText(beginEl);
 			} else {
-				if(beginEl.previousSibling && beginEl.previousSibling.nodeType == 1) {
-					beginRange.moveToElementText(beginEl.previousSibling);
-					beginRange.collapse(false);
-					beginRange.moveStart('character', 1);
-				} else if(beginEl.nextSibling && beginEl.nextSibling.nodeType == 1) {
-					beginRange.moveToElementText(beginEl.nextSibling);
-					beginRange.collapse(true);
-					beginRange.moveStart('character', -beginEl.nodeValue.length);
-				} else if(beginEl.parentNode.childNodes.length == 1) {
-					beginRange.moveToElementText(beginEl.parentNode);
+				var offset1 = 0;
+				var prevEl = beginEl;
+				var isBegin = true;
+				while(prevEl.previousSibling) {
+					prevEl = prevEl.previousSibling;
+					if(prevEl.nodeType == 1) {
+						beginRange.moveToElementText(prevEl);
+						beginRange.collapse(false);
+						beginRange.moveStart('character', offset1);
+						isBegin = false;
+						break;
+					} else {
+						offset1 += prevEl.nodeValue.length;
+					}
 				}
+				if(isBegin) {
+					beginRange.moveToElementText(beginEl.parentNode);
+					beginRange.moveStart('character', offset1);
+				}
+
+				/*
+				 if(beginEl.previousSibling && beginEl.previousSibling.nodeType == 1) {
+				 beginRange.moveToElementText(beginEl.previousSibling);
+				 beginRange.collapse(false);
+				 beginRange.moveStart('character', 1);
+				 } else if(beginEl.nextSibling && beginEl.nextSibling.nodeType == 1) {
+				 beginRange.moveToElementText(beginEl.nextSibling);
+				 beginRange.collapse(true);
+				 beginRange.moveStart('character', -beginEl.nodeValue.length);
+				 } else if(beginEl.parentNode.childNodes.length == 1) {
+				 beginRange.moveToElementText(beginEl.parentNode);
+				 }
+				 */
 			}
 			beginRange.moveStart('character', config.startOffset);
 			beginRange.collapse(true);
@@ -483,17 +524,38 @@ $kit.merge($Kit.Selection.prototype,
 				if(endEl.nodeType == 1) {
 					endRange.moveToElementText(endEl);
 				} else {
-					if(endEl.previousSibling && endEl.previousSibling.nodeType == 1) {
-						endRange.moveToElementText(endEl.previousSibling);
-						endRange.collapse(false);
-						endRange.moveStart('character', 1);
-					} else if(endEl.nextSibling && endEl.nextSibling.nodeType == 1) {
-						endRange.moveToElementText(endEl.nextSibling);
-						endRange.collapse(true);
-						endRange.moveStart('character', -endEl.nodeValue.length);
-					} else if(endEl.parentNode.childNodes.length == 1) {
-						endRange.moveToElementText(endEl.parentNode);
+					var offset1 = 0;
+					var nextEl = endEl;
+					var isBegin = true;
+					while(nextEl.previousSibling) {
+						nextEl = nextEl.previousSibling;
+						if(nextEl.nodeType == 1) {
+							endRange.moveToElementText(nextEl);
+							endRange.collapse(false);
+							endRange.moveStart('character', offset1);
+							isBegin = false;
+							break;
+						} else {
+							offset1 += nextEl.nodeValue.length;
+						}
 					}
+					if(isBegin) {
+						endRange.moveToElementText(endEl.parentNode);
+						endRange.moveStart('character', offset1);
+					}
+					/*
+					 if(endEl.previousSibling && endEl.previousSibling.nodeType == 1) {
+					 endRange.moveToElementText(endEl.previousSibling);
+					 endRange.collapse(false);
+					 endRange.moveStart('character', 1);
+					 } else if(endEl.nextSibling && endEl.nextSibling.nodeType == 1) {
+					 endRange.moveToElementText(endEl.nextSibling);
+					 endRange.collapse(true);
+					 endRange.moveStart('character', -endEl.nodeValue.length);
+					 } else if(endEl.parentNode.childNodes.length == 1) {
+					 endRange.moveToElementText(endEl.parentNode);
+					 }
+					 */
 				}
 				//
 				endRange.moveStart('character', config.endOffset);
@@ -528,8 +590,21 @@ $kit.merge($Kit.Selection.prototype,
 	 * @param {String} color
 	 */
 	removeHighlight : function() {
-		var range = document.body.createTextRange();
-		range.execCommand('removeFormat', false);
+		var range;
+		if(document.createRange) {
+			var r = document.createRange();
+			r.selectNode(document.body);
+			var s = window.getSelection();
+			s.removeAllRanges();
+			s.addRange(r);
+			document.designMode = 'on';
+			document.execCommand('RemoveFormat', false, null);
+			document.designMode = 'off';
+			range.detach();
+		} else {
+			range = document.body.createTextRange();
+			range.execCommand('removeFormat', false);
+		}
 	}
 });
 /**
