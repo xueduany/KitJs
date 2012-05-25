@@ -684,7 +684,7 @@ $kit.merge($Kit.Selection.prototype,
 		var e = arguments[0];
 		if($kit.selection.highlightDomInsertEventRegisteFlag) {
 			var target = e.target;
-			if(target.nodeType == 1 && target.nodeName.toLowerCase() == 'span' && (target.getAttribute('style').indexOf('background-color: ' + $kit.selection.highlightColor + ';') > -1)) {
+			if(target.nodeType == 1 && target.nodeName.toLowerCase() == 'span' && (target.getAttribute('style') && target.getAttribute('style').indexOf('background-color: ' + $kit.selection.highlightColor + ';') > -1)) {
 				target.className = $kit.selection.markBlockCls;
 			}
 		}
