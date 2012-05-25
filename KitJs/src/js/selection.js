@@ -307,7 +307,9 @@ $kit.merge($Kit.Selection.prototype,
 		}
 	},
 	/**
-	 *
+	 * 生成range对象的xpath
+	 * @param {Range}
+	 * @return {String}
 	 */
 	getXpath : function(range) {
 		var re = {
