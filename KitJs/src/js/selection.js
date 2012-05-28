@@ -6,7 +6,7 @@
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/selection.js">Source code</a>
  */
 $Kit.Selection = function() {
-	//
+	this.markBlockCls = 'kitjs-highlightBlock-mark';
 }
 $kit.merge($Kit.Selection.prototype,
 /**
@@ -307,7 +307,9 @@ $kit.merge($Kit.Selection.prototype,
 		}
 	},
 	/**
-	 *
+	 * 生成range对象的xpath
+	 * @param {Range}
+	 * @return {String}
 	 */
 	getXpath : function(range) {
 		var re = {
@@ -463,16 +465,51 @@ $kit.merge($Kit.Selection.prototype,
 		}
 		color = color || 'orange';
 		if(document.evaluate) {
+			document.designMode = 'on';
 			var selection = window.getSelection();
 			selection.removeAllRanges();
 			var range = document.createRange();
 			range.setStart(this.selectNodeByXpath(config.startContainerXpath), config.startOffset);
 			range.setEnd(this.selectNodeByXpath(config.endContainerXpath), config.endOffset);
 			selection.addRange(range);
-			document.designMode = 'on';
-			document.execCommand('backcolor', false, color);
-			document.designMode = 'off';
 			reText = selection.toString();
+			//
+			this.highlightDomInsertEventRegisteFlag = this.highlightDomInsertEventRegisteFlag || false;
+			if(!this.highlightDomInsertEventRegisteFlag) {
+				this.highlightDomInsertEventRegisteFlag = true;
+				this.highlightColor = color;
+				var self = this;
+				document.addEventListener('DOMNodeInserted', this._DOMNodeInserted, false);
+			}
+
+			//
+			if(!document.execCommand("HiliteColor", false, color)) {
+				document.execCommand('backcolor', false, color);
+			}
+			document.designMode = 'off';
+			//
+			if(this.highlightDomInsertEventRegisteFlag) {
+				document.removeEventListener('DOMNodeInserted', this._DOMNodeInserted, false);
+				this.highlightDomInsertEventRegisteFlag = false;
+				this.highlightColor = null;
+			}
+			//fix 一个奇怪的bug，有时遇到*元素会不触发attrchange事件
+			var father = range.commonAncestorContainer;
+			if(father.nodeType == 1) {
+				var a = father.getElementsByTagName('*');
+				var o;
+				for(var i = 0; i < a.length; i++) {
+					o = a[i];
+					if(o.nodeType == 1 && o.getAttribute('style') && o.getAttribute('style').indexOf('background-color: ' + color + ';') > -1 && !$kit.hsCls(o, this.markBlockCls)) {
+						$kit.adCls(o, this.markBlockCls);
+					}
+				}
+				o = father;
+				if(o.nodeType == 1 && o.getAttribute('style') && o.getAttribute('style').indexOf('background-color: ' + color + ';') > -1 && !$kit.hsCls(o, this.markBlockCls)) {
+					$kit.adCls(o, this.markBlockCls);
+				}
+			}
+			//
 			range.detach();
 			selection.removeAllRanges();
 		} else {
@@ -592,18 +629,64 @@ $kit.merge($Kit.Selection.prototype,
 	removeHighlight : function() {
 		var range;
 		if(document.createRange) {
-			var r = document.createRange();
-			r.selectNode(document.body);
+			range = document.createRange();
+			range.selectNode(document.body);
 			var s = window.getSelection();
 			s.removeAllRanges();
-			s.addRange(r);
-			document.designMode = 'on';
-			document.execCommand('RemoveFormat', false, null);
-			document.designMode = 'off';
+			s.addRange(range);
+			var a = document.getElementsByClassName(this.markBlockCls);
+			var a1 = [];
+			for(var i = 0; i < a.length; i++) {
+				a1.push(a[i]);
+			}
+			for(var i = 0; i < a1.length; i++) {
+				if(range.compareNode) {
+					if(range.compareNode(a1[i]) == 3) {
+						//inside
+						var o = a1[i];
+						var childs = [];
+						for(var j = 0; j < o.childNodes.length; j++) {
+							childs.push(o.childNodes[j]);
+						}
+						for(var j = childs.length - 1; j > 0; j--) {
+							$kit.insertNode(o, 'afterEnd', childs[j]);
+						}
+						o.parentNode.replaceChild(childs[0], o);
+
+					}
+				} else {
+					var range1 = document.createRange();
+					range1.selectNode(a1[i]);
+					if(range.compareBoundaryPoints(range.START_TO_START, range1) <= 0 && range.compareBoundaryPoints(range.END_TO_END, range1) >= 0) {
+						//inside
+						var o = a1[i];
+						var childs = [];
+						for(var j = 0; j < o.childNodes.length; j++) {
+							childs.push(o.childNodes[j]);
+						}
+						for(var j = childs.length - 1; j > 0; j--) {
+							$kit.insertNode(o, 'afterEnd', childs[j]);
+						}
+						o.parentNode.replaceChild(childs[0], o);
+
+					}
+					range1.detach();
+				}
+			}
+			s.removeAllRanges();
 			range.detach();
 		} else {
 			range = document.body.createTextRange();
 			range.execCommand('removeFormat', false);
+		}
+	},
+	_DOMNodeInserted : function() {
+		var e = arguments[0];
+		if($kit.selection.highlightDomInsertEventRegisteFlag) {
+			var target = e.target;
+			if(target.nodeType == 1 && target.nodeName.toLowerCase() == 'span' && (target.getAttribute('style') && target.getAttribute('style').indexOf('background-color: ' + $kit.selection.highlightColor + ';') > -1)) {
+				target.className = $kit.selection.markBlockCls;
+			}
 		}
 	}
 });

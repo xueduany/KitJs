@@ -46,17 +46,11 @@ $kit.merge($kit.ui.Dialog.YesOrNo, {
 		cancelCls : 'confirm-cancel',
 		confirmText : '请确认你的请求？',
 		//
-		/**
-		 * yes的跳转方法
-		 */
+		// yes的跳转方法
 		yesThen : null,
-		/**
-		 * no的跳转方法
-		 */
+		// no的跳转方法
 		noThen : null,
-		/**
-		 * 取消的跳转方法
-		 */
+		// 取消的跳转方法
 		cancelThen : null
 	}, $kit.ui.Dialog.defaultConfig)
 });
