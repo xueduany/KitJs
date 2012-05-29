@@ -1,0 +1,142 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	发布新闻
+</title><link href="/style/default/StyleSheet.css" rel="stylesheet" type="text/css" />
+    <script src="../../tools/ueditor/editor_config.js" type="text/javascript"></script>
+    <script src="../../tools/ueditor/editor_all.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../../tools/ueditor/themes/default/ueditor.css" />
+
+    <script src="../../tools/kitjs/kit.js" type="text/javascript"></script>
+    <script src="../../tools/kitjs/dom.js" type="text/javascript"></script>
+    <link href="../../tools/kitjs/Validator/validator.css" rel="stylesheet" type="text/css" />
+    <script src="../../tools/kitjs/Validator/validator.js" type="text/javascript"></script>
+    <script src="../../tools/kitjs/Validator/autowired.validator.js" type="text/javascript"></script>
+    <script src="../../tools/kitjs/form.js" type="text/javascript"></script>
+    
+    <script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/widget/Form/form.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<link rel="stylesheet" href="login.css" />
+		<link rel="stylesheet" href="validator.css" />
+		<!--validator-->
+		<script src="../../src/js/widget/Validator/validator.js"></script>
+		<script src="../../src/js/widget/Validator/autowired.validator.js"></script>
+
+    <style>
+			table td {
+				font-size: 14px;
+			}
+			label {
+				cursor: pointer;
+				margin-right: 1em;
+			}
+		</style>
+</head>
+<body>
+    <form name="form1" method="post" action="NewsAdd.aspx" id="form1">
+<div>
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUHOTM0NjUzN2QYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgcFCXR4dF9PblRvcAUMdHh0X09uVG9wQWxsBQt0eHRfSXNFbGl0ZQUJdHh0X0lzSG90BQp0eHRfSXNMb2NrBQx0eHRfSXNEZWxldGUFC3R4dF9Jc0xpbmtzMW71A/dLgi2yfCC2cqhpP5uHDEo=" />
+</div>
+
+<div>
+
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWEQKx+/XuBgKOue8VAo65m+0CAryr9cgJAr2r9cgJApf44e8EArGbgecFApX7+sYGAsfMyuwOAsLBrfUKAt/68YUDAubVjrAKAs3FnqMHAuClhPAJAuPgkpAMAsyblt8KApjhg+EBOuUM/8bO3d6NTVAtHhmqqWQwOAQ=" />
+</div>
+   <table border="0" align="center" cellpadding="3" cellspacing="1" class="navigation">
+      <tr>
+     
+        <td  style="padding-left:12px;"><span class="caption">管理导航：</span>  <a href="Admin_Article.aspx">新闻公告管理</a>&nbsp;┋&nbsp;<a href="Admin_ArticleAlter.aspx">添加新闻公告</a></td>
+      </tr>
+      
+      </table>
+        <table style="width:98%" border="0" align="center" cellpadding="4" cellspacing="1"  class="grid" id="tabs0">
+        <tr class="header">
+        <td colspan="2" align="center"><span class="title">
+          文章</span>
+                        </td>
+        </tr>
+            <tr class="item">
+                <td align="right">
+                   <label class="asterisk">*</label> 新闻标题：
+                   </td>
+                <td style="width: 80%">
+                <span class="field-validation-valid" data-valmsg-for="txt_Subject" data-valmsg-replace="true"></span>
+                    <input name="txt_Subject" type="text" id="txt_Subject" class="textBox" style="width:500px;" />
+                    <span class="kitjs-validator" for="@txt_Subject" rules="[{notNull:true, message:'新闻标题不能为空'}]"></span>
+                </td>
+            </tr>
+             <tr class="item">
+                <td align="right">
+                   <label class="asterisk">*</label> 新闻副标题：</td>
+                <td style="width: 80%">
+                    <input name="txt_Subject1" type="text" id="txt_Subject1" class="textBox" style="width:500px;" />
+                </td>
+            </tr>
+            <tr class="item">
+                <td align="right">
+                   <label class="asterisk">*</label> 新闻类别：</td>
+                <td style="width: 80%">
+                    <select name="txt_Class" id="txt_Class" style="width:120px;">
+	<option selected="selected" value="1">新闻</option>
+	<option value="2">公告</option>
+
+</select>
+                </td>
+            </tr>
+             <tr class="item">
+                <td align="right">
+                   <label class="asterisk">*</label> 标题颜色：</td>
+                <td style="width: 80%">
+                    <select name="txt_HighLight" id="txt_HighLight" style="width:120px;">
+	<option selected="selected" value="Red">红色</option>
+	<option value="Green">绿色</option>
+
+</select>
+                </td>
+            </tr>
+            <tr class="item">
+                <td align="right">
+                    新闻选项：</td>
+                <td>
+                    <input id="txt_OnTop" type="checkbox" name="txt_OnTop" /><label for="txt_OnTop">置顶</label>&nbsp;&nbsp;<input id="txt_OnTopAll" type="checkbox" name="txt_OnTopAll" /><label for="txt_OnTopAll">总是置顶</label>
+                    &nbsp;&nbsp;<input id="txt_IsElite" type="checkbox" name="txt_IsElite" /><label for="txt_IsElite">精华</label>&nbsp;&nbsp;<input id="txt_IsHot" type="checkbox" name="txt_IsHot" /><label for="txt_IsHot">热点</label>&nbsp;&nbsp;<input id="txt_IsLock" type="checkbox" name="txt_IsLock" /><label for="txt_IsLock">锁定</label>&nbsp;&nbsp;<input id="txt_IsDelete" type="checkbox" name="txt_IsDelete" /><label for="txt_IsDelete">删除</label>
+                    &nbsp;&nbsp;<input id="txt_IsLinks" type="checkbox" name="txt_IsLinks" /><label for="txt_IsLinks">外链</label>
+                </td>
+            </tr>
+             <tr class="item">
+                <td align="right">
+                   <label class="asterisk">*</label> 外链地址：</td>
+                <td style="width: 80%">
+                    <input name="txt_LinkUrl" type="text" id="txt_LinkUrl" class="textBox" style="width:500px;" />
+                </td>
+            </tr>
+            <tr class="item">
+                <td align="right">
+                    <label class="asterisk">*</label> 文章内容：</td>
+                <td>
+                    <textarea name="txt_Body" rows="2" cols="20" id="txt_Body" style="width:700px;">&lt;p&gt;&amp;nbsp;&lt;/p&gt;</textarea>
+                </td>
+            </tr>
+         
+            <tr class="item">
+                <td align="right">
+                    &nbsp;</td>
+                <td style="height: 33px">
+                    <input type="submit" name="btn_PostNews" value="提 交" id="btn_PostNews" class="button" />&nbsp;&nbsp;        
+                         <input type="button" name="btnBack" value=" 返 回 " id="btnBack" onclick="#" class="button"/>
+                        </td>
+            </tr>
+       </table>
+        
+    </form>
+    <script src="../../tools/ueditor/LoadEditor.js" type="text/javascript"></script>
+</body>
+</html>
