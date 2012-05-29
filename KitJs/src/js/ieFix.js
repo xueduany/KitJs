@@ -69,9 +69,13 @@ $kit.merge($Kit.prototype, {
 						re = el.filters.item("alpha").opacity / 100;
 					} catch(e) {
 					}
+					try {
+						re = isNaN(parseFloat(re)) ? 1 : parseFloat(re);
+					} catch(e) {
+					}
 				}
 				try {
-					re = isNaN(parseFloat(re)) ? 1 : parseFloat(re);
+					re = isNaN(parseFloat(re)) ? re : parseFloat(re);
 				} catch(e) {
 				}
 				return re;
