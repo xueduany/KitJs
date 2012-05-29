@@ -33,7 +33,7 @@ $kit.merge($Kit.Url.prototype,
  */
 {
 	/**
-	 * 解析url
+	 * 通过解析url，返回包含用户名，密码，端口，协议，路径名，请求参数的map对象
 	 * @param {String}
 	 * @return {Map}
 	 */
