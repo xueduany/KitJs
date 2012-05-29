@@ -1,7 +1,7 @@
 .kitjs-dialog {
 	display: inline-block;
-	*display: inline;
 	*zoom: 1;
+	*width: 300px;
 	border-radius: 10px;
 	padding: 10px;
 	background-color: rgba(200,200,200,0.5);
@@ -10,10 +10,10 @@
 	left: 40px;
 	z-index: 999999;
 	min-width: 300px;
-	_width: 300px;
 	box-shadow: 0 0 5px rgba(200,200,200,0.5);
 }
 .kitjs-dialog-title {
+	*width: 300px;
 	padding: 5px;
 	cursor: move;
 	height: 25px;
@@ -24,6 +24,7 @@
 	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#DEE5F1), to(#C9D6ED));
 }
 .kitjs-dialog-panel {
+	*width: 300px;
 	padding: 5px;
 	border: 1px solid #ccc;
 	border: 1px solid rgba(200,200,200,0.5);
