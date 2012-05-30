@@ -3,6 +3,7 @@
  * @class $Kit.Multithread
  * @requires kit.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/multithread.js">Source code</a>
+ * @example <a href="xueduany.github.com/KitJs/KitJs/demo/MultiThread/demo.html">KitJs多线程demo演示</a>
  */
 $Kit.Multithread = function(url) {
 	this.threadPool = {};
