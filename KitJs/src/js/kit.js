@@ -1567,9 +1567,9 @@ $Kit.prototype = {
 				div.className = "J_Debug_Info";
 				div.style.borderBottom = "1px solid " + config.borderColor || "#000";
 				try {
-					div.innerText += info;
+					div.innerHTML += info;
 				} catch (e) {
-					div.innerText += e.toString();
+					div.innerHTML += e.toString();
 				}
 			} else {
 				alert(info);
