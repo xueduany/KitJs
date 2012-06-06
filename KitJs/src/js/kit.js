@@ -509,6 +509,9 @@ $Kit.prototype = {
 						});
 						el.style[l1] = attr[l];
 					} else {
+						if(me.isFirefox()) {
+							l = me._camelCssName(l);
+						}
 						el.style[l] = attr[l];
 					}
 				}
@@ -531,9 +534,19 @@ $Kit.prototype = {
 				});
 				el.style[attr1] = value;
 			} else {
+				if(me.isFirefox()) {
+					attr = me._camelCssName(attr);
+				}
 				el.style[attr] = value;
 			}
 		}
+	},
+	_camelCssName : function(str) {
+		var a = str.split('-');
+		for(var i = 1; i < a.length; i++) {
+			a[i] = a[i].substr(0, 1).toUpperCase() + a[i].substr(1);
+		}
+		return a.join('');
 	},
 	/**
 	 * 获取Element的cssStr
