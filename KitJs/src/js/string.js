@@ -238,6 +238,40 @@ $kit.merge($Kit.String.prototype,
 	endsWith : function(str, pattern) {
 		var d = str.length - pattern.length;
 		return d >= 0 && str.indexOf(pattern, d) === d;
+	},
+	/**
+	 * 首字母小写
+	 * @param {String}
+	 * @return {String}
+	 */
+	camelize : function(str) {
+		return str.replace(/-+(.)?/g, function(match, chr) {
+			return chr ? chr.toUpperCase() : '';
+		});
+	},
+	/**
+	 * 首字母大写
+	 * @param {String}
+	 * @return {String}
+	 */
+	capitalize : function(str) {
+		return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+	},
+	/**
+	 * 中划线变下划线
+	 * @param {String}
+	 * @return {String}
+	 */
+	underscore : function(str) {
+		return str.replace(/::/g, '/').replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2').replace(/([a-z\d])([A-Z])/g, '$1_$2').replace(/-/g, '_').toLowerCase();
+	},
+	/**
+	 * 下划线变中划线
+	 * @param {String}
+	 * @return {String}
+	 */
+	dasherize : function(str) {
+		return str.replace(/_/g, '-');
 	}
 });
 /**
