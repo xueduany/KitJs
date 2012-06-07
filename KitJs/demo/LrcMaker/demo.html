@@ -56,41 +56,17 @@
 		<link rel="stylesheet" href="../../../../Ciku/css/media/z.lrc-play.css" />
 		<link rel="stylesheet" href="../../../../Ciku/css/media/z.lrc-list.css" />
 		<meta name="viewport" content="width=device-width" />
+		<style>
+			.operate {
+				display: none;
+			}
+		</style>
 	</head>
 	<body>
-		<header>
-			<div id="header">
-				<div class="header-content">
-					<div id="login">
-					    <div id="loginComplete">
-					        你好, xueduanyang<s></s>
-							<ul class="menu" style="display:none">
-								<li><a href="/Account/ChangePassword">修改密码</a></li>
-								<li><a href="/Account/LogOff">退出登陆</a></li>
-							</ul>
-					    </div>
-					</div>
-					<nav>
-						<ul class="nav media">
-							<li>
-								<a class="home" href="/">词库</a>
-							</li>
-							<li>
-								<a class="media" href="/media/">资源</a>
-							</li>
-							<li>
-								<a class="dict" href="#">在线词典</a>
-							</li>
-						</ul>
-					</nav>
-				</div>
-			</div>
-		</header>
 		<div id="body">
-			<div class="mainboard-ceiling"></div>
 			<div class="mainboard">
 				<div class="media-edit-page">
-					<h3>编辑资源</h3>
+					<h3></h3>
 					<div class="lrc-create">
 						<div class="audio">
 							<audio id="J_media" src="../../../../Ciku/dat/Telephone.mp3" preload="auto"></audio>
@@ -109,7 +85,7 @@
 								<ol id="lrc-list"></ol>
 								<div class="cue" id="J_lrcArea_cue"></div>
 							</div>
-							<div class="creater" id="J_createrArea">
+							<div class="creater" id="J_createrArea" style="display:none">
 								<div class="control-params">
 									<label for="time-error">误差时间</label>
 									<input size="1" type="text" id="J_timeError" value="0" title="tips:控制点击创建字幕的由于听到单击创建字幕时的延时误差时间">

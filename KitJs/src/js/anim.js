@@ -30,6 +30,7 @@ $kit.merge($Kit.Anim.prototype,
 	 * @param {Function} [config.fx] 动画算法，可以通过$kit.anim.fx(type)的方式取得动画算法，也可以直接$kit.anim.Fx.easeInQuad的方式取得算法
 	 * @param {Function} [config.then] 动画结束后的匿名方法
 	 * @param {Object} [config.scope] config.then方法的this指针
+	 * @param {Object} [config.reverse] config.reverse控制是否翻转，实现摇头效果
 	 * @param {Number|String} [config.timeout] 因为动画是用setInterval实现的，所有一个timeout句柄，你可以用指定的timeout的句柄数字，也可以用一个String标记
 	 * 在$kit.anim.handleMap[timeout]会保存的anim的timeout句柄数字，下一次的motion方法也传入timeout，即可实现终止上一次的动画继续进行，进行新的动画，也可以使用
 	 * clearInterval终止当前进行的动画
@@ -45,6 +46,7 @@ $kit.merge($Kit.Anim.prototype,
 			from : undefined,
 			to : undefined,
 			fx : undefined,
+			reverse : false,
 			then : undefined,
 			scope : window,
 			exceptStyleArray : ["scrollTop", "scrollLeft"],
@@ -85,8 +87,10 @@ $kit.merge($Kit.Anim.prototype,
 					});
 				});
 			}
+			var count = 0;
 			config.timeout = setInterval(function() {
 				config.hold += config.timeSeg;
+				//结束时状态
 				if(config.hold >= config.duration) {
 					clearInterval(config.timeout);
 					config.timeout = null;
@@ -106,6 +110,7 @@ $kit.merge($Kit.Anim.prototype,
 						config.then.call(config.scope, config);
 					}
 				} else {
+					//过程中状态
 					for(var p in config.to) {
 						$kit.each(($kit.isNode(config.el) ? [config.el] : config.el), function(node) {
 							var reSty = "", sty, sty1;
@@ -179,6 +184,9 @@ $kit.merge($Kit.Anim.prototype,
 									var c = sty == null ? parseFloat(sty1[i].value) : parseFloat(sty1[i].value) - parseFloat(sty[i].value);
 									var d = config.duration;
 									changeValue = me.fx(config.fx)(t, b, c, d);
+									if(config.reverse && count % 2 == 1) {
+										changeValue = -changeValue;
+									}
 								}
 								reSty += o.prefix + changeValue + o.unit + o.postfix;
 							}
@@ -201,6 +209,7 @@ $kit.merge($Kit.Anim.prototype,
 						});
 					}
 				}
+				count++;
 			}, config.timeSeg);
 			if(f1) {
 				me.handleMap[timeoutStr] = config.timeout;

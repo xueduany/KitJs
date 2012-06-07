@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+	<head></head>
+	<body>
+		<script>
+			var a1 = 1;
+			function a() {
+
+				setTimeout(function() {
+					var div = document.createElement('div');
+					a1 = a1 + 1;
+					div.innerHTML = a1;
+					document.body.appendChild(div);
+					setTimeout(function() {
+						a1 = a1 + 1;
+						a();
+					}, 300);
+				}, 300);
+			}
+
+			a();
+			var b1 = 99999;
+			function b() {
+
+				setTimeout(function() {
+					var div = document.createElement('div');
+					b1 = b1 - 1;
+					div.innerHTML = b1;
+					document.body.appendChild(div);
+					setTimeout(function() {
+						b1 = b1 - 1;
+						b();
+					}, 300);
+				}, 300);
+			}
+
+			b();
+
+		</script>
+	</body>
+</html>

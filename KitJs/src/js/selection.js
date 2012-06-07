@@ -408,7 +408,7 @@ $kit.merge($Kit.Selection.prototype,
 						root = nodes[a[2] - 1];
 					}
 
-				} else if(/(\w+)\[@(\w+)='?(\w+)"?\]/.test(deep[i])) {
+				} else if(/(\w+)\[@(\w+)=['"]?(\w+)['"]?\]/.test(deep[i])) {
 					var a = deep[i].match(/(\w+)\[@(\w+)="?(\w+)"?\]/);
 					if(a[2].toLowerCase() == 'id') {
 						root = document.getElementById(a[3]);

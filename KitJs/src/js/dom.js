@@ -531,7 +531,7 @@ $kit.merge($Kit.Dom.prototype,
 			}
 		} else {
 			targetPos = {
-				pos : 'last',
+				pos : 'first',
 				where : target.parentNode
 			}
 		}

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=3.0;">
+		<link rel="stylesheet" href="../../css.css" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+
+		</script>
+		<script src="../../src/js/anim.js?t=20120606"></script>
+		<script src="../../src/js/selector.js"></script>
+		<script src="../../src/js/array.js"></script>
+		<script src="../../src/js/math.js"></script>
+		<script src="../../src/js/dom.js"></script>
+		<style>
+			.test1 {
+				border: #ccc;
+				background-color: #aaa;
+				width: 300px;
+				zoom: 1;
+			}
+		</style>
+		<link rel="stylesheet" href="../../src/css/widget/Dialog/dialog.css" />
+		<link rel="stylesheet" href="../../src/css/button.css" />
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<div>
+			<h1>摇头动画范例，貌似最近很流行？？？</h1>
+			<div class="kitjs-dialog" id="test1" style="top: 286px; left: 603px; "><div class="kitjs-dialog-title" style="cursor: move; " draggable="true">标题栏可以拖拽</div><div class="kitjs-dialog-panel"><div class="kitjs-dialog-confirm-text">请确认你的请求？</div><div class="kitjs-dialog-confirm-buttons"><a class="confirm-yes">是</a><a class="confirm-no">否</a><a class="confirm-cancel">取消</a></div></div><a class="kitjs-dialog-close-btn">╳</a></div>
+			<script>
+				function a1() {
+					$kit.anim.motion({
+						duration : 1000,//持续时间
+						el : "#test1",
+						fx : $kit.anim.fx('swing'),
+						from : {
+							'margin-left' : '50px'
+						},
+						to : {
+							'margin-left' : '0px'
+						},
+						reverse: true,
+						timeSeg: 33,//晃动频率，自己调
+						then : function() {
+							$kit.log('摇动完毕？再shake一次？')
+						}
+					});
+				}
+				a1();
+			</script>
+			<button onclick="a1()">点我摇一摇</button>
+			<br/>
+			<br/>
+			<br/>
+		</div>
+	</body>
+</html>
