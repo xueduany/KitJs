@@ -5,7 +5,7 @@
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/string.js">Source code</a>
  */
 $Kit.String = function() {
-	//
+	this.ScriptFragment = '<script[^>]*>([\\S\\s]*?)<\/script>';
 }
 $kit.merge($Kit.String.prototype,
 /**
@@ -161,6 +161,83 @@ $kit.merge($Kit.String.prototype,
 				}
 				break;
 		}
+	},
+	/**
+	 * 首尾去空格
+	 * @param {String}
+	 * @return {String}
+	 */
+	strip : function(str) {
+		return str.replace(/^\s+/, '').replace(/\s+$/, '');
+	},
+	/**
+	 * 左去空
+	 * @param {String}
+	 * @return {String}
+	 */
+	ltrim : function(str) {
+		return str.replace(/^\s+/, '');
+	},
+	/**
+	 * 右去空
+	 * @param {String}
+	 * @return {String}
+	 */
+	rtrim : function(str) {
+		return str.replace(/\s+$/, '');
+	},
+	/**
+	 * 去掉所有的tag标记
+	 * @param {String}
+	 * @param {String}
+	 */
+	stripTags : function(str) {
+		return str.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
+	},
+	/**
+	 * 去除脚本代码
+	 * @param {String}
+	 * @return {String}
+	 */
+	stripScripts : function(str) {
+		return this.replace(new RegExp(this.ScriptFragment, 'img'), '');
+	},
+	/**
+	 * 找出脚本代码，将结果放在一个数组中
+	 * @param {String}
+	 * @return {Array}
+	 */
+	extractScripts : function(str) {
+		var matchAll = new RegExp(this.ScriptFragment, 'img'), matchOne = new RegExp(this.ScriptFragment, 'im'), re = [];
+		$kit.each((str.match(matchAll) || []), function(scriptTag) {
+			re.push((scriptTag.match(matchOne) || ['', ''])[1]);
+		});
+		return re;
+	},
+	/**
+	 * 是否包含特定字符
+	 * @param {String}
+	 * @return {Boolean}
+	 */
+	include : function(str, pattern) {
+		return str.indexOf(pattern) > -1;
+	},
+	/**
+	 * 开始位置
+	 * @param {String}
+	 * @return {Number}
+	 */
+	startsWith : function(str, pattern) {
+		return str.lastIndexOf(pattern, 0) === 0;
+	},
+	/**
+	 * 倒数开始位置
+	 * @param {String}
+	 * @return {Number}
+	 */
+	endsWith : function(str, pattern) {
+		var d = str.length - pattern.length;
+		return d >= 0 && str.indexOf(pattern, d) === d;
 	}
 });
 /**
