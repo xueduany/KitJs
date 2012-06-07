@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']); (function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+
+		</script>
+		<script src="../../src/js/template.js"></script>
+		<!--按钮样式-->
+		<link rel="stylesheet" href="../../src/css/button.css" />
+		<link rel="stylesheet" href="../../css.css" />
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>模板---使用mustache</h1>
+		<h3>1.简单变量替换${name}</h3>
+		<div id="a1">
+			<pre>
+function _a1() {
+	$kit.el('#a1').innerHTML = $kit.template.render('${name} is awesome', {
+		name : '&lt;b style="color:red"&gt;Willy&lt;/b&gt;'
+	});
+}
+			</pre>
+			<button onclick="_a1()">
+				执行模板渲染
+			</button>
+		</div>
+		<script>
+			function _a1() {
+				$kit.el('#a1').innerHTML = $kit.template.render('${name} is awesome', {
+					name : '<b style="color:red">Willy</b>'
+				});
+			}
+		</script>
+		<br/>
+		<h3>2.如果变量含有html的代码的，例如：&lt;br&gt;、&lt;tr&gt;等等而不想转义可以在用${&name}</h3>
+		<div id="a2">
+			<pre>
+function _a2() {
+	$kit.el('#a2').innerHTML = $kit.template.render('${&name} is awesome', {
+		name : '&lt;b style="color:red"&gt;Willy&lt;/b&gt;'
+	});
+}
+			</pre>
+			<button onclick="_a2()">
+				执行模板渲染
+			</button>
+		</div>
+		<script>
+			function _a2() {
+				$kit.el('#a2').innerHTML = $kit.template.render('${&name} is awesome', {
+					name : '<b style="color:red">Willy</b>'
+				});
+			}
+		</script>
+		<br/>
+		<h3>3.如果是对象，还能解释其属性</h3>
+		<div id="a3">
+			<pre>
+function _a3() {
+	$kit.el('#a3').innerHTML = $kit.template.render("name:${name.first} ${name.last},age:${age}", {
+		"name" : {
+			"first" : "Chen",
+			"last" : "Jackson"
+		},
+		"age" : 18
+	});
+}
+			</pre>
+			<button onclick="_a3()">
+				执行模板渲染
+			</button>
+		</div>
+		<script>
+			function _a3() {
+				$kit.el('#a3').innerHTML = $kit.template.render("name:${name.first} ${name.last},age:${age}", {
+					"name" : {
+ 						"first" : "Chen",
+ 						"last" : "Jackson"
+ 					},
+					"age" : 18
+				});
+			}
+		</script>
+		<br/>
+		<h3>4.${#param}这个标签很强大，有if判断、forEach的功能。</h3>
+		<div id="a4">
+			<pre>
+function _a4() {
+	$kit.el('#a4').innerHTML = $kit.template.render("Shown.${#nothin}Never shown!${/nothin}", {
+		"nothin" : true
+	});
+}
+			</pre>
+			<button onclick="_a4()">
+				执行模板渲染
+			</button>
+		</div>
+		如果nothin是空或者null，或者是false都会输出Shown.相反则是Shown.Never shown!。
+		<script>
+			function _a4() {
+				$kit.el('#a4').innerHTML = $kit.template.render("Shown.${#nothin}Never shown!${/nothin}", {
+					"nothin" : true
+				});
+			}
+		</script>
+		<br/>
+		<br/>
+		<h3>5.迭代</h3>
+		<div id="a5">
+			<pre>
+function _a5() {
+	$kit.el('#a5').innerHTML = $kit.template.render("${#stooges}<b>${name}</b>${/stooges}", {
+		"stooges" : [ {
+			"name" : "Moe"
+		}, {
+			"name" : "Larry"
+		}, {
+			"name" : "Curly"
+		} ]
+	});
+}
+			</pre>
+			<button onclick="_a5()">
+				执行模板渲染
+			</button>
+		</div>
+		<script>
+			function _a5() {
+				$kit.el('#a5').innerHTML = $kit.template.render("${#stooges}<b>${name}</b>${/stooges}", {
+					"stooges" : [ {
+ 						"name" : "Moe"
+ 					}, {
+ 						"name" : "Larry"
+ 					}, {
+ 						"name" : "Curly"
+ 					} ]
+				});
+			}
+		</script>
+		<br/>
+		<h3>6.如果迭代的是数组，还可以用${.}来替代每个元素</h3>
+		<div id="a6">
+			<pre>
+function _a6() {
+	$kit.el('#a6').innerHTML = $kit.template.render("${#musketeers}* ${&.}${/musketeers}", {
+		"musketeers" : [ "Athos", "Aramis", "Porthos", "D'Artagnan" ]
+	});
+}
+			</pre>
+			<button onclick="_a6()">
+				执行模板渲染
+			</button>
+		</div>
+		<script>
+			function _a6() {
+				$kit.el('#a6').innerHTML = $kit.template.render("${#musketeers}* ${&.}${/musketeers}", {
+					"musketeers" : [ "Athos", "Aramis", "Porthos", "D'Artagnan" ]
+				});
+			}
+		</script>
+		<br/>
+		<h3>7.迭代输出的还可以是一个function返回的结果，function可以读取当前变量的上下文来获取其他属性执行其他操作</h3>
+		<div id="a7">
+			<pre>
+function _a7() {
+	$kit.el('#a7').innerHTML = $kit.template.render("${#beatles} *${name}${/beatles}", {
+		"beatles" : [ {
+			"firstName" : "John",
+			"lastName" : "Lennon"
+		}, {
+			"firstName" : "Paul",
+			"lastName" : "McCartney"
+		}, {
+			"firstName" : "George",
+			"lastName" : "Harrison"
+		}, {
+			"firstName" : "Ringo",
+			"lastName" : "Starr"
+		} ],
+		"name" : function() {
+			return this.firstName + " " + this.lastName;
+		}
+	});
+}
+			</pre>
+			<button onclick="_a7()">
+				执行模板渲染
+			</button>
+		</div>
+		<script>
+			function _a7() {
+				$kit.el('#a7').innerHTML = $kit.template.render("${#beatles} *${name}${/beatles}", {
+					"beatles" : [ {
+ 						"firstName" : "John",
+ 						"lastName" : "Lennon"
+ 					}, {
+ 						"firstName" : "Paul",
+ 						"lastName" : "McCartney"
+ 					}, {
+ 						"firstName" : "George",
+						"lastName" : "Harrison"
+					}, {
+						"firstName" : "Ringo",
+						"lastName" : "Starr"
+					} ],
+					"name" : function() {
+						return this.firstName + " " + this.lastName;
+					}
+				});
+			}
+		</script>
+		<br/>
+		<h3>8：方法里面可以再执行变量中的表达式</h3>
+		<div id="a8">
+			<pre>
+function _a8() {
+	$kit.el('#a8').innerHTML = $kit.template.render("${#bold}Hi ${name}.${/bold}", {
+		"name" : "${age}" + "Tater",
+		"bold" : function() {
+			return function(text, render) {
+				console.log(text);
+				return "<b>" + render(text) + "</b>";
+			};
+		},
+		"age" : 18
+	});
+}
+			</pre>
+			<button onclick="_a8()">
+				执行模板渲染
+			</button>
+		</div>
+		<script>
+			function _a8() {
+				$kit.el('#a8').innerHTML = $kit.template.render("${#bold}Hi ${name}.${/bold}", {
+					"name" : "${age}" + "Tater",
+ 					"bold" : function() {
+	 					return function(text, render) {
+	 						console.log(text);
+	 						return "<b>" + render(text) + "</b>";
+	 					};
+ 					},
+ 					"age" : 18
+				});
+			}
+		</script>
+		<br/>
+		<h3>9.{{^}}与{{#}}相反，如果变量是null、undefined、 false、和空数组讲输出结果</h3>
+		<br/>
+		<h3>10.{{!  }}注释</h3>
+	</body>
+</html>
