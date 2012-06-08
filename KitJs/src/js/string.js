@@ -2,10 +2,19 @@
  * 文本扩展
  * @class $Kit.String
  * @requires kit.js
+ * @requires math.js
  * @see <a href="https://github.com/xueduany/KitJs/blob/master/KitJs/src/js/string.js">Source code</a>
  */
 $Kit.String = function() {
 	this.ScriptFragment = '<script[^>]*>([\\S\\s]*?)<\/script>';
+	this.specialChar = {
+		'\b' : '\\b',
+		'\t' : '\\t',
+		'\n' : '\\n',
+		'\f' : '\\f',
+		'\r' : '\\r',
+		'\\' : '\\\\'
+	}
 }
 $kit.merge($Kit.String.prototype,
 /**
@@ -215,7 +224,7 @@ $kit.merge($Kit.String.prototype,
 		return re;
 	},
 	/**
-	 * 是否包含特定字符
+	 * Check if the string contains a substring.
 	 * @param {String}
 	 * @return {Boolean}
 	 */
@@ -223,17 +232,21 @@ $kit.merge($Kit.String.prototype,
 		return str.indexOf(pattern) > -1;
 	},
 	/**
-	 * 开始位置
+	 * Checks if the string starts with substring.
 	 * @param {String}
-	 * @return {Number}
+	 * @return {Boolean}
+	 * @example
+	 * 'Prototype JavaScript'.startsWith('Pro');//-> true
 	 */
 	startsWith : function(str, pattern) {
 		return str.lastIndexOf(pattern, 0) === 0;
 	},
 	/**
-	 * 倒数开始位置
+	 * Checks if the string ends with substring.
 	 * @param {String}
-	 * @return {Number}
+	 * @return {Boolean}
+	 * @example
+	 * 'slaughter'.endsWith('laughter')// -> true
 	 */
 	endsWith : function(str, pattern) {
 		var d = str.length - pattern.length;
@@ -243,6 +256,9 @@ $kit.merge($Kit.String.prototype,
 	 * Converts a string separated by dashes into a camelCase equivalent. For instance, 'foo-bar' would be converted to 'fooBar'.
 	 * @param {String}
 	 * @return {String}
+	 * @example
+	 * 'background-color'.camelize();// -> 'backgroundColor'
+	 * '-moz-binding'.camelize();// -> 'MozBinding'
 	 */
 	camelize : function(str) {
 		return str.replace(/-+(.)?/g, function(match, chr) {
@@ -253,6 +269,9 @@ $kit.merge($Kit.String.prototype,
 	 * Capitalizes the first letter of a string and downcases all the others.
 	 * @param {String}
 	 * @return {String}
+	 * @example
+	 * 'hello'.capitalize();// -> 'Hello'
+	 * 'HELLO WORLD!'.capitalize();// -> 'Hello world!'
 	 */
 	capitalize : function(str) {
 		return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
@@ -269,9 +288,59 @@ $kit.merge($Kit.String.prototype,
 	 * Replaces every instance of the underscore character ("_") by a dash ("-").
 	 * @param {String}
 	 * @return {String}
+	 * @example
+	 * 'border_bottom_width'.dasherize();// -> 'border-bottom-width'
+	 * Note:
+	 * Used in conjunction with String#underscore, String#dasherize converts a DOM style into its CSS equivalent.
+	 * 'borderBottomWidth'.underscore().dasherize();// -> 'border-bottom-width'
 	 */
 	dasherize : function(str) {
 		return str.replace(/_/g, '-');
+	},
+	/**
+	 * Check if the string is 'blank', meaning either empty or containing only whitespace.
+	 * @param {String}
+	 * @return {Boolean}
+	 * @example
+	 * ''.blank();//-> true
+	 * '  '.blank();//-> true
+	 * ' a '.blank();//-> false
+	 */
+	blank : function(str) {
+		return /^\s*$/.test(str);
+	},
+	/**
+	 * Checks if the string is empty.
+	 * @param {String}
+	 * @return {Boolean}
+	 * @example
+	 * ''.empty();//-> true
+	 * '  '.empty();//-> false
+	 */
+	empty : function(str) {
+		return str == '';
+	},
+	/**
+	 * Returns a debug-oriented version of the string (i.e. wrapped in single or double quotes, with backslashes and quotes escaped).
+	 * @param {String}
+	 * @return {Boolean}
+	 * @example
+	 * 'I\'m so happy.'.inspect();
+	 * // -> '\'I\\\'m so happy.\'' (displayed as 'I\'m so happy.' in an alert dialog or the console)
+	 * 'I\'m so happy.'.inspect(true);
+	 * // -> '"I'm so happy."'  (displayed as "I'm so happy." in an alert dialog or the console)
+	 */
+	inspect : function(str, useDoubleQuotes) {
+		var escapedString = str.replace(/[\x00-\x1f\\]/g, function(character) {
+			if( character in this.specialChar) {
+				return this.specialChar[character];
+			}
+			var c = character.charCodeAt();
+			return '\\u00' + $kit.math.padZero(c.toString(16), 2);
+		});
+		if(useDoubleQuotes)
+			return '"' + escapedString.replace(/"/g, '\\"') + '"';
+		return "'" + escapedString.replace(/'/g, '\\\'') + "'";
 	}
 });
 /**
