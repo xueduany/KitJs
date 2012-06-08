@@ -240,7 +240,7 @@ $kit.merge($Kit.String.prototype,
 		return d >= 0 && str.indexOf(pattern, d) === d;
 	},
 	/**
-	 * 首字母小写
+	 * Converts a string separated by dashes into a camelCase equivalent. For instance, 'foo-bar' would be converted to 'fooBar'.
 	 * @param {String}
 	 * @return {String}
 	 */
@@ -250,7 +250,7 @@ $kit.merge($Kit.String.prototype,
 		});
 	},
 	/**
-	 * 首字母大写
+	 * Capitalizes the first letter of a string and downcases all the others.
 	 * @param {String}
 	 * @return {String}
 	 */
@@ -258,7 +258,7 @@ $kit.merge($Kit.String.prototype,
 		return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 	},
 	/**
-	 * 中划线变下划线
+	 * Converts a camelized string into a series of words separated by an underscore ("_").
 	 * @param {String}
 	 * @return {String}
 	 */
@@ -266,7 +266,7 @@ $kit.merge($Kit.String.prototype,
 		return str.replace(/::/g, '/').replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2').replace(/([a-z\d])([A-Z])/g, '$1_$2').replace(/-/g, '_').toLowerCase();
 	},
 	/**
-	 * 下划线变中划线
+	 * Replaces every instance of the underscore character ("_") by a dash ("-").
 	 * @param {String}
 	 * @return {String}
 	 */
