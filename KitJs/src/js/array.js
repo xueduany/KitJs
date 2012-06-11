@@ -211,6 +211,9 @@ $Kit.Array.prototype =
 	},
 	/**
 	 * 返回指定元素在数组的第几个，从0开始
+	 * @param {Array}
+	 * @param {Object}
+	 * @return {Number}
 	 */
 	indexOf : function(ary, obj) {
 		var index = -1;
@@ -226,6 +229,8 @@ $Kit.Array.prototype =
 	},
 	/**
 	 * 克隆一个新的数组
+	 * @param {Array}
+	 * @param {Array}
 	 */
 	clone : function(ary) {
 		var re = [];
@@ -236,6 +241,8 @@ $Kit.Array.prototype =
 	},
 	/**
 	 * 删除数组中空的元素
+	 * @param {Array}
+	 * @return {Array}
 	 */
 	delEmpty : function(ary) {
 		for(var i = 0; i < ary.length; ) {
@@ -246,6 +253,21 @@ $Kit.Array.prototype =
 			}
 		}
 		return ary;
+	},
+	/**
+	 * 删除重复元素，不保证顺序
+	 * @param {Array}
+	 * @return {Array}
+	 */
+	rmRepeat : function(ary) {
+		var tmp = {}, re = [];
+		$kit.each(ary, function(o) {
+			tmp[o] = 1;
+		});
+		for(var o in tmp) {
+			re.push(o);
+		}
+		return re;
 	}
 };
 /**

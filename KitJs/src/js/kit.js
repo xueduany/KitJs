@@ -1710,13 +1710,20 @@ $Kit.prototype = {
 	 * @param {Object} config.child 子类
 	 * @param {Object} config.father 父类
 	 */
-	inherit : function(config) {
+	inherit : function(config, initFlag) {
 		var me = this, child = config.child, father = config.father;
+		if(initFlag == false) {
+			//
+		} else {
+			initFlag = true;
+		}
 		var _arguments = undefined || config.arguments;
-		try {
-			_arguments = arguments.callee.caller.arguments;
-		} catch(e) {
-			//don`t pass arguments of constructor
+		if(initFlag) {
+			try {
+				_arguments = arguments.callee.caller.arguments;
+			} catch(e) {
+				//don`t pass arguments of constructor
+			}
 		}
 		me.mergeIf(child.prototype, new father(_arguments));
 		child.prototype.constructor = child;
