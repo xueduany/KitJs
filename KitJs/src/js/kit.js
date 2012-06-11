@@ -1709,6 +1709,7 @@ $Kit.prototype = {
 	 * @param {Object} config
 	 * @param {Object} config.child 子类
 	 * @param {Object} config.father 父类
+	 * @param {Boolean} initFlag initFlag为false时，不执行父类的构造器，默认为true
 	 */
 	inherit : function(config, initFlag) {
 		var me = this, child = config.child, father = config.father;
