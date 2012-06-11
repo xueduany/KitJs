@@ -875,6 +875,7 @@ $kit.merge($kit.ui.DatePicker.prototype,
 							} else if(e.ctrlKey && me.config.canMultipleChoose && me.selectedDateAry && me.selectedDateAry.length >= 1) {
 								me.addValue();
 							} else {
+								//清除选中
 								if(me.selectedDateAry && me.selectedDateAry.length > 1) {
 									$kit.each($kit.$el('.datepicker-days td.day', me.picker), function(o) {
 										$kit.rmCls(o, 'active');
