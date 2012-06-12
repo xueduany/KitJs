@@ -102,6 +102,41 @@ $kit.merge($Kit.Math.prototype,
 		var num = new String(str);
 		num = parseInt(num, parseInt(oldHex));
 		return num.toString(parseInt(newHex));
+	},
+	/**
+	 * 给数字添加逗号分割
+	 * @param {Number}
+	 * @param {String} [sign] 分隔符号，默认是,
+	 * @param {Number} [n] 默认以千位分割，默人是3，10的3次方
+	 * @return {String}
+	 */
+	splitNumberWithComma : function(num, sign, n) {
+		if(sign == null && n == null) {
+			sign = ',';
+			n = 3;
+		} else {
+			if(n == null) {
+				if( typeof sign != 'number') {
+					//
+					n = 3;
+				} else {
+					sign = ',';
+					n = parseInt(sign);
+				}
+			}
+		}
+		var s = new String(num);
+		var a = [], b = [];
+		for(var i = 0; i < s.length; i++) {
+			if((s.length - i - 1) % n > 0) {
+				b.push(s[i]);
+			} else {
+				b.push(s[i]);
+				a.push(b.join(''));
+				b = [];
+			}
+		}
+		return a.join(sign);
 	}
 });
 /**
