@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="../../src/js/require.js"></script>
+		<link rel="stylesheet" href="../../src/css/widget/Dialog/dialog.css" />
+	</head>
+	<body>
+		<script>
+			require(['kit'], function(dependency) {
+				define('', ['suger', 'widget/Mask/mask', 'widget/Dialog/dialog'], function($) {
+					var d = new $kit.ui.Dialog();
+					d.init();
+					d.center();
+				});
+			});
+			require(['kit'], function(dependency) {
+				define('', ['suger'], function($) {
+					console.log($(document.body).width());
+				});
+			});
+		</script>
+	</body>
+</html>
