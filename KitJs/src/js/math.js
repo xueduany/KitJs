@@ -125,7 +125,7 @@ $kit.merge($Kit.Math.prototype,
 				}
 			}
 		}
-		var s = new String(num);
+		var s = num.toString().split('');
 		var a = [], b = [];
 		for(var i = 0; i < s.length; i++) {
 			if((s.length - i - 1) % n > 0) {

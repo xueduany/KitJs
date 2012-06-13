@@ -341,6 +341,18 @@ $kit.merge($Kit.String.prototype,
 		if(useDoubleQuotes)
 			return '"' + escapedString.replace(/"/g, '\\"') + '"';
 		return "'" + escapedString.replace(/'/g, '\\\'') + "'";
+	},
+	/**
+	 * 在字符串中指定位置插入字符串
+	 * @param {String}
+	 * @param {Number}
+	 * @param {String}
+	 * @return {String}
+	 */
+	insert : function(str, pos, insertString) {
+		var a = str.split('');
+		a.splice(pos, 1, insertString);
+		return a.join('');
 	}
 });
 /**
