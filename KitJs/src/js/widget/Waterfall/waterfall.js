@@ -94,7 +94,7 @@ $kit.merge($kit.ui.Waterfall.prototype,
 	 * @param {Function} [callback] Callback function to be called after adjust.
 	 */
 	adjust : function(callback) {
-		var me = this, items = $kit.$el('.' + me.config.waterfallCls, me.config.container);
+		var me = this, items = $kit.el('.' + me.config.waterfallCls, me.config.container);
 		/* 正在加，直接开始这次调整，剩余的加和正在调整的一起处理 */
 		/* 正在调整中，取消上次调整，开始这次调整 */
 		if(me.isAdjusting()) {

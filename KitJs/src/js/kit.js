@@ -416,9 +416,21 @@ $Kit.prototype = {
 		if(selector.indexOf("#") == 0) {
 			return me.el8id(selector.substring(1), root);
 		} else if(selector.indexOf(".") == 0) {
-			return me.els8cls(selector.substring(1), root);
+			var a = me.els8cls(selector.substring(1), root), re = [];
+			if(a.constructor && a.constructor.toString().indexOf("Array") > -1) {
+				re = a;
+			} else {
+				for(var i = 0; i < a.length; i++) {
+					re.push(a[i]);
+				}
+			}
+			return re;
 		} else if(selector.indexOf("@") == 0) {
-			return me.els8name(selector.substring(1), root);
+			var a = me.els8name(selector.substring(1), root), re = [];
+			for(var i = 0; i < a.length; i++) {
+				re.push(a[i]);
+			}
+			return re;
 		} else {
 			var re = [];
 			if(selector.indexOf(".") > 0 && selector.indexOf(".") < selector.length) {
