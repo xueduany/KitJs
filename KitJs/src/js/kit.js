@@ -1709,9 +1709,8 @@ $Kit.prototype = {
 	 * @param {Object} config
 	 * @param {Object} config.child 子类
 	 * @param {Object} config.father 父类
-	 * @param {Boolean} initFlag initFlag为false时，不执行父类的构造器，默认为true
 	 */
-	inherit : function(config, initFlag) {
+	inherit : function(config) {
 		var me = this, child = config.child, father = config.father;
 		if(initFlag == false) {
 			//
@@ -1719,12 +1718,10 @@ $Kit.prototype = {
 			initFlag = true;
 		}
 		var _arguments = undefined || config.arguments;
-		if(initFlag) {
-			try {
-				_arguments = arguments.callee.caller.arguments;
-			} catch(e) {
-				//don`t pass arguments of constructor
-			}
+		try {
+			_arguments = arguments.callee.caller.arguments;
+		} catch(e) {
+			//don`t pass arguments of constructor
 		}
 		me.mergeIf(child.prototype, new father(_arguments));
 		child.prototype.constructor = child;
