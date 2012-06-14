@@ -351,7 +351,7 @@ $kit.merge($Kit.String.prototype,
 	 */
 	insert : function(str, pos, insertString) {
 		var a = str.split('');
-		a.splice(pos, 1, insertString);
+		a.splice(pos, 0, insertString);
 		return a.join('');
 	}
 });
