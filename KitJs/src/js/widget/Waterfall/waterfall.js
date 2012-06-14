@@ -245,8 +245,8 @@ $kit.merge($kit.ui.Waterfall.prototype,
 					el : item
 				}, effect, {
 					from : {
-						top : $kit.css(item, 'top'),
-						left : $kit.css(item, 'left')
+						top : $kit.css(item, 'top') + 'px',
+						left : $kit.css(item, 'left') + 'px'
 					},
 					to : colProp,
 					then : function() {
@@ -260,7 +260,8 @@ $kit.merge($kit.ui.Waterfall.prototype,
 		}
 
 		// 加入到 dom 树才能取得高度
-		curColHeights[col] += item.offsetHeight + $kit.css(item, 'margin-top') + $kit.css(item, 'margin-bottom');
+		var mTop = $kit.css(item, 'margin-top'), mBot = $kit.css(item, 'margin-bottom');
+		curColHeights[col] += item.offsetHeight + (isNaN(mTop) ? 0 : mTop) + (isNaN(mBot) ? 0 : mBot);
 		var colItems = me.config.colItems;
 		colItems[col] = colItems[col] || [];
 		colItems[col].push(item);
