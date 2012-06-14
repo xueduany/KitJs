@@ -3,14 +3,20 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
 		<script src="../../src/js/array.js"></script>
 		<script src="../../src/js/dom.js"></script>
 		<script src="../../src/js/io.js"></script>
 		<script src="../../src/js/json.js"></script>
+		<script src="../../src/js/anim.js"></script>
+		<script src="../../src/js/selector.js"></script>
 		<link rel="stylesheet" href="../../css.css" />
 		<link rel="stylesheet" href="waterfall.css" />
 		<!--waterfall-->
 		<script src="../../src/js/widget/Waterfall/waterfall.js" ></script>
+		<script src="../../src/js/widget/SemitransparentLoading/semitransparentloading.js"></script>
 		<style>
 			table td {
 				font-size: 14px;
@@ -23,12 +29,11 @@
 				width: auto;
 			}
 		</style>
-		<link rel="stylesheet" href="http://docs.kissyui.com/kissy/src/waterfall/demo/demo.css" />
 	</head>
 	<body>
 		<a href="../../index.html" class="backhome">返回首页</a>
 		<h1>瀑布流</h1>
-		<div id="ColumnContainer"></div>
+		<div class="kitjs-waterfall-container"></div>
 		<script src="demo.js"></script>
 	</body>
 </html>

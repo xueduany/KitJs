@@ -1,0 +1,15 @@
+.top-hide {
+	display: block;
+	height: 40px;
+	width: 100%;
+	background-color: red;
+}
+.top-hide {
+	-webkit-transform: translateY(-40px);
+}
+.top-fixed {
+	position: fixed;
+	top: 0;
+	left: 0;
+	top: 40px;
+}

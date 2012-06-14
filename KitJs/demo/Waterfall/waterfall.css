@@ -1,19 +1,31 @@
-.J_WaterfallContainer {
-	width: 100%;
-	-webkit-column-gap: 5px;
-	-webkit-column-width: 120px;
-	height: 400px;
-	list-style: none;
-	display: block;
-	overflow: hidden;
+.kitjs-waterfall-container {
+	position: relative;
+	min-width: 692px;
+	margin: 0 auto;
 }
-.J_WaterfallContainer .J_Waterfall {
-	list-style: none !important;
-	margin: 0;
-	padding: 0;
+.kitjs-waterfall-container  .kitjs-waterfall {
+	position: absolute;
+	width: 193px;
+	padding: 14px;
+	background-color: white;
+	overflow: hidden;
+	margin-bottom: 20px;
+}
+.kitjs-waterfall-container  .kitjs-waterfall .image {
+	position: relative;
 	display: block;
-	float: left;
-	width: 120px;
-	margin-bottom: 10px;
-	background-color: #aaa;
+	width: 190px;
+	overflow: hidden;
+	background-color: white;
+	border: 1px solid white;
+}
+.kitjs-waterfall-container  .kitjs-waterfall a {
+	text-decoration: none;
+	font-weight: bold;
+	color: #1389E5;
+	text-decoration: underline;
+	outline: none;
+}
+html {
+	background-color: #E8E7E3;
 }

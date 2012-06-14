@@ -31,13 +31,23 @@ $kit.merge($kit.ui.Waterfall,
 		/**
 		 * Minimum col count of waterfall items.
 		 * Event window resize to 0.
-		 * Default: 1.
 		 * @type Number
 		 */
 		minColCount : 1,
 		diff : 0,
 		colWidth : 220,
-		effect : {}
+		effect : {
+			fx : $kit.anim.fx('swing'),
+			duration : 500,
+			from : {
+				opacity : 0
+			},
+			to : {
+				opacity : 1
+			}
+		},
+		waterfallCls : 'kitjs-waterfall',
+		colAttrName : 'data-waterfall-col'
 	}
 });
 $kit.merge($kit.ui.Waterfall.prototype,
@@ -52,31 +62,39 @@ $kit.merge($kit.ui.Waterfall.prototype,
 			el : window,
 			ev : 'resize',
 			fn : function() {
+				clearTimeout(me.timeResize);
 				me.timeResize = setTimeout(function() {
 					me.doResize();
-				}, 300);
+				}, 1000);
 			},
 			scope : me
 		});
-		setTimeout(function() {
-			me.doScroll();
-		}, 150);
+		me.__onScroll = function() {
+			clearTimeout(me.timeoutDoScroll);
+			me.timeoutDoScroll = setTimeout(function() {
+				me.doScroll();
+			}, 150);
+		}
+		me.start();
+		me.__onScroll();
 	},
 	doResize : function() {
 		var me = this, //
 		containerRegion = me._containerRegion || {};
 		// 宽度没变就没必要调整
 		if(containerRegion && $kit.offset(me.config.container).width === containerRegion.width) {
-			return
+			return;
 		}
+		me.newEv('resizeBegin');
 		me.adjust();
+		me.newEv('resizeEnd');
 	},
 	/**
 	 * Readjust existing waterfall item.
 	 * @param {Function} [callback] Callback function to be called after adjust.
 	 */
 	adjust : function(callback) {
-		var me = this, items = $kit.els8cls("ks-waterfall", me.config.container);
+		var me = this, items = $kit.$el('.' + me.config.waterfallCls, me.config.container);
 		/* 正在加，直接开始这次调整，剩余的加和正在调整的一起处理 */
 		/* 正在调整中，取消上次调整，开始这次调整 */
 		if(me.isAdjusting()) {
@@ -133,9 +151,9 @@ $kit.merge($kit.ui.Waterfall.prototype,
 			if(timer) {
 				clearTimeout(timer);
 				todo = [];
-				$kit.each(items, function(item) {
-					item.stop();
-				});
+				// $kit.each(items, function(item) {
+				// item.stop();
+				// });
 			}
 		};
 		return stopper;
@@ -207,19 +225,34 @@ $kit.merge($kit.ui.Waterfall.prototype,
 		if(add) {
 			// 初始需要动画，那么先把透明度换成 0
 			$kit.css(item, colProp);
-			// if(effect && effect.effect) {
-			// // has layout to allow to compute height
-			// item.css("visibility", "hidden");
-			// }
 			container.appendChild(item);
+			if(effect) {
+				// has layout to allow to compute height
+				//item.css("visibility", "hidden");
+				$kit.anim.motion($kit.merge({
+					el : item
+				}, effect));
+			}
 			callback && callback();
 		}
 		// 否则调整，需要动画
 		else {
-			var adjustEffect = false;
-			//me.get("adjustEffect");
+			var adjustEffect = me.config.effect;
 			if(adjustEffect) {
 				//item.animate(colProp, adjustEffect.duration, adjustEffect.easing, callback);
+				//$kit.css(item, colProp);
+				$kit.anim.motion($kit.merge({
+					el : item
+				}, effect, {
+					from : {
+						top : $kit.css(item, 'top'),
+						left : $kit.css(item, 'left')
+					},
+					to : colProp,
+					then : function() {
+						callback && callback();
+					}
+				}));
 			} else {
 				$kit.css(item, colProp);
 				callback && callback();
@@ -227,11 +260,11 @@ $kit.merge($kit.ui.Waterfall.prototype,
 		}
 
 		// 加入到 dom 树才能取得高度
-		curColHeights[col] += item.offsetHeight;
+		curColHeights[col] += item.offsetHeight + $kit.css(item, 'margin-top') + $kit.css(item, 'margin-bottom');
 		var colItems = me.config.colItems;
 		colItems[col] = colItems[col] || [];
 		colItems[col].push(item);
-		$kit.attr(item, "data-waterfall-col", col);
+		$kit.attr(item, me.config.colAttrName, col);
 
 		return item;
 	},
@@ -274,7 +307,8 @@ $kit.merge($kit.ui.Waterfall.prototype,
 		// 动态载
 		// 最小高度(或被用户看到了)低于预加载线
 		var viewport = $kit.viewport();
-		if(diff + viewport.scrollTop + viewport.scrollHeight > colHeight) {
+		if(diff + viewport.scrollTop + viewport.clientHeight > colHeight) {
+			me.newEv('loadData');
 			me.loadData();
 		}
 	},
@@ -298,7 +332,6 @@ $kit.merge($kit.ui.Waterfall.prototype,
 	},
 	/**
 	 * Start monitor scroll on window.
-	 * @since 1.3
 	 */
 	start : function() {
 		var me = this;
@@ -394,7 +427,7 @@ $kit.merge($kit.ui.Waterfall.prototype,
 
 		var diff = outerHeight - originalOuterHeight, //
 		curColHeights = me.config.curColHeights, //
-		col = parseInt($kit.attr(item, "data-waterfall-col")), //
+		col = parseInt($kit.attr(item, me.config.colAttrName)), //
 		colItems = me.config.colItems[col], //
 		items = [], //
 		original = Math.max.apply(Math, curColHeights), //
@@ -416,7 +449,7 @@ $kit.merge($kit.ui.Waterfall.prototype,
 		now = Math.max.apply(Math, curColHeights);
 
 		if(now != original) {
-			me.get("container").height(now);
+			$kit.css(me.config.container, 'height', now);
 		}
 
 		var effect = cfg.effect, num = items.length;
@@ -427,6 +460,7 @@ $kit.merge($kit.ui.Waterfall.prototype,
 
 		function check() {
 			num--;
+			console.log(1);
 			if(num <= 0) {
 				me._adjuster = 0;
 				cfg.callback && cfg.callback.call(me);
@@ -434,16 +468,26 @@ $kit.merge($kit.ui.Waterfall.prototype,
 		}
 
 		if(effect === undefined) {
-			effect = me.get("adjustEffect");
+			effect = me.config.effect;
 		}
 
 		return me._adjuster = me.timedChunk(items, function(item) {
 			if(effect) {
-				item.animate({
-					top : parseInt(item.css("top")) + diff
-				}, effect.duration, effect.easing, check);
+				// item.animate({
+				// top : parseInt(item.css("top")) + diff
+				// }, effect.duration, effect.easing, check);
+				$kit.anim.motion($kit.merge({
+					el : item
+				}, effect, {
+					from : {
+						top : $kit.css(item, 'top'),
+						left : $kit.css(item, 'left')
+					},
+					to : colProp,
+					then : check
+				}));
 			} else {
-				item.css("top", parseInt(item.css("top")) + diff);
+				$kit.css(item, "top", parseInt(item.css("top")) + diff);
 				check();
 			}
 		});
@@ -466,7 +510,7 @@ $kit.merge($kit.ui.Waterfall.prototype,
 				return 0;
 			},
 			callback : function() {
-				var col = parseInt(item.attr("data-waterfall-col")), colItems = me.get("colItems")[col];
+				var col = parseInt(item.attr(me.config.colAttrName)), colItems = me.config.colItems[col];
 				for(var i = 0; i < colItems.length; i++) {
 					if(colItems[i][0] == item[0]) {
 						colItems.splice(i, 1);
@@ -493,5 +537,54 @@ $kit.merge($kit.ui.Waterfall.prototype,
 			callback && callback.call(me);
 		});
 		return me._adder;
+	},
+	/**
+	 * 注册自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 * @param {Function} config.fn
+	 */
+	ev : function() {
+		if(arguments.length == 1) {
+			var evCfg = arguments[0];
+			var scope = evCfg.scope || this;
+			if($kit.isFn(evCfg.fn) && $kit.isStr(evCfg.ev)) {
+				var evCfg = {
+					ev : evCfg.ev,
+					fn : evCfg.fn,
+					scope : this
+				};
+				this.event = this.event || {};
+				this.event[evCfg.ev] = this.event[evCfg.ev] || [];
+				this.event[evCfg.ev].push(evCfg);
+			}
+		}
+	},
+	/**
+	 * 触发自定义事件
+	 * @param {Object} config
+	 * @param {String} config.ev
+	 */
+	newEv : function() {
+		if(arguments.length == 1 && !$kit.isEmpty(this.event)) {
+			var evAry, evCfg, _evCfg = {};
+			if($kit.isStr(arguments[0])) {
+				var ev = arguments[0];
+				evAry = this.event[ev];
+			} else if($kit.isObj(arguments[0])) {
+				_evCfg = arguments[0];
+				evAry = this.event[_evCfg.ev];
+			}
+			if(!$kit.isEmpty(evAry)) {
+				for(var i = 0; evAry != null && i < evAry.length; i++) {
+					evCfg = $kit.merge(evAry[i], _evCfg);
+					var e = {
+						target : this,
+						type : evCfg.ev
+					}
+					evCfg.fn.call(evCfg.scope, e, evCfg);
+				}
+			}
+		}
 	}
 });

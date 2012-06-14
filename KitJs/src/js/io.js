@@ -209,7 +209,6 @@ $kit.merge($Kit.IO.prototype,
 			if(config.onSuccess) {
 				if(script.readyState) {//ie
 					script.onreadystatechange = function() {
-						a.push(script.readyState);
 						if(script.readyState == "loaded" || script.readyState == "complete") {
 							script.onreadystatechange = null;
 							config.onSuccess && config.onSuccess();
