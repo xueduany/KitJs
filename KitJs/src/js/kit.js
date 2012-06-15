@@ -1724,11 +1724,7 @@ $Kit.prototype = {
 	 */
 	inherit : function(config) {
 		var me = this, child = config.child, father = config.father;
-		if(initFlag == false) {
-			//
-		} else {
-			initFlag = true;
-		}
+		
 		var _arguments = undefined || config.arguments;
 		try {
 			_arguments = arguments.callee.caller.arguments;
