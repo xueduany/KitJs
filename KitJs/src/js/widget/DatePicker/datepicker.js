@@ -156,6 +156,9 @@ $kit.merge($kit.ui.DatePicker.prototype,
 					$kit.each(dateStrAry, function(o) {
 						me.selectedDateAry.push($kit.date.parseDate(o, me.format, me.language));
 					});
+					me.selectedDateAry.sort(function(a, b) {
+						return a.valueOf() - b.valueOf();
+					});
 				} else {
 					me.date = $kit.date.parseDate(config.date, me.format, me.language);
 					me.selectedDateAry = [me.date];

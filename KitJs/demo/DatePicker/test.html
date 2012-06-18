@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="../../src/js/kit.js"></script>
+		<!--[if IE]>
+		<script src="../../src/js/ieFix.js"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-30210234-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+
+		</script>
+		<script src="../../src/js/array.js"></script>
+		<script src="../../src/js/date.js"></script>
+		<script src="../../src/js/dom.js"></script>
+		<script src="../../src/js/selector.js"></script>
+		<link rel="stylesheet" href="../../css.css" />
+		<!--widget-->
+		<script src="../../src/js/widget/DatePicker/datepicker.js"></script>
+		<link rel="stylesheet" href="../../src/css/widget/DatePicker/datepicker.css" />
+	</head>
+	<body>
+		<a href="../../index.html" class="backhome">返回首页</a>
+		<h1>日历</h1>
+		<ul>
+			<li>
+				<h4>日期多选</h4>
+				<input type="text" id="J_input_5" size="80">
+				<br/>
+				<br/>
+			</li>
+		</ul>
+		<script>
+			$kit.$(function() {
+				$kit.ev({
+					el : '#J_input_5',
+					ev : 'focus',
+					fn : function(e) {
+						var d
+						d = e.target[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d) {
+							d.show();
+						} else {
+							d = new $kit.ui.DatePicker({
+								language : 'en',
+								dateFormat : 'yyyy-mm-dd',
+								date : '2012-02-01,2012-03-01'
+							}).init();
+							d.adhere($kit.el('#J_input_5'));
+							d.show();
+						}
+					}
+				});
+				$kit.ev({
+					el : document,
+					ev : 'click',
+					fn : function(e) {
+						var input = $kit.el('#J_input_5');
+						d = input[$kit.ui.DatePicker.defaultConfig.kitWidgetName];
+						if(d && !$kit.contains(d.picker, e.target) && input != e.target) {
+							d.hide();
+						}
+					}
+				});
+			})
+		</script>
+	</body>
+</html>
