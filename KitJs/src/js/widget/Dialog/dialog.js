@@ -80,7 +80,7 @@ $kit.merge($kit.ui.Dialog.prototype,
 		});
 	},
 	/**
-	 * 隐藏
+	 * 显示
 	 */
 	show : function() {
 		var me = this;
@@ -90,7 +90,7 @@ $kit.merge($kit.ui.Dialog.prototype,
 		me.wrapper.style.display = '';
 	},
 	/**
-	 * 显示
+	 * 隐藏
 	 */
 	hide : function() {
 		var me = this;
