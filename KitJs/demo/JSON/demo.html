@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html">
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -46,7 +46,7 @@
 		<h1>JSON Parse</h1>
 		<ul>
 			<li>
-				<h3>String转json</h3>
+				<h3>String转json（结果用支持Console的浏览器，比如chrome看console）</h3>
 				<textarea id="t1">
 {a:[1,2],b:3}
 </textarea>
@@ -86,17 +86,6 @@
 				});
 			});
 
-		</script>
-		<script>
-			(function() {
-				var a = 1;
-				var e = 3; (function() {
-					var a = 2; (function() {
-						new Function('alert(e)')();
-
-					})()
-				})()
-			})()
 		</script>
 	</body>
 </html>
