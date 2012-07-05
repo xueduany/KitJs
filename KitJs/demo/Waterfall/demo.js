@@ -4,7 +4,7 @@ $kit.$(function() {
 		container : $kit.el('.kitjs-waterfall-container')[0],
 		load : function(success, end) {
 			//$('#loadingPins').show();
-			$kit.io.josnp({
+			$kit.io.jsonp({
 				url : 'http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=5d93c2e473e39e9307e86d4a01381266&tags=rose&page=' + currentPage + '&per_page=20&format=json&_ksTS=1339665079110_92&jsoncallback=dealWithJSONPData',
 				onSuccess : function() {
 					currentPage = window.loadedData.photos.page + 1;

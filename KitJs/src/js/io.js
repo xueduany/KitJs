@@ -195,7 +195,7 @@ $kit.merge($Kit.IO.prototype,
 	 * @param {Object} config.params
 	 * @param {Object} config.onSuccess
 	 */
-	josnp : function(config) {
+	jsonp : function(config) {
 		if(config.url) {
 			var url = config.url;
 			if(config.params) {
