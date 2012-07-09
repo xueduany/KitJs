@@ -15,6 +15,8 @@
 	display: inline-block;
 	min-width: 30px;
 	max-width: 200px;
+	word-break: break-all;
+	word-wrap: break-word;
 	min-height: 22px;
 	background: #d2d2d2;
 	border-radius: 15px;
