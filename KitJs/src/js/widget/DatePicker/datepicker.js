@@ -889,6 +889,9 @@ $kit.merge($kit.ui.DatePicker.prototype,
 								} else {
 									me.setValue();
 								}
+								if(me.config.canMultipleChoose==true){
+									me.hide();
+								}
 							}
 						}
 					}
