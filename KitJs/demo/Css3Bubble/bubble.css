@@ -1,27 +1,30 @@
 /**
  * 	iphone气泡
  */
-#wraper1 {
+#wraper1,
+#wraper2,
+#wraper3,
+#wraper4 {
 	color: #000;
 	position: relative;
 	width: 100%;
-	height: 600px;
 	background: #dbe2ed;
 }
-#wraper1 .bubble {
+.bubble {
 	position: relative;
-	top: 100px;
-	margin: auto;
-	width: 180px;
-	min-height: 70px;
+	display: inline-block;
+	min-width: 30px;
+	max-width: 200px;
+	min-height: 22px;
 	background: #d2d2d2;
 	border-radius: 15px;
+	margin-bottom: 20px;
 	padding: 6px 8px;
 	-webkit-box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
 	-moz-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
 	box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
 }
-#wraper1 .bubble:before {
+.bubble:before {
 	content: '';
 	display: block;
 	font-size: 0;
@@ -34,7 +37,7 @@
 	border-color: #4a4c50 transparent transparent #4a4c50;
 	border-style: solid dashed dashed solid;
 }
-#wraper1 .bubble:after {
+.bubble:after {
 	content: '';
 	display: block;
 	font-size: 0;
@@ -47,11 +50,11 @@
 	border-color: #e8e8e8 transparent transparent #e8e8e8;
 	border-style: solid dashed dashed solid;
 }
-#wraper1 .bubble .content {
+.bubble .content {
 	position: relative;
 	padding: 0 4px;
 }
-#wraper1 .bubble .content:before {
+.bubble .content:before {
 	content: '';
 	position: absolute;
 	margin: auto;
@@ -69,199 +72,50 @@
 /**
  * 	绿色气泡
  */
-#wraper2 {
-	color: #000;
-	position: relative;
-	width: 100%;
-	height: 600px;
-	background: #dbe2ed;
-}
 #wraper2 .bubble {
-	position: relative;
-	top: 100px;
-	margin: auto;
-	width: 180px;
-	min-height: 70px;
 	background: #b7da2b;
-	border-radius: 15px;
-	padding: 6px 8px;
-	-webkit-box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
-	-moz-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
-	box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
 }
 #wraper2 .bubble:before {
-	content: '';
-	display: block;
-	font-size: 0;
-	width: 0;
-	height: 0;
-	border-width: 6px;
-	position: absolute;
-	bottom: -12px;
-	right: 12px; 
+	left: auto;
+	right: 12px;
 	border-color: #4a4c50 #4a4c50 transparent transparent;
 	border-style: solid solid dashed dashed;
 }
 #wraper2 .bubble:after {
-	content: '';
-	display: block;
-	font-size: 0;
-	position: absolute;
-	bottom: -9px;
+	left: auto;
 	right: 13px;
-	width: 0;
-	height: 0;
-	border-width: 5px;
 	border-color: #daec93 #daec93 transparent transparent;
 	border-style: solid solid dashed dashed;
-}
-#wraper2 .bubble .content {
-	position: relative;
-	padding: 0 4px;
-}
-#wraper2 .bubble .content:before {
-	content: '';
-	position: absolute;
-	margin: auto;
-	top: -5px;
-	left: 0;
-	width: 100%;
-	height: 12px;
-	background-image: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 90%, rgba(255,255,255,0) 90% );
-	background-image: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 90%, rgba(255,255,255,0) 90% );
-	border-radius: 10px
 }
 
 
 /**
  * 	橙色气泡
  */
-#wraper3 {
-	color: #000;
-	position: relative;
-	width: 100%;
-	height: 600px;
-	background: #dbe2ed;
-}
 #wraper3 .bubble {
-	position: relative;
-	top: 100px;
-	margin: auto;
-	width: 180px;
-	min-height: 70px;
 	background: #f6d031;
-	border-radius: 15px;
-	padding: 6px 8px;
-	-webkit-box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
-	-moz-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
-	box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
-}
-#wraper3 .bubble:before {
-	content: '';
-	display: block;
-	font-size: 0;
-	width: 0;
-	height: 0;
-	border-width: 6px;
-	position: absolute;
-	bottom: -12px;
-	left: 12px; 
-	border-color: #4a4c50 transparent transparent #4a4c50;
-	border-style: solid dashed dashed solid;
 }
 #wraper3 .bubble:after {
-	content: '';
-	display: block;
-	font-size: 0;
-	position: absolute;
-	bottom: -9px;
-	left: 13px;
-	width: 0;
-	height: 0;
-	border-width: 5px;
 	border-color: #fae796 transparent transparent #fae796;
 	border-style: solid dashed dashed solid;
-}
-#wraper3 .bubble .content {
-	position: relative;
-	padding: 0 4px;
-}
-#wraper3 .bubble .content:before {
-	content: '';
-	position: absolute;
-	margin: auto;
-	top: -5px;
-	left: 0;
-	width: 100%;
-	height: 12px;
-	background-image: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 90%, rgba(255,255,255,0) 90% );
-	background-image: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 90%, rgba(255,255,255,0) 90% );
-	border-radius: 10px
 }
 
 
 /**
  * 	黄色气泡
  */
-#wraper4 {
-	color: #000;
-	position: relative;
-	width: 100%;
-	height: 600px;
-	background: #dbe2ed;
-}
 #wraper4 .bubble {
-	position: relative;
-	top: 100px;
-	margin: auto;
-	width: 180px;
-	min-height: 70px;
 	background: #feed24;
-	border-radius: 15px;
-	padding: 6px 8px;
-	-webkit-box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
-	-moz-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
-	box-shadow: 0px 1px 2px #000, inset 0px 4px 4px rgba(0,0,0,.3), inset 0px -4px 4px rgba(255,255,255,.5);
 }
 #wraper4 .bubble:before {
-	content: '';
-	display: block;
-	font-size: 0;
-	width: 0;
-	height: 0;
-	border-width: 6px;
-	position: absolute;
-	bottom: -12px;
-	left: 12px; 
-	border-color: #4a4c50 transparent transparent #4a4c50;
-	border-style: solid dashed dashed solid;
+	left: auto;
+	right: 12px;
+	border-color: #4a4c50 #4a4c50 transparent transparent;
+	border-style: solid solid dashed dashed;
 }
 #wraper4 .bubble:after {
-	content: '';
-	display: block;
-	font-size: 0;
-	position: absolute;
-	bottom: -9px;
-	left: 13px;
-	width: 0;
-	height: 0;
-	border-width: 5px;
-	border-color: #fef690 transparent transparent #fef690;
-	border-style: solid dashed dashed solid;
-}
-#wraper4 .bubble .content {
-	position: relative;
-	padding: 0 4px;
-}
-#wraper4 .bubble .content:before {
-	content: '';
-	position: absolute;
-	margin: auto;
-	top: -5px;
-	left: 0;
-	width: 100%;
-	height: 12px;
-	background-image: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 90%, rgba(255,255,255,0) 90% );
-	background-image: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 90%, rgba(255,255,255,0) 90% );
-	border-radius: 10px
+	left: auto;
+	right: 13px;
+	border-color: #fef690 #fef690 transparent transparent;
+	border-style: solid solid dashed dashed;
 }
