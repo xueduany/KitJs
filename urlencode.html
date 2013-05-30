@@ -1,9 +1,8 @@
 <html>
 <head>
-<title>中文gbk,utf-8,big5 javascript编码转换 urlencode urldecode</title>
-<meta name="keywords" content="javascript,gbk,utf-8,big,urlencode,urldecode,编码转换" />
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
 </head>
 <body>
 	<input type="text" id="input" value="中文">
@@ -21,13 +20,31 @@
 		解码： <input type="button" id="deBtn" value="urldecode">
 		<textarea style="display: block" id="outputDecode"></textarea>
 	</div>
+	<!--<img src="data:text/javascript;charset=gbk,window.a='%D6%D0%CE%C4'" id="d">-->
+	<!--<script charset="gbk" src="data:text/javascript;charset=gbk,alert('%CE%C4')"></script>-->
 	<script>
+		/*
+		var s=document.createElement('script');
+		s.charset='gbk';
+		var src=document.getElementById('d').src;
+		alert(src);
+		s.src=src;
+		document.body.appendChild(s);
+		setTimeout(function(){
+			alert(window.a)
+		},300)
+		*/
 		function urlencode(str, charset, callback) {
 			//创建form通过accept-charset做encode
 			var form = document.createElement('form');
 			form.method = 'get';
 			form.style.display = 'none';
 			form.acceptCharset = charset;
+			if (document.all) {
+				//如果是IE那么就调用document.charset方法
+				window.oldCharset = document.charset;
+				document.charset = charset;
+			}
 			var input = document.createElement('input');
 			input.type = 'hidden';
 			input.name = 'str';
@@ -50,7 +67,12 @@
 				document.body.appendChild(iframe);
 			}
 			//
-			window._urlEncode_iframe_callback = callback;
+			window._urlEncode_iframe_callback = function(str) {
+				callback(str);
+				if (document.all) {
+					document.charset = window.oldCharset;
+				}
+			}
 			//设置回调编码页面的地址，这里需要用户修改
 			form.action = 'getEncodeStr.html';
 			form.submit();
@@ -61,11 +83,36 @@
 
 		}
 		function urldecode(str, charset, callback) {
-			window._urlDecodeFn_ = callback;
 			var script = document.createElement('script');
 			script.id = '_urlDecodeFn_';
-			script.src = 'data:text/javascript;charset=' + charset + ',_urlDecodeFn_("' + str + '");document.getElementById("_urlDecodeFn_").parentNode.removeChild(document.getElementById("_urlDecodeFn_"));';
-			document.body.appendChild(script);
+			window._urlDecodeFn_ = callback;
+			if (document.all) {
+				//隐藏iframe截获提交的字符串
+				if (!window['_urlDecode_iframe_']) {
+					var iframe = document.createElement('iframe');
+					//iframe.name = '_urlDecode_iframe_';
+					iframe.setAttribute('name', '_urlDecode_iframe_');
+					iframe.style.display = 'none';
+					iframe.width = "0";
+					iframe.height = "0";
+					iframe.scrolling = "no";
+					iframe.allowtransparency = "true";
+					iframe.frameborder = "0";
+					iframe.src = 'about:blank';
+					document.body.appendChild(iframe);
+				}
+				//ie下需要指明charset，然后src=datauri才可以
+				iframe.contentWindow.document.write('<html><scrip' + 't charset="gbk" src="data:text/javascript;charset=gbk,parent._decodeStr_=\'' + str + '\'"></s'+'cript></html>');
+				setTimeout(function() {
+					callback(_decodeStr_);
+					iframe.parentNode.removeChild(iframe);
+				}, 300)
+			} else {
+				var src = 'data:text/javascript;charset=' + charset + ',_urlDecodeFn_("' + str + '");';
+				src += 'document.getElementById("_urlDecodeFn_").parentNode.removeChild(document.getElementById("_urlDecodeFn_"));';
+				script.src = src;
+				document.body.appendChild(script);
+			}
 		}
 
 		/**编码和解码
