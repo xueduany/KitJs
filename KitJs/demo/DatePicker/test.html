@@ -54,7 +54,11 @@
 							d = new $kit.ui.DatePicker({
 								language : 'en',
 								dateFormat : 'yyyy-mm-dd',
-								date : '2012-02-01,2012-03-01'
+								date : $kit.el('#J_input_5').value,
+								startDate: (function(){
+								    var d=$kit.date.dateNow();
+								    return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()
+								})()
 							}).init();
 							d.adhere($kit.el('#J_input_5'));
 							d.show();

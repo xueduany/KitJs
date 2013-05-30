@@ -477,11 +477,20 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype,
 							$kit.rmCls(o, 'active');
 						}
 						if(first && !last) {
+						    if(n<3){
 							$kit.adCls(o, 'active');
+						    }
 						}
 					});
 				}
 			}
+			var n=0;
+			$kit.each($kit.$el('.datepicker-days td.active', me.picker), function(o){
+			    n++;
+			    if(n>3){
+				$kit.rmCls(o, 'active');
+			    }
+			});
 		}
 	},
 	/**
@@ -523,6 +532,10 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype,
 			while(endDate.valueOf() >= beginDate.valueOf()) {
 				newSelectedDateAry.push(new Date(beginDate));
 				$kit.date.addDays(beginDate, 1);
+				if(newSelectedDateAry.length>3){
+				    alert(1);
+				    break;
+			    	}
 			}
 			me.selectedDateAry = newSelectedDateAry;
 		} else {
@@ -538,10 +551,18 @@ $kit.merge($kit.ui.DatePicker.NMonths.prototype,
 						canAdd = false;
 						break;
 					} else if(me.date.valueOf() > me.selectedDateAry[i].valueOf() && i < me.selectedDateAry.length - 1 && me.date.valueOf() < me.selectedDateAry[i + 1].valueOf()) {
+					    if(me.selectedDateAry.length<3){
 						me.selectedDateAry.splice(i + 1, 0, new Date(me.date));
 						break;
+					    }else{
+						alert(2);
+					    }
 					} else if(i == me.selectedDateAry.length - 1) {
+					    if(me.selectedDateAry.length<3){
 						me.selectedDateAry.splice(i, 0, new Date(me.date));
+					    }else{
+						alert(3)
+					    }
 					}
 					i++;
 				}

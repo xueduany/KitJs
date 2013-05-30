@@ -1,11 +1,47 @@
 <html>
-	<body>
-		<script>
-			function A() {
-				alert(this)
-			};
-
-			[A][0]()
-		</script>
-	</body>
+<link rel="stylesheet" href="a.css" />
+</head>
+<body>
+	<div id="c" style="background-color: black">123</div>
+	<script>
+		//console.log(document.getElementById('c').offsetHeight);
+		//document.getElementById('c').style.height = '1px';
+		//console.log(document.getElementById('c').offsetHeight);
+		//setTimeout(function() {
+		//document.getElementById('c').style.height = 'auto';
+		//console.log(document.getElementById('c').offsetHeight);
+		//}, 0);
+		function aa(b) {
+			var d1 = new Date().getTime();
+			b();
+			var d2 = new Date().getTime();
+			console.log((d2 - d1) / 1000);
+		}
+		/*
+		c1 = new Date().getTime();
+		setInterval(function() {
+			c2 = new Date().getTime();
+			console.log((c2 - c1) / 1000)
+			c1 = c2;
+			aa(function() {
+				for ( var i = 0; i < 100000; i++) {
+					console.log(1);
+				}
+			});
+			
+		}, 5000);
+		*/
+		c1 = new Date().getTime();
+		setTimeout(function() {
+			c2 = new Date().getTime();
+			console.log((c2 - c1) / 1000)
+			c1 = c2;
+		}, 1000);
+		aa(function() {
+			for ( var i = 0; i < 100000; i++) {
+				console.log(1);
+			}
+		});
+	</script>
+</body>
 </html>

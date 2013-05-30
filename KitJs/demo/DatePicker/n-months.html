@@ -80,7 +80,7 @@
 				picker.ev({
 					ev : 'change',
 					fn : function(e) {
-						alert(picker.getValue());
+						//alert(picker.getValue());
 					}
 				})
 				//输入框下拉
@@ -93,7 +93,13 @@
 						if(d) {
 							d.show();
 						} else {
-							d = new $kit.ui.DatePicker.NMonths();
+							d = new $kit.ui.DatePicker.NMonths({
+								date: [
+									$kit.date.parseDate('2012年4月5日', $kit.date.parseFormat('yyyy年MM月dd日'), 'cn'), //
+									$kit.date.parseDate('2012年4月6日', $kit.date.parseFormat('yyyy年MM月dd日'), 'cn') //
+								],
+								startDate:'2012年4月3日'
+							});
 							d.init();
 							d.adhere($kit.el('#J_input'));
 							d.show();
