@@ -54,9 +54,20 @@
 			document.body.appendChild(form);
 			//隐藏iframe截获提交的字符串
 			if (!window['_urlEncode_iframe_']) {
-				var iframe = document.createElement('iframe');
-				//iframe.name = '_urlEncode_iframe_';
-				iframe.setAttribute('name', '_urlEncode_iframe_');
+				var iframe;
+				if(document.all){
+					try{
+						iframe = document.createElement('<iframe name="_urlEncode_iframe_"></iframe>');
+					}catch(e){
+						iframe = document.createElement('iframe');
+						//iframe.name = '_urlEncode_iframe_';
+						iframe.setAttribute('name', '_urlEncode_iframe_');
+					}
+				}else{
+					iframe = document.createElement('iframe');
+					//iframe.name = '_urlEncode_iframe_';
+					iframe.setAttribute('name', '_urlEncode_iframe_');
+				}
 				iframe.style.display = 'none';
 				iframe.width = "0";
 				iframe.height = "0";
@@ -89,7 +100,20 @@
 			if (document.all) {
 				//隐藏iframe截获提交的字符串
 				if (!window['_urlDecode_iframe_']) {
-					var iframe = document.createElement('iframe');
+					var iframe;
+					if(document.all){
+						try{
+							iframe = document.createElement('<iframe name="_urlDecode_iframe_"></iframe>');
+						}catch(e){
+							iframe = document.createElement('iframe');
+							//iframe.name = '_urlDecode_iframe_';
+							iframe.setAttribute('name', '_urlDecode_iframe_');
+						}
+					}else{
+						iframe = document.createElement('iframe');
+						//iframe.name = '_urlDecode_iframe_';
+						iframe.setAttribute('name', '_urlDecode_iframe_');
+					}
 					//iframe.name = '_urlDecode_iframe_';
 					iframe.setAttribute('name', '_urlDecode_iframe_');
 					iframe.style.display = 'none';
