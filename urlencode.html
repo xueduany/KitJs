@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>中文gbk,utf-8,big5 javascript编码转换 urlencode urldecode</title>
+<meta name="keywords" content="javascript,gbk,utf-8,big,urlencode,urldecode,编码转换" />
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+</head>
+<body>
+	<input type="text" id="input" value="中文">
+	<input type="button" id="btn" value="urlencode">
+	<select id="charset">
+		<option value="gbk">gbk</option>
+		<option value="big5">big5</option>
+		<option value="utf-8">utf-8</option>
+	</select>
+	<div>
+		编码结果：
+		<textarea style="display: block" id="output"></textarea>
+	</div>
+	<div>
+		解码： <input type="button" id="deBtn" value="urldecode">
+		<textarea style="display: block" id="outputDecode"></textarea>
+	</div>
+	<script>
+		function urlencode(str, charset, callback) {
+			//创建form通过accept-charset做encode
+			var form = document.createElement('form');
+			form.method = 'get';
+			form.style.display = 'none';
+			form.acceptCharset = charset;
+			var input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = 'str';
+			input.value = str;
+			form.appendChild(input);
+			form.target = '_urlEncode_iframe_';
+			document.body.appendChild(form);
+			//隐藏iframe截获提交的字符串
+			if (!window['_urlEncode_iframe_']) {
+				var iframe = document.createElement('iframe');
+				//iframe.name = '_urlEncode_iframe_';
+				iframe.setAttribute('name', '_urlEncode_iframe_');
+				iframe.style.display = 'none';
+				iframe.width = "0";
+				iframe.height = "0";
+				iframe.scrolling = "no";
+				iframe.allowtransparency = "true";
+				iframe.frameborder = "0";
+				iframe.src = 'about:blank';
+				document.body.appendChild(iframe);
+			}
+			//
+			window._urlEncode_iframe_callback = callback;
+			//设置回调编码页面的地址，这里需要用户修改
+			form.action = 'getEncodeStr.html';
+			form.submit();
+			setTimeout(function() {
+				form.parentNode.removeChild(form);
+				iframe.parentNode.removeChild(iframe);
+			}, 500)
+
+		}
+		function urldecode(str, charset, callback) {
+			window._urlDecodeFn_ = callback;
+			var script = document.createElement('script');
+			script.id = '_urlDecodeFn_';
+			script.src = 'data:text/javascript;charset=' + charset + ',_urlDecodeFn_("' + str + '");document.getElementById("_urlDecodeFn_").parentNode.removeChild(document.getElementById("_urlDecodeFn_"));';
+			document.body.appendChild(script);
+		}
+
+		/**编码和解码
+		 */
+		document.getElementById('btn').onclick = function() {
+			urlencode(document.getElementById('input').value, document.getElementById('charset').value, function(str) {
+				document.getElementById('output').value = str;
+			})
+		}
+		document.getElementById('deBtn').onclick = function() {
+			urldecode(document.getElementById('output').value, document.getElementById('charset').value, function(str) {
+				document.getElementById('outputDecode').value = str;
+			})
+		}
+	</script>
+</body>
+</html>
