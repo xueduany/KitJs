@@ -302,7 +302,14 @@ $kit.merge($kit.ui.DatePicker.prototype,
 		remove = remove;
 		var me = this;
 		if(remove == false) {
-			me.selectedDateAry = [];
+			for(var i=0;i<me.selectedDateAry.length;i++){
+				var o = me.selectedDateAry[i];
+				if(o.valueOf() == me.date.valueOf()){
+					me.selectedDateAry.splice(i,1);
+					break;
+				}
+			}
+			//me.selectedDateAry. = [];
 			if(me.adhereEl) {
 				me.adhereEl.value = '';
 			}
