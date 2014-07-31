@@ -164,7 +164,7 @@ $kit.merge($Kit.Date.prototype,
 			return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
 		}
 		var parts = date ? date.match(this.nonpunctuation) : [], date = new Date(), val, filtered;
-		date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+		date = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0);
 		if(parts.length == format.parts.length) {
 			for(var i = 0, cnt = format.parts.length; i < cnt; i++) {
 				val = parseInt(parts[i], 10) || 1;
