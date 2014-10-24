@@ -182,6 +182,7 @@ $kit.merge($Kit.Selection.prototype,
 				}
 			}
 		}
+        re = re || parent;
 		range1 = null;
 		range2 = null;
 		return re;
